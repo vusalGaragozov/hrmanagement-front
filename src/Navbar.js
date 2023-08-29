@@ -1,10 +1,34 @@
-import React from 'react';
-
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import './style.css';
+import { API_URL } from './config';
+import { AuthContext } from './AuthContext.js';
 
 const Navbar = () => {
+  const { user, setAuthenticated } = useContext(AuthContext);
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(API_URL + '/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (response.ok) {
+        setAuthenticated(false);
+        window.location.href = '/login';
+      } else {
+        throw new Error('Error logging out');
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
-     
+      <a className="navbar-brand" href="/">
+        HR Management
+      </a>
       <button
         className="navbar-toggler"
         type="button"
@@ -105,6 +129,35 @@ const Navbar = () => {
               İşçi cəlbi
             </a>
           </li>
+        </ul>
+        <ul className="navbar-nav">
+          {user ? (
+            <>
+              <li className="nav-item">
+                <span className="nav-link">
+                  Welcome, {user.firstname} {user.lastname}
+                </span>
+              </li>
+              <li className="nav-item">
+                <button className="nav-link btn btn-link" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="nav-item">
+                <Link className="nav-link underline-hover" to="/register">
+                  Register
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link underline-hover" to="/login">
+                  Login
+                </Link>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </nav>
