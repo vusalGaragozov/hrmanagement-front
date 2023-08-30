@@ -11,8 +11,15 @@ export const AuthProvider = ({ children }) => {
 
 
   useEffect(() => {
-    axios
-      .get(`${API_URL}/check-auth`, { withCredentials: true })
+    const storedToken = localStorage.getItem('authToken');
+    if (storedToken) {
+      // Fetch user data using storedToken and update user and authenticated state
+      axios.get(`${API_URL}/check-auth`, {
+        withCredentials: true, // Include this option
+        headers: {
+          Authorization: `Bearer ${storedToken}`,
+        },
+      })
       .then((response) => {
         const { user, isAuthenticated } = response.data;
         if (isAuthenticated) {
@@ -28,7 +35,11 @@ export const AuthProvider = ({ children }) => {
         console.error('Error checking authentication status:', error);
         setIsLoaded(true);
       });
+    } else {
+      setIsLoaded(true);
+    }
   }, []);
+  
 
   return (
     <AuthContext.Provider

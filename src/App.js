@@ -10,8 +10,9 @@ import { AuthProvider } from './AuthContext.js'; // Use AuthContext instead of A
 function App() {
   return (
     <AuthProvider>
+      
       <Router>
-        <Navbar />
+      <Navbar />
         <div className="container mt-4">
           <Routes>
             <Route path="/" element={<Home />} /> 

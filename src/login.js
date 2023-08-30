@@ -1,32 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { API_URL } from './config.js';
+import { AuthContext } from './AuthContext.js';
 
 const UserLogin = () => {
+  const { setUser, setAuthenticated } = useContext(AuthContext); // Use the functions from AuthContext
   const [credentials, setCredentials] = useState({
     email: '',
     password: '',
   });
   const [loginError, setLoginError] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
   useEffect(() => {
     async function checkLoggedInStatus() {
-      try {
-        const response = await axios.get(`${API_URL}/check-auth`);
-        if (response.data.isLoggedIn) {
-          setIsLoggedIn(true);
-          setFirstName(response.data.user.firstname);
-          setLastName(response.data.user.lastname);
+      const storedToken = localStorage.getItem('authToken');
+      if (storedToken) {
+        try {
+          const response = await axios.get(`${API_URL}/check-auth`, {
+            withCredentials: true, // Include this option
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+          console.log('Check logged in response:', response.data);
+          if (response.data.user) {
+            setFirstName(response.data.user.firstname);
+            setLastName(response.data.user.lastname);
+          }
+        } catch (error) {
+          console.error('Error checking authentication:', error);
         }
-      } catch (error) {
-        console.error('Error checking authentication:', error);
       }
     }
     checkLoggedInStatus();
-  }, []); 
+  }, []);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -41,16 +50,27 @@ const UserLogin = () => {
 
     try {
       const response = await axios.post(`${API_URL}/login`, credentials);
-      console.log('Login successful:', response.data);
+      const { token, firstname, lastname, user } = response.data; // Extract user from response
 
+      // Store token and user details in local storage
+      localStorage.setItem('authToken', token);
+
+       // Update AuthContext state
+    setUser(user); // Set the user object
+    setAuthenticated(true);
+    setFirstName(firstname); // Set the first name
+    setLastName(lastname); // Set the last name
+
+      // Update AuthContext state
+      setUser(user); // Set the user object
+      setAuthenticated(true);
+
+      // Clear form fields and errors
       setCredentials({
         email: '',
         password: '',
       });
       setLoginError('');
-      setIsLoggedIn(true);
-      setFirstName(response.data.firstname); // Store first name
-      setLastName(response.data.lastname); // Store last name
     } catch (error) {
       console.error('Login error:', error);
       setLoginError('Invalid email or password');
@@ -65,11 +85,12 @@ const UserLogin = () => {
           {loginError}
         </div>
       )}
-      {isLoggedIn ? (
+      {firstName && (
         <div className="alert alert-success" role="alert">
           Dear {firstName} {lastName}, you logged in successfully
         </div>
-      ) : (
+      )}
+      {!firstName && (
         <form onSubmit={handleLogin}>
           <div className="form-group">
             <input

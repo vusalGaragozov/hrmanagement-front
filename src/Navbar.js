@@ -14,6 +14,7 @@ const Navbar = () => {
         credentials: 'include',
       });
       if (response.ok) {
+        localStorage.removeItem('authToken'); // Remove token
         setAuthenticated(false);
         window.location.href = '/login';
       } else {
