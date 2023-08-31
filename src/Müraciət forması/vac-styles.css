@@ -1,0 +1,49 @@
+/* Apply.js Sidebar */
+.sidebar {
+    min-height: 100vh;
+    width: 200px;
+    border-right: 1px solid #dee2e6;
+    background-color: #f8f9fa; /* Light grey background */
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align links to the left */
+    padding-top: 20px;
+  }
+  
+  /* Apply.js Sidebar Links */
+  .sidebar .nav-item {
+    margin-bottom: 2px;
+  }
+  
+  .sidebar .nav-item a {
+    text-decoration: none;
+    color: black;
+    padding: 10px 20px;
+    transition: background-color 0.3s, color 0.3s;
+    display: block;
+    background-color: transparent; /* Remove background color */
+  }
+  
+  .sidebar .nav-item.selected a,
+  .sidebar .nav-item a:hover {
+    background-color: black;
+    color: white;
+  }
+  
+  /* Apply.js Content */
+  .content {
+    margin-left: 220px; /* Add space for the sidebar */
+    padding: 20px;
+  }
+  
+  /* Optional: Adjust the background color of the entire page */
+  body {
+    background-color: white;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  

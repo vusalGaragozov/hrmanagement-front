@@ -27,7 +27,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <a className="navbar-brand" href="/">
-        HR Management
+        Aytötəş
       </a>
       <button
         className="navbar-toggler"
@@ -42,22 +42,10 @@ const Navbar = () => {
       </button>
       <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
         <ul className="navbar-nav">
-          <li className="nav-item ">
-            <a
-              className="nav-link"
-              href="#"
-              id="navbarDropdown1"
-              role="button"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
+        <li className="nav-item">
+            <Link className="nav-link" to="/apply">
               Müraciət et
-            </a>
-            <div >
-              <Link className="dropdown-item" to="/vacation">
-             
-              </Link>
-            </div>
+            </Link>
           </li>
           <li className="nav-item dropdown">
             <a

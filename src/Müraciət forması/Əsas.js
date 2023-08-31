@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import './vac-styles.css';
-import Müraciət_forması from './Müraciət forması';
+import Müraciət_forması from './Məzuniyyət müraciəti';
 import Müraciətlər_siyahısı from './Müraciətlər siyahısı';
-
 
 const Apply = () => {
   const [activeSection, setActiveSection] = useState('form'); // Default to 'form'
@@ -12,16 +11,11 @@ const Apply = () => {
   };
 
   return (
-    
     <div className="container-fluid">
-      <br/>
-      <div className="row">
-        <nav
-          className={`col-md-2 d-none d-md-block sidebar ${
-            activeSection === 'form' ? 'bg-light' : 'bg-light' // Adjust background colors
-          }`}
-        >
-          <div className="position-sticky">
+      <br />
+      <div className="row no-gutters">
+        <nav className="col-md-2 d-none d-md-block sidebar">
+          <div className="position-fixed">
             <ul className="nav flex-column">
               <li className="nav-item">
                 <a
@@ -29,7 +23,25 @@ const Apply = () => {
                   href="#"
                   onClick={() => handleSectionClick('form')}
                 >
-                  <i className="bi bi-file-earmark-text"></i> Müraciət forması
+                  <i className="bi bi-file-earmark-text"></i> Məzuniyyət müraciəti
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  className={`nav-link ${activeSection === 'list' ? 'active' : ''}`}
+                  href="#"
+                  onClick={() => handleSectionClick('list')}
+                >
+                  <i className="bi bi-list"></i> İcazə forması
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  className={`nav-link ${activeSection === 'list' ? 'active' : ''}`}
+                  href="#"
+                  onClick={() => handleSectionClick('list')}
+                >
+                  <i className="bi bi-list"></i> Xəstəlik vərəqəsi
                 </a>
               </li>
               <li className="nav-item">
@@ -44,7 +56,7 @@ const Apply = () => {
             </ul>
           </div>
         </nav>
-        <div className={`col-md-9 ms-sm-auto col-lg-10 px-md-4 ${activeSection === 'form' ? 'content-left' : ''}`}>
+        <div className="col-md-9 ms-sm-auto col-lg-10 px-md-4 content">
           {activeSection === 'form' && (
             <div className="container mt-5">
               <Müraciət_forması />
