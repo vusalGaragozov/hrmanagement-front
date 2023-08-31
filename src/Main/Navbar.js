@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import './style.css';
-import { API_URL } from './config';
-import { AuthContext } from './AuthContext.js';
+import '../style.css';
+import { API_URL } from '../Other/config';
+import { AuthContext } from '../Main/AuthContext';
 
 const Navbar = () => {
   const { user, setAuthenticated } = useContext(AuthContext);
@@ -14,7 +14,6 @@ const Navbar = () => {
         credentials: 'include',
       });
       if (response.ok) {
-        localStorage.removeItem('authToken'); // Remove token
         setAuthenticated(false);
         window.location.href = '/login';
       } else {
@@ -43,28 +42,21 @@ const Navbar = () => {
       </button>
       <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
         <ul className="navbar-nav">
-          <li className="nav-item dropdown">
+          <li className="nav-item ">
             <a
-              className="nav-link dropdown-toggle"
+              className="nav-link"
               href="#"
               id="navbarDropdown1"
               role="button"
-              data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
             >
               Müraciət et
             </a>
-            <div className="dropdown-menu" aria-labelledby="navbarDropdown1">
-              <a className="dropdown-item" href="#">
-                Məzuniyyət
-              </a>
-              <a className="dropdown-item" href="#">
-                İcazə
-              </a>
-              <a className="dropdown-item" href="#">
-                Xəstəlik vərəqəsi
-              </a>
+            <div >
+              <Link className="dropdown-item" to="/vacation">
+             
+              </Link>
             </div>
           </li>
           <li className="nav-item dropdown">
@@ -80,18 +72,18 @@ const Navbar = () => {
               İşçi uçotu
             </a>
             <div className="dropdown-menu" aria-labelledby="navbarDropdown2">
-              <a className="dropdown-item" href="#">
+              <Link className="dropdown-item" to="/newstaff">
                 Yeni əməkdaş
-              </a>
-              <a className="dropdown-item" href="#">
+              </Link>
+              <Link className="dropdown-item" to="vacationtable">
                 Məzuniyyət cədvəli
-              </a>
-              <a className="dropdown-item" href="#">
+              </Link>
+              <Link className="dropdown-item" to="stafflist">
                 Əməkdaş siyahısı
-              </a>
-              <a className="dropdown-item" href="#">
+              </Link>
+              <Link className="dropdown-item" to="staffrequests">
                 Müraciətlər
-              </a>
+              </Link>
             </div>
           </li>
           <li className="nav-item dropdown">
@@ -107,28 +99,28 @@ const Navbar = () => {
               Əmək haqqı
             </a>
             <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
-              <a className="dropdown-item" href="#">
+              <Link className="dropdown-item" to="/tabel">
                 Tabel
-              </a>
-              <a className="dropdown-item" href="#">
+              </Link>
+              <Link className="dropdown-item" to="/salarycalculation">
                 Hesablama cədvəli
-              </a>
+              </Link>
             </div>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#">
+            <Link className="nav-link" to="/trainings">
               Təlimlər
-            </a>
+            </Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#">
+            <Link className="nav-link" to="/kpi">
               KPİ sistemləri
-            </a>
+            </Link>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="#">
+            <Link className="nav-link" to="/recruitment">
               İşçi cəlbi
-            </a>
+            </Link>
           </li>
         </ul>
         <ul className="navbar-nav">
@@ -136,13 +128,19 @@ const Navbar = () => {
             <>
               <li className="nav-item">
                 <span className="nav-link">
-                  Welcome, {user.firstname} {user.lastname}
+                  {user.firstname} {user.lastname}
                 </span>
               </li>
               <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={handleLogout}>
-                  Logout
-                </button>
+              <button
+  className="nav-link btn custom-logout-btn"
+  onClick={handleLogout}
+  style={{ backgroundColor: 'red', color: 'white' }}
+>
+  Logout
+</button>
+
+
               </li>
             </>
           ) : (

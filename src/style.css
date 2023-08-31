@@ -17,7 +17,7 @@
   /* style.css */
 
 .navbar-nav {
-    margin-left: 150px; /* Adjust the margin as needed */
+    margin-left: 130px; /* Adjust the margin as needed */
   }
   /* style.css */
 
@@ -47,6 +47,13 @@
   top: -1rem;
   font-size: 12px;
 }
+
+.custom-logout-btn {
+  color: white; /* Set the desired font color */
+}
+
+
+/* Example CSS */
 
 
   

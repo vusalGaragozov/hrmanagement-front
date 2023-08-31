@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { API_URL } from './config.js';
+import { API_URL } from '../Other/config.js';
 
 const UserRegistration = () => {
   const [user, setUser] = useState({
