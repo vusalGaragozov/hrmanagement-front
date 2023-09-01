@@ -49,7 +49,6 @@ const AddStaffMember = () => {
 
   return (
     <div className="container mt-5">
-      <h2>Add New Staff Member</h2>
       <form>
         {/* Personal Information */}
         <div className="mb-3">
@@ -96,12 +95,16 @@ const AddStaffMember = () => {
               />
             </div>
             <div className="col-md-4">
-              <DatePicker
-                selected={personalInfo.birthDate}
-                onChange={(date) => handleDateChange(date, 'birthDate')}
-                className="form-control w-100"
+            <DatePicker
+ selected={personalInfo.birthDate}
+ onChange={(date) => handleDateChange(date, 'birthDate')}
+ className="form-control"
+ dateFormat="MMM d, yyyy"
+ showYearDropdown  // Enable the year dropdown
+ scrollableYearDropdown  // Make the year dropdown scrollable
+ yearDropdownItemNumber={75}  // Number of years to show in the dropdown
                 placeholderText="Doğum tarixi"
-                style={{ width: '100%' }} // Set the width explicitly
+                
               />
             </div>
             <div className="col-md-4">
@@ -176,6 +179,10 @@ const AddStaffMember = () => {
                 selected={corporateInfo.startDate}
                 onChange={(date) => handleDateChange(date, 'startDate')}
                 className="form-control w-100"
+                dateFormat="MMM d, yyyy"
+                showYearDropdown  // Enable the year dropdown
+                scrollableYearDropdown  // Make the year dropdown scrollable
+                yearDropdownItemNumber={75}  // Number of years to show in the dropdown
                 placeholderText="İşə başlama tarixi"
                 style={{ width: '100%' }} // Set the width explicitly
               />

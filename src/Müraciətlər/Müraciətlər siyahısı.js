@@ -3,7 +3,7 @@ import { Table, Button, Dropdown, Form } from 'react-bootstrap';
 import DatePicker from 'react-datepicker'; // Import date picker library
 import 'react-datepicker/dist/react-datepicker.css'; // Import date picker styles
 
-const TimeframeTable = () => {
+const Müraciətlər_siyahısı = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState([]); // Replace with your actual data
@@ -99,4 +99,4 @@ const TimeframeTable = () => {
   );
 };
 
-export default TimeframeTable;
+export default Müraciətlər_siyahısı;
