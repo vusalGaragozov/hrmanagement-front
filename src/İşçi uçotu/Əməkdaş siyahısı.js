@@ -1,7 +1,7 @@
 import React from 'react'; // Import AuthContext
 
 
-const StaffList = () => {
+const Əməkdaş_siyahısı = () => {
 
   return (
     <div className="container">
@@ -11,4 +11,4 @@ const StaffList = () => {
   );
 };
 
-export default StaffList;
+export default Əməkdaş_siyahısı;

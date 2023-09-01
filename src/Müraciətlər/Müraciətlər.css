@@ -1,8 +1,11 @@
 /* Apply.js Sidebar */
 .sidebar {
-    min-height: 100vh;
+    min-height: 10vh;
     width: 200px;
     border-right: 1px solid #dee2e6;
+    border-left: 1px solid #dee2e6;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
     background-color: #f8f9fa; /* Light grey background */
     position: fixed;
     top: 0;
@@ -22,7 +25,7 @@
   .sidebar .nav-item a {
     text-decoration: none;
     color: black;
-    padding: 10px 20px;
+    padding: 10px 14px;
     transition: background-color 0.3s, color 0.3s;
     display: block;
     background-color: transparent; /* Remove background color */
@@ -47,3 +50,31 @@
     font-family: Arial, sans-serif;
   }
   
+ /* CustomDatePicker.css */
+
+/* CustomDatePicker.css */
+
+/* Style the datetime picker input field */
+.react-datetime-picker {
+  width: 100%;
+}
+
+/* Style the clear icon */
+.react-datetime-picker .react-datetime-picker__clear-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #ccc;
+}
+
+/* Style the clear icon on hover */
+.react-datetime-picker .react-datetime-picker__clear-button:hover {
+  color: #ff0000; /* Change to your preferred color */
+}
+
+/* Add your custom styles for the active state here */
+.nav-link.active {
+  background-color: black !important;
+  color: white !important;
+}
+

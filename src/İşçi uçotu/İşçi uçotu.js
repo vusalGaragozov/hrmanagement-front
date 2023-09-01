@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import az from 'date-fns/locale/az';
-import '@fortawesome/fontawesome-free/css/all.css';
 
 const AddStaffMember = () => {
   const [personalInfo, setPersonalInfo] = useState({
@@ -10,7 +8,7 @@ const AddStaffMember = () => {
     surname: '',
     fatherName: '',
     gender: '',
-    birthDate: null, // Use null for date fields
+    birthDate: null,
     FINCode: '',
     email: '',
   });
@@ -20,7 +18,7 @@ const AddStaffMember = () => {
     position: '',
     grossSalary: '',
     field: '',
-    startDate: null, // Use null for date fields
+    startDate: null,
     annualLeaveDays: '',
     contractDuration: '',
     weeklyWorkingHours: '',
@@ -37,7 +35,6 @@ const AddStaffMember = () => {
   };
 
   const handleDateChange = (date, field) => {
-    // Update the corresponding date field in the state
     if (field === 'birthDate') {
       setPersonalInfo({ ...personalInfo, birthDate: date });
     } else if (field === 'startDate') {
@@ -52,6 +49,7 @@ const AddStaffMember = () => {
 
   return (
     <div className="container mt-5">
+      <h2>Add New Staff Member</h2>
       <form>
         {/* Personal Information */}
         <div className="mb-3">
@@ -60,7 +58,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Ad"
                 name="name"
                 value={personalInfo.name}
@@ -70,7 +68,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Soyad"
                 name="surname"
                 value={personalInfo.surname}
@@ -80,7 +78,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Ata adı"
                 name="fatherName"
                 value={personalInfo.fatherName}
@@ -90,7 +88,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Cins"
                 name="gender"
                 value={personalInfo.gender}
@@ -101,15 +99,15 @@ const AddStaffMember = () => {
               <DatePicker
                 selected={personalInfo.birthDate}
                 onChange={(date) => handleDateChange(date, 'birthDate')}
-                className="form-control"
-                locale={az}
+                className="form-control w-100"
                 placeholderText="Doğum tarixi"
+                style={{ width: '100%' }} // Set the width explicitly
               />
             </div>
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="FİN kod"
                 name="FINCode"
                 value={personalInfo.FINCode}
@@ -119,7 +117,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="email"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="E-mail"
                 name="email"
                 value={personalInfo.email}
@@ -136,7 +134,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Şöbə"
                 name="department"
                 value={corporateInfo.department}
@@ -146,7 +144,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Vəzifə"
                 name="position"
                 value={corporateInfo.position}
@@ -156,7 +154,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="number"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Əmək haqqı (gross)"
                 name="grossSalary"
                 value={corporateInfo.grossSalary}
@@ -166,7 +164,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Sahə (dövlət və qeyri-dövlət)"
                 name="field"
                 value={corporateInfo.field}
@@ -177,16 +175,15 @@ const AddStaffMember = () => {
               <DatePicker
                 selected={corporateInfo.startDate}
                 onChange={(date) => handleDateChange(date, 'startDate')}
-                locale={az}
-                className="form-control"
+                className="form-control w-100"
                 placeholderText="İşə başlama tarixi"
-                
+                style={{ width: '100%' }} // Set the width explicitly
               />
             </div>
             <div className="col-md-4">
               <input
                 type="number"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="İllik məzuniyyət günləri"
                 name="annualLeaveDays"
                 value={corporateInfo.annualLeaveDays}
@@ -196,7 +193,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Müqavilə müddəti"
                 name="contractDuration"
                 value={corporateInfo.contractDuration}
@@ -206,7 +203,7 @@ const AddStaffMember = () => {
             <div className="col-md-4">
               <input
                 type="text"
-                className="form-control"
+                className="form-control w-100"
                 placeholder="Həftəlik iş saatı"
                 name="weeklyWorkingHours"
                 value={corporateInfo.weeklyWorkingHours}

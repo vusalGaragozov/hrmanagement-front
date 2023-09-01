@@ -4,7 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import az from 'date-fns/locale/az';
 
-const Müraciət_forması = () => {
+const Məzuniyyət_müraciəti = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [paymentTiming, setPaymentTiming] = useState('immediate');
@@ -46,6 +46,7 @@ const Müraciət_forması = () => {
               <DatePicker
                 selected={startDate}
                 onChange={handleStartDateChange}
+                dateFormat="MMM d, yyyy"
                 locale={az}
                 className="form-control"
               />
@@ -59,6 +60,7 @@ const Müraciət_forması = () => {
               <DatePicker
                 selected={endDate}
                 onChange={handleEndDateChange}
+                dateFormat="MMM d, yyyy"
                 minDate={startDate}
                 locale={az}
                 className="form-control"
@@ -115,4 +117,4 @@ const Müraciət_forması = () => {
   );
 };
 
-export default Müraciət_forması;
+export default Məzuniyyət_müraciəti;

@@ -27,7 +27,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <a className="navbar-brand" href="/">
-        Aytötəş
+        HR Module
       </a>
       <button
         className="navbar-toggler"
@@ -44,35 +44,14 @@ const Navbar = () => {
         <ul className="navbar-nav">
         <li className="nav-item">
             <Link className="nav-link" to="/apply">
-              Müraciət et
+              Müraciətlər
             </Link>
           </li>
-          <li className="nav-item dropdown">
-            <a
-              className="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdown2"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
+          
+        <li className="nav-item">
+            <Link className="nav-link" to="/staff_accounting">
               İşçi uçotu
-            </a>
-            <div className="dropdown-menu" aria-labelledby="navbarDropdown2">
-              <Link className="dropdown-item" to="/newstaff">
-                Yeni əməkdaş
-              </Link>
-              <Link className="dropdown-item" to="vacationtable">
-                Məzuniyyət cədvəli
-              </Link>
-              <Link className="dropdown-item" to="stafflist">
-                Əməkdaş siyahısı
-              </Link>
-              <Link className="dropdown-item" to="staffrequests">
-                Müraciətlər
-              </Link>
-            </div>
+            </Link>
           </li>
           <li className="nav-item dropdown">
             <a

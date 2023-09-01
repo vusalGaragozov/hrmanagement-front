@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import './vac-styles.css';
+import './Müraciətlər.css';
 import Müraciət_forması from './Məzuniyyət müraciəti';
 import Müraciətlər_siyahısı from './Müraciətlər siyahısı';
+import İcazə from './İcazə forması'
+import Xəstəlik_vərəqəsi from './Xəstəlik vərəqəsi';
 
-const Apply = () => {
+const Müraciət_et = () => {
   const [activeSection, setActiveSection] = useState('form'); // Default to 'form'
 
   const handleSectionClick = (section) => {
@@ -32,25 +34,25 @@ const Apply = () => {
                   href="#"
                   onClick={() => handleSectionClick('list')}
                 >
-                  <i className="bi bi-list"></i> İcazə forması
+                  <i className="bi bi-file-earmark-text"></i> İcazə forması
                 </a>
               </li>
               <li className="nav-item">
                 <a
-                  className={`nav-link ${activeSection === 'list' ? 'active' : ''}`}
+                  className={`nav-link ${activeSection === 'sickness' ? 'active' : ''}`}
                   href="#"
-                  onClick={() => handleSectionClick('list')}
+                  onClick={() => handleSectionClick('sickness')}
                 >
-                  <i className="bi bi-list"></i> Xəstəlik vərəqəsi
+                  <i className="bi bi-file-earmark-text"></i> Xəstəlik vərəqəsi
                 </a>
               </li>
               <li className="nav-item">
                 <a
-                  className={`nav-link ${activeSection === 'list' ? 'active' : ''}`}
+                  className={`nav-link ${activeSection === 'applicationList' ? 'active' : ''}`}
                   href="#"
-                  onClick={() => handleSectionClick('list')}
+                  onClick={() => handleSectionClick('applicationList')}
                 >
-                  <i className="bi bi-list"></i> Müraciətlər siyahısı
+                  <i className="bi bi-file-earmark-text"></i> Müraciətlər siyahısı
                 </a>
               </li>
             </ul>
@@ -64,6 +66,16 @@ const Apply = () => {
           )}
           {activeSection === 'list' && (
             <div className="container mt-5">
+              <İcazə/>
+            </div>
+          )}
+          {activeSection === 'sickness' && (
+            <div className="container mt-5">
+              <Xəstəlik_vərəqəsi/>
+            </div>
+          )}
+          {activeSection === 'applicationList' && (
+            <div className="container mt-5">
               <Müraciətlər_siyahısı />
             </div>
           )}
@@ -73,4 +85,4 @@ const Apply = () => {
   );
 };
 
-export default Apply;
+export default Müraciət_et;

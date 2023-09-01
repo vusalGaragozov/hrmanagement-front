@@ -1,7 +1,7 @@
 import React from 'react'; // Import AuthContext
 
 
-const VacationTable = () => {
+const Məzuniyyyət_cədvəli = () => {
 
   return (
     <div className="container">
@@ -11,4 +11,4 @@ const VacationTable = () => {
   );
 };
 
-export default VacationTable;
+export default Məzuniyyyət_cədvəli;
