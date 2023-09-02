@@ -36,7 +36,10 @@ const Xəstəlik_vərəqəsi = () => {
 
   return (
     <main className="col-md-12 ms-sm-lg col-lg-7 px-md-2">
-      <div className="container mt-5 col-md-15">
+      <div className="container mt-5 col-md-15 ml-md-5">
+      <h2 className='text-center'>Xəstəlik vərəqəsi</h2>
+      <br/>
+      
         <form onSubmit={handleSubmit}>
           <div className="row mb-3">
             <div className="col-md-6">

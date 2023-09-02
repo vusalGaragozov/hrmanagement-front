@@ -23,8 +23,9 @@ const Müraciətlər_siyahısı = () => {
 
   return (
     <div>
-      <div className="d-flex align-items-center mb-3">
-        <Form.Group className="mr-3">
+      <div className="d-flex align-items-center mb-3 ">
+
+        <Form.Group className="mr-3m ">
           <DatePicker
             selected={startDate}
             onChange={(date) => setStartDate(date)}

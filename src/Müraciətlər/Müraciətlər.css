@@ -78,3 +78,25 @@
   color: white !important;
 }
 
+/* Import Bootstrap grid system */
+@import '~bootstrap/dist/css/bootstrap.css';
+
+/* Define grid layout */
+
+
+.align-text-right {
+
+  text-align: right;
+}
+
+.align-text-center {
+
+  text-align: center;
+  font-weight: bold;
+}
+
+.align-text-left {
+
+  text-align: left;
+}
+

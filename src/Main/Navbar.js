@@ -25,6 +25,9 @@ const Navbar = () => {
   };
 
   return (
+    <div className="container-fluid">
+    <div className="row">
+      <div className="col-md-12">
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <a className="navbar-brand" href="/">
         HR Module
@@ -42,16 +45,57 @@ const Navbar = () => {
       </button>
       <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
         <ul className="navbar-nav">
-        <li className="nav-item">
-            <Link className="nav-link" to="/apply">
+        <li className="nav-item dropdown">
+            <a
+              className="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown3"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
               Müraciətlər
-            </Link>
+            </a>
+            <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
+              <Link className="dropdown-item" to="/vacation">
+                Məzuniyyət müraciəti
+              </Link>
+              <Link className="dropdown-item" to="/away">
+                İcazə forması
+              </Link>
+              <Link className="dropdown-item" to="/sick">
+              Xəstəlik vərəqəsi
+              </Link>
+              <Link className="dropdown-item" to="/requestList">
+              Müraciətlər siyahısı
+              </Link>
+            </div>
           </li>
           
-        <li className="nav-item">
-            <Link className="nav-link" to="/staff_accounting">
+          <li className="nav-item dropdown">
+            <a
+              className="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown3"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
               İşçi uçotu
-            </Link>
+            </a>
+            <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
+              <Link className="dropdown-item" to="/newstaff">
+                Yeni əməkdaş
+              </Link>
+              <Link className="dropdown-item" to="/stafflist">
+                Əməkdaş siyahısı
+              </Link>
+              <Link className="dropdown-item" to="/vacationtable">
+              Məzuniyyyət cədvəli
+              </Link>
+            </div>
           </li>
           <li className="nav-item dropdown">
             <a
@@ -127,6 +171,9 @@ const Navbar = () => {
         </ul>
       </div>
     </nav>
+    </div>
+    </div>
+    </div>
   );
 };
 

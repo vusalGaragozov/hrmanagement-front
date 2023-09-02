@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './Navbar.js';
 import Home from './home.js';
-import Apply from '../Müraciətlər/Müraciətlər.js';
 import UserRegistration from './registration.js'; // Fixed the import path
 import Login from './login.js';
 import Tabel from '../Əmək haqqı/Tabel.js'
@@ -10,7 +9,13 @@ import SalaryCalculation from '../Əmək haqqı/Hesablama cədvəli.js';
 import Trainings from '../Təlimlər/Təlimlər.js';
 import KPI from '../KPI/kpi.js';
 import Recruitment from '../İşçi cəlbi/İşçi cəlbi.js';
-import İşçi_uçotu from '../İşçi uçotu/İşçi uçotu.js';
+import Əməkdaş_siyahısı from '../İşçi uçotu/Əməkdaş siyahısı.js';
+import Yeni_əməkdaş from '../İşçi uçotu/Yeni əməkdaş.js';
+import Məzuniyyyət_cədvəli from '../İşçi uçotu/Məzuniyyət cədvəli.js';
+import İcazə_forması from '../Müraciətlər/İcazə forması.js';
+import Məzuniyyət_müraciəti from '../Müraciətlər/Məzuniyyət müraciəti.js';
+import Xəstəlik_vərəqəsi from '../Müraciətlər/Xəstəlik vərəqəsi.js';
+import Müraciətlər_siyahısı from '../Müraciətlər/Müraciətlər siyahısı.js';
 import { AuthProvider } from './AuthContext.js'; // Use AuthContext instead of AuthProvider
 
 
@@ -25,13 +30,18 @@ function App() {
             <Route path="/" element={<Home />} /> 
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<UserRegistration />} />
-            <Route path="/staff_accounting" element={<İşçi_uçotu />} />
+            <Route path="/vacation" element={<Məzuniyyət_müraciəti />} />
+            <Route path="/away" element={<İcazə_forması />} />
+            <Route path="/sick" element={<Xəstəlik_vərəqəsi />} />
+            <Route path="/requestList" element={<Müraciətlər_siyahısı />} />
+            <Route path="/stafflist" element={<Əməkdaş_siyahısı />} />
+            <Route path="/vacationtable" element={<Məzuniyyyət_cədvəli />} />
+            <Route path="/newstaff" element={<Yeni_əməkdaş/>} />
             <Route path="/tabel" element={<Tabel />} />
             <Route path="/salarycalculation" element={<SalaryCalculation />} />
             <Route path="/trainings" element={<Trainings />} />
             <Route path="/kpi" element={<KPI />} />
             <Route path="/recruitment" element={<Recruitment />} />
-            <Route path="/apply" element={<Apply />} />
           </Routes>
         </div>
       </Router>
