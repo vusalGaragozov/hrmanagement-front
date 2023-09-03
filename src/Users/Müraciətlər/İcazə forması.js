@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext} from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import az from 'date-fns/locale/az';
+import { AuthContext } from '../Main/AuthContext';
 
 const İcazə = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [reason, setReason] = useState('');
   const [approvers, setApprovers] = useState('');
+  const {user} = useContext(AuthContext);
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -44,6 +46,16 @@ const İcazə = () => {
       approvers,
     });
   };
+
+  if (!user) {
+    return (
+      <div className="container text-left">
+        <div className="alert alert-danger mt-5">
+          Bu səhifəyə giriş üçün sayta daxil olmalısız.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main className="col-md-12 ms-sm-lg col-lg-7 px-md-2">

@@ -40,8 +40,8 @@ const UserRegistration = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>User Registration</h2>
+    <div className="container mt-5 col-5">
+      <h2>İstifadəçi qeydiyyatı</h2>
       {registrationSuccess ? (
         <div className="alert alert-success" role="alert">
           Registration successful!
@@ -49,7 +49,9 @@ const UserRegistration = () => {
       ) : (
         <form onSubmit={handleSubmit}>
           {/* Form fields */}
-          <div className="form-group">
+          <br/>
+
+          <div className="form-group col-8">
             <input
               type="text"
               className="form-control"
@@ -57,11 +59,11 @@ const UserRegistration = () => {
               name="firstname"
               value={user.firstname}
               onChange={handleInputChange}
-              placeholder="First Name"
+              placeholder="Ad"
               required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group col-8">
             <input
               type="text"
               className="form-control"
@@ -69,11 +71,11 @@ const UserRegistration = () => {
               name="lastname"
               value={user.lastname}
               onChange={handleInputChange}
-              placeholder="Last Name"
+              placeholder="Soyad"
               required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group col-8">
             <input
               type="email"
               className="form-control"
@@ -85,7 +87,7 @@ const UserRegistration = () => {
               required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group col-8">
             <input
               type="password"
               className="form-control"
@@ -93,11 +95,11 @@ const UserRegistration = () => {
               name="password"
               value={user.password}
               onChange={handleInputChange}
-              placeholder="Password"
+              placeholder="Şifrə"
               required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group col-8">
             <input
               type="text"
               className="form-control"
@@ -105,11 +107,11 @@ const UserRegistration = () => {
               name="organization"
               value={user.organization}
               onChange={handleInputChange}
-              placeholder="Organization"
+              placeholder="Şirkət"
               required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group col-8">
             <input
               type="text"
               className="form-control"
@@ -117,13 +119,13 @@ const UserRegistration = () => {
               name="position"
               value={user.position}
               onChange={handleInputChange}
-              placeholder="Position"
+              placeholder="Vəzifə"
               required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group col-8">
             <button type="submit" className="btn btn-primary">
-              Register
+              Qeydə al
             </button>
           </div>
         </form>

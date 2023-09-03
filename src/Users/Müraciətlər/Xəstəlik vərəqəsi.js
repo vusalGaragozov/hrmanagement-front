@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import az from 'date-fns/locale/az';
+import { AuthContext } from '../Main/AuthContext';
 
 const Xəstəlik_vərəqəsi = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [paymentTiming, setPaymentTiming] = useState('immediate');
   const [approvers, setApprovers] = useState('');
+  const {user} = useContext(AuthContext);
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -34,12 +36,22 @@ const Xəstəlik_vərəqəsi = () => {
     });
   };
 
+  if (!user) {
+    return (
+      <div className="container text-left">
+        <div className="alert alert-danger mt-5">
+          Bu səhifəyə giriş üçün sayta daxil olmalısız.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="col-md-12 ms-sm-lg col-lg-7 px-md-2">
       <div className="container mt-5 col-md-15 ml-md-5">
       <h2 className='text-center'>Xəstəlik vərəqəsi</h2>
       <br/>
-      
+
         <form onSubmit={handleSubmit}>
           <div className="row mb-3">
             <div className="col-md-6">

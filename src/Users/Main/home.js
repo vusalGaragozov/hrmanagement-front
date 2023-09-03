@@ -7,11 +7,11 @@ const Home = () => {
 
   return (
     <div className="container">
-      <h2>Welcome to the HR Management system</h2>
+      <h2>IR İdarəetmə Moduluna xoş gəlmisiniz!</h2>
       {user ? (
-        <p>You are logged in as {user.firstname} {user.lastname}</p>
+        <p>Siz {user.firstname} {user.lastname} olaraq daxil olmusuz.</p>
       ) : (
-        <p>Please register or login to access your organisation page.</p>
+        <p>Öz səhifənizə giriş əldə etmək üçün daxil olun və ya qeydiyyatdan keçin.</p>
       )}
     </div>
   );

@@ -37,10 +37,10 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-12">
-          <h2>Login</h2>
+    <div className="container mt-5 col-5">
+      <div className="row " >
+        <div className="col-7">
+          <h2>Daxil ol</h2>
           {error && <div className="alert alert-danger">{error}</div>}
           <form onSubmit={handleLogin}>
             <div className="mb-3">
@@ -56,14 +56,14 @@ const Login = () => {
             <div className="mb-3">
               <input
                 type="password"
-                placeholder='Password'
+                placeholder='Şifrə'
                 id="password"
                 className="form-control"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <button type="submit" className="btn btn-primary">Login</button>
+            <button type="submit" className="btn btn-primary">Giriş</button>
           </form>
         </div>
       </div>

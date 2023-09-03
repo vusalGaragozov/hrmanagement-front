@@ -17,6 +17,12 @@ import Məzuniyyət_müraciəti from '../Müraciətlər/Məzuniyyət müraciəti
 import Xəstəlik_vərəqəsi from '../Müraciətlər/Xəstəlik vərəqəsi.js';
 import Müraciətlər_siyahısı from '../Müraciətlər/Müraciətlər siyahısı.js';
 import { AuthProvider } from './AuthContext.js'; // Use AuthContext instead of AuthProvider
+import Məhsul from '../../Visitors/Məhsul.js';
+import Qiymətlər from '../../Visitors/Qiymətlər.js';
+import Tətbiqetmə from '../../Visitors/Tətbiqetmə.js';
+import Əlaqə from '../../Visitors/Əlaqə.js';
+import './style.css'; 
+
 
 
 function App() {
@@ -29,6 +35,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} /> 
             <Route path="/login" element={<Login />} />
+            <Route path="/product" element={<Məhsul />} />
+            <Route path="/pricing" element={<Qiymətlər />} />
+            <Route path="/guidance" element={<Tətbiqetmə />} />
+            <Route path="/contact" element={<Əlaqə />} />
             <Route path="/register" element={<UserRegistration />} />
             <Route path="/vacation" element={<Məzuniyyət_müraciəti />} />
             <Route path="/away" element={<İcazə_forması />} />

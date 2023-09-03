@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import {useNavigate} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import az from 'date-fns/locale/az';
 import './Müraciətlər.css'; // Import your CSS file
+import { AuthContext } from '../Main/AuthContext';
 
 const Məzuniyyət_müraciəti = () => {
   const [startDate, setStartDate] = useState(null);
@@ -13,6 +15,8 @@ const Məzuniyyət_müraciəti = () => {
   const [senediImzalayacaqRehber, setSenediImzalayacaqRehber] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [generatedText, setGeneratedText] = useState('');
+  const {user} = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -58,6 +62,12 @@ const Məzuniyyət_müraciəti = () => {
 
     return daysDifference;
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     if (
@@ -123,7 +133,7 @@ const Məzuniyyət_müraciəti = () => {
 
   return (
     <div className="container text-left">
-      <div className="row row-cols-2">
+      <div className="row">
         <div className="col-md-6">
           <main className="col-md-12">
             <div className="container mt-5">
@@ -138,47 +148,35 @@ const Məzuniyyət_müraciəti = () => {
                 </div>
               </div>
               <form onSubmit={handleSubmit}>
-                <div className="row mb-3">
-                  <h2 className="text-center">Məzuniyyət müraciəti</h2>
-                  <br/><br/><br/>
+                <div className="mb-3 row">
+                  <label className="col-md-6 col-form-label">Başlanğıc tarixi:</label>
                   <div className="col-md-6">
-                    <label className="form-label">Başlanğıc tarixi:</label>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="w-100">
-                      <DatePicker
-                        selected={startDate}
-                        onChange={handleStartDateChange}
-                        dateFormat="MMM d, yyyy"
-                        locale={az}
-                        className="form-control"
-                      />
-                    </div>
+                    <DatePicker
+                      selected={startDate}
+                      onChange={handleStartDateChange}
+                      dateFormat="MMM d, yyyy"
+                      locale={az}
+                      className="form-control"
+                    />
                   </div>
                 </div>
-                <div className="row mb-3">
+                <div className="mb-3 row">
+                  <label className="col-md-6 col-form-label">Bitmə tarixi:</label>
                   <div className="col-md-6">
-                    <label className="form-label">Bitmə tarixi:</label>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="w-100">
-                      <DatePicker
-                        selected={endDate}
-                        onChange={handleEndDateChange}
-                        dateFormat="MMM d, yyyy"
-                        minDate={startDate}
-                        locale={az}
-                        className="form-control"
-                      />
-                    </div>
+                    <DatePicker
+                      selected={endDate}
+                      onChange={handleEndDateChange}
+                      dateFormat="MMM d, yyyy"
+                      minDate={startDate}
+                      locale={az}
+                      className="form-control"
+                    />
                   </div>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">Ödəniş vaxtı:</label>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="input-group">
+                <div className="mb-3 row ">
+                  <label className="col-md-6 col-form-label ">Ödəniş vaxtı:</label>
+                  <div className="col-md-6 ">
+                    <div className="input-group ">
                       <select
                         value={paymentTiming}
                         onChange={(e) => setPaymentTiming(e.target.value)}
@@ -189,19 +187,14 @@ const Məzuniyyət_müraciəti = () => {
                       </select>
                       <div className="input-group-append">
                         <span className="input-group-text">
-                          <i className="fas fa-caret-up"></i>
                           <i className="fas fa-caret-down"></i>
                         </span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">
-                      Təsdiq edəcək rəhbərlər:
-                    </label>
-                  </div>
+                <div className="mb-3 row">
+                  <label className="col-md-6 col-form-label">Təsdiq edəcək rəhbərlər:</label>
                   <div className="col-md-6">
                     <input
                       type="text"
@@ -211,32 +204,22 @@ const Məzuniyyət_müraciəti = () => {
                     />
                   </div>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label className="form-label">
-                      Sənədi imzalayacaq rəhbər:
-                    </label>
-                  </div>
+                <div className="mb-3 row">
+                  <label className="col-md-6 col-form-label">Sənədi imzalayacaq rəhbər:</label>
                   <div className="col-md-6">
                     <input
                       type="text"
                       value={senediImzalayacaqRehber}
-                      onChange={(e) =>
-                        setSenediImzalayacaqRehber(e.target.value)
-                      }
+                      onChange={(e) => setSenediImzalayacaqRehber(e.target.value)}
                       className="form-control"
                     />
                   </div>
                 </div>
-                <br/>
-                <div className="row mb-3">
-                  
+                <div className="mb-3 row">
                   <div className="col-md-12">
                     <button
                       type="submit"
-                      className={`btn btn-primary ${
-                        isFormValid ? '' : 'disabled'
-                      }`}
+                      className={`btn btn-primary ${isFormValid ? '' : 'disabled'}`}
                       style={{ width: '100%' }}
                     >
                       Göndər

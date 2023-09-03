@@ -100,3 +100,25 @@
   text-align: left;
 }
 
+/* CSS for select element with down icon */
+
+/* Müraciətlər.css */
+
+/* Add margin to the icon container to separate it from the input field */
+.input-icon-container {
+  display: flex;
+  align-items: center;
+  margin-right: 10px; /* Adjust the margin as needed */
+}
+
+/* Style the icon */
+.input-icon {
+  color: #ccc; /* Change the color of the icon */
+  margin-left: 5px; /* Adjust the margin as needed */
+  cursor: pointer; /* Add pointer cursor to indicate interactivity */
+}
+
+/* Style the icon on hover (optional) */
+.input-icon:hover {
+  color: #333; /* Change the color on hover */
+}
