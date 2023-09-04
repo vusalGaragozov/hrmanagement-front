@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.css';
@@ -15,7 +15,7 @@ const Məzuniyyət_müraciəti = () => {
   const [senediImzalayacaqRehber, setSenediImzalayacaqRehber] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [generatedText, setGeneratedText] = useState('');
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleStartDateChange = (date) => {
@@ -173,10 +173,10 @@ const Məzuniyyət_müraciəti = () => {
                     />
                   </div>
                 </div>
-                <div className="mb-3 row ">
-                  <label className="col-md-6 col-form-label ">Ödəniş vaxtı:</label>
+                <div className="mb-3 row">
+                  <label className="col-md-6 col-form-label">Ödəniş vaxtı:</label>
                   <div className="col-md-6 ">
-                    <div className="input-group ">
+                    <div className="input-group">
                       <select
                         value={paymentTiming}
                         onChange={(e) => setPaymentTiming(e.target.value)}
@@ -185,11 +185,6 @@ const Məzuniyyət_müraciəti = () => {
                         <option value="immediate">Dərhal</option>
                         <option value="later">Ay sonunda</option>
                       </select>
-                      <div className="input-group-append">
-                        <span className="input-group-text">
-                          <i className="fas fa-caret-down"></i>
-                        </span>
-                      </div>
                     </div>
                   </div>
                 </div>

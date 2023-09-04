@@ -3,12 +3,23 @@ import { Link } from 'react-router-dom';
 import './style.css';
 import { API_URL } from '../Other/config';
 import { AuthContext } from '../Main/AuthContext';
+import workerIcon from '../Icons/İşçi cəlbi icon.png';
+
+
+const navLinkStyle = {
+  whiteSpace: 'nowrap', // Prevent text from wrapping to the next line
+  overflow: 'hidden',   // Hide any overflow text
+  textOverflow: 'ellipsis', // Show ellipsis for long text
+};
+
+const iconDimensions = {
+  width: '22px',   // Adjust width to match the size of Google Fonts icons
+  height: '22px',  // Adjust height to match the size of Google Fonts icons
+};
 
 const LoggedInNavbar = ({ user, handleLogout }) => (
-  <nav className="navbar navbar-expand-lg navbar-light bg-light">
-    <a className="navbar-brand" href="/">
-      İR Modulu
-    </a>
+  <nav className="navbar navbar-expand-lg navbar-light bg-light ">
+  
     <button
       className="navbar-toggler"
       type="button"
@@ -20,19 +31,19 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
     >
       <span className="navbar-toggler-icon"></span>
     </button>
-    <div className="collapse navbar-collapse justify-content-center" id="navbarNav">
-      <ul className="navbar-nav">
+    <div className="collapse navbar-collapse" id="navbarNav">
+      <ul className="navbar-nav ">
         <li className="nav-item dropdown">
           <a
             className="nav-link dropdown-toggle"
-            href="#"
+            
             id="navbarDropdown1"
             role="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
           >
-            Müraciətlər
+            <span className="material-symbols-outlined">&#xe745;</span>Müraciətlər
           </a>
           <div className="dropdown-menu" aria-labelledby="navbarDropdown1">
             <Link className="dropdown-item" to="/vacation">
@@ -52,14 +63,14 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
         <li className="nav-item dropdown">
           <a
             className="nav-link dropdown-toggle"
-            href="#"
+            
             id="navbarDropdown2"
             role="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
           >
-            İşçi uçotu
+            <span className="material-symbols-outlined">&#xea4f;</span>İşçi uçotu
           </a>
           <div className="dropdown-menu" aria-labelledby="navbarDropdown2">
             <Link className="dropdown-item" to="/newstaff">
@@ -76,14 +87,14 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
         <li className="nav-item dropdown">
           <a
             className="nav-link dropdown-toggle"
-            href="#"
+          
             id="navbarDropdown3"
             role="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
           >
-            Əmək haqqı
+            <span className="material-symbols-outlined">&#xe57d;</span>Əmək haqqı
           </a>
           <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
             <Link className="dropdown-item" to="/tabel">
@@ -96,24 +107,24 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/trainings">
-            Təlimlər
+          <span className="material-symbols-outlined">&#xe80c;</span>Təlimlər
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/kpi">
-            KPİ sistemləri
+          <span className="material-symbols-outlined">&#xf6ee;</span>KPİ
           </Link>
         </li>
         <li className="nav-item">
-          <Link className="nav-link" to="/recruitment">
-            İşçi cəlbi
+          <Link className="nav-link" to="/trainings">
+          <span className="material-symbols-outlined">&#xf772;</span>İşçi cəlbi
           </Link>
         </li>
       </ul>
-      <ul className="navbar-nav">
+      <ul className="navbar-nav ml-auto">
         <li className="nav-item">
           <span className="nav-link">
-            {user.firstname} {user.lastname}
+          <span className="material-symbols-outlined">&#xe7fd;</span> {user.firstname} {user.lastname}
           </span>
         </li>
         <li className="nav-item">
@@ -122,7 +133,7 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
             onClick={handleLogout}
             style={{ backgroundColor: 'red', color: 'white' }}
           >
-            Logout
+            <span className="material-symbols-outlined">&#xe9ba;</span>Çıxış
           </button>
         </li>
       </ul>
@@ -130,11 +141,10 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
   </nav>
 );
 
+
 const VisitorNavbar = () => (
-  <nav className="navbar navbar-expand-lg navbar-light bg-light">
-    <a className="navbar-brand" href="/">
-      İR Modulu
-    </a>
+  <nav className="navbar navbar-expand-lg navbar-light bg-light ">
+   
     <button
       className="navbar-toggler"
       type="button"
@@ -150,22 +160,22 @@ const VisitorNavbar = () => (
       <ul className="navbar-nav">
         <li className="nav-item">
           <Link className="nav-link" to="/product">
-            Məhsul
+          <span className="material-symbols-outlined">&#xe1a1;</span>Məhsul
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/pricing">
-            Qiymətlər
+          <span className="material-symbols-outlined">&#xe57d;</span>Qiymətlər
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/guidance">
-            Tətbiqetmə
+          <span className="material-symbols-outlined">&#xe99e;</span>Tətbiqetmə
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/contact">
-            Əlaqə
+          <span className="material-symbols-outlined">&#xe61b;</span>Əlaqə
           </Link>
         </li>
       </ul>

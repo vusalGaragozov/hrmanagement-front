@@ -72,9 +72,6 @@ color: white; /* Set the desired font color */
   transition: color 0.3s; /* Add a smooth color transition effect */
 }
 
-.material-symbols-outlined:hover {
-  color: green; /* Change the color to green on hover */
-}
 
 
 

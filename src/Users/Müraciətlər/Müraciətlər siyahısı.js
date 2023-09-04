@@ -8,6 +8,8 @@ const Müraciətlər_siyahısı = () => {
   const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState([]); // Replace with your actual data
 
+  
+
   // Implement sorting logic here
   const sortByStatus = () => {
     // Implement sorting by Status logic

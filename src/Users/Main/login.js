@@ -2,8 +2,7 @@ import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Main/AuthContext.js';
-import {API_URL} from "../Other/config.js"
-
+import { API_URL } from '../Other/config.js';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,39 +31,52 @@ const Login = () => {
       setPassword('');
       navigate('/');
     } catch (error) {
-      setError('Wrong password');
+      setError('Yanlış şifrə');
     }
   };
 
   return (
-    <div className="container mt-5 col-5">
-      <div className="row " >
-        <div className="col-7">
-          <h2>Daxil ol</h2>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <form onSubmit={handleLogin}>
-            <div className="mb-3">
-              <input
-                type="text"
-                placeholder='Email'
-                id="email"
-                className="form-control"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+    <div className="container" style={{ marginTop: '4rem' }}>
+      <div className="row">
+        <div className="col-7 mx-auto border border-success rounded p-4">
+          {/* Add border and border-success classes */}
+          <form>
+            <div className="form-group row">
+              <label htmlFor="inputEmail3" className="col-sm-2 col-form-label">Email</label>
+              <div className="col-sm-10">
+                <input
+                  type="email"
+                  className="form-control"
+                  id="inputEmail3"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="mb-3">
-              <input
-                type="password"
-                placeholder='Şifrə'
-                id="password"
-                className="form-control"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+            <div className="form-group row">
+              <label htmlFor="inputPassword3" className="col-sm-2 col-form-label">Şifrə</label>
+              <div className="col-sm-10">
+                <input
+                  type="password"
+                  className="form-control"
+                  id="inputPassword3"
+                  placeholder="Şifrə"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
             </div>
-            <button type="submit" className="btn btn-primary">Giriş</button>
+
+            <div className="form-group row">
+              <div className="col-sm-10">
+                <button type="submit" className="btn btn-primary" onClick={handleLogin}>
+                  Giriş et
+                </button>
+              </div>
+            </div>
           </form>
+          {error && <div className="alert alert-danger">{error}</div>}
         </div>
       </div>
     </div>
