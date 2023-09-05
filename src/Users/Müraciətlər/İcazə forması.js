@@ -13,6 +13,7 @@ const İcazə_forması = () => {
   const [paymentTiming, setPaymentTiming] = useState('immediate');
   const [approvers, setApprovers] = useState('');
   const [senediImzalayacaqRehber, setSenediImzalayacaqRehber] = useState('');
+  const [sebeb, setSebeb] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [generatedText, setGeneratedText] = useState('');
   const { user } = useContext(AuthContext);
@@ -155,7 +156,12 @@ const İcazə_forması = () => {
         <div className="align-text-left">
           Yazıb Sizdən xahiş edirəm ki, mənə {formattedStartDate} tarixindən {formattedEndDate} tarixinədək ({hoursdifference}) icazə verəsiniz.
         </div>
+        <br/>
+        <div className='align-text-left' style={{fontWeight:"bold"}}>
+          Səbəb: {sebeb}
+        </div>
         <br /><br /><br /><br />
+        
         <div className="align-text-left">
           Tarix: {formattedCurrentDate}
         </div>
@@ -194,6 +200,7 @@ const İcazə_forması = () => {
                       timeIntervals={15} // Specify time intervals
                       locale={az}
                       className="form-control"
+                      style={{ width: '150%' }} 
                     />
                   </div>
                 </div>
@@ -209,6 +216,17 @@ const İcazə_forması = () => {
                       timeIntervals={15} // Specify time intervals
                       minDate={startDate} // Set minDate to limit the date range
                       locale={az}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+                <div className="mb-3 row">
+                  <label className="col-md-6 col-form-label">Səbəb:</label>
+                  <div className="col-md-6">
+                    <input
+                      type="text"
+                      value={sebeb}
+                      onChange={(e) => setSebeb(e.target.value)}
                       className="form-control"
                     />
                   </div>

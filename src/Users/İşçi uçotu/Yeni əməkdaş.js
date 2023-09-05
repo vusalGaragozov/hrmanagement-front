@@ -45,10 +45,30 @@ const AddStaffMember = () => {
     }
   };
 
-  const handleAddStaffMember = () => {
-    // Perform the logic to add the staff member with the provided information
-    // You can send the data to an API or update your state here
+  const handleAddStaffMember = async () => {
+    try {
+      // Send a POST request to your backend API
+      const response = await fetch('/api/staffmember', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ personalInfo, corporateInfo }),
+      });
+  
+      if (response.status === 201) {
+        // Staff member added successfully
+        // You can optionally reset the form or display a success message
+        alert('Staff member added successfully');
+      } else {
+        // Handle errors here
+        alert('Error adding staff member');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
+  
 
   return (
     <div className="container mt-5">
