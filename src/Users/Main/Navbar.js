@@ -3,21 +3,9 @@ import { Link } from 'react-router-dom';
 import './style.css';
 import { API_URL } from '../Other/config';
 import { AuthContext } from '../Main/AuthContext';
-import workerIcon from '../Icons/İşçi cəlbi icon.png';
-
-
-const navLinkStyle = {
-  whiteSpace: 'nowrap', // Prevent text from wrapping to the next line
-  overflow: 'hidden',   // Hide any overflow text
-  textOverflow: 'ellipsis', // Show ellipsis for long text
-};
-
-const iconDimensions = {
-  width: '22px',   // Adjust width to match the size of Google Fonts icons
-  height: '22px',  // Adjust height to match the size of Google Fonts icons
-};
 
 const LoggedInNavbar = ({ user, handleLogout }) => (
+  <div className="mx-auto"> {/* Add mx-auto to center-align */}
   <nav className="navbar navbar-expand-lg navbar-light bg-light ">
   
     <button
@@ -43,7 +31,7 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <span className="material-symbols-outlined">&#xe745;</span>Müraciətlər
+          Müraciətlər
           </a>
           <div className="dropdown-menu" aria-labelledby="navbarDropdown1">
             <Link className="dropdown-item" to="/vacation">
@@ -70,7 +58,7 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <span className="material-symbols-outlined">&#xea4f;</span>İşçi uçotu
+          İşçi uçotu
           </a>
           <div className="dropdown-menu" aria-labelledby="navbarDropdown2">
             <Link className="dropdown-item" to="/newstaff">
@@ -94,7 +82,7 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <span className="material-symbols-outlined">&#xe57d;</span>Əmək haqqı
+            Əmək haqqı
           </a>
           <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
             <Link className="dropdown-item" to="/tabel">
@@ -107,17 +95,17 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/trainings">
-          <span className="material-symbols-outlined">&#xe80c;</span>Təlimlər
+          Təlimlər
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/kpi">
-          <span className="material-symbols-outlined">&#xf6ee;</span>KPİ
+          KPİ
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/trainings">
-          <span className="material-symbols-outlined">&#xf772;</span>İşçi cəlbi
+          İşçi cəlbi
           </Link>
         </li>
       </ul>
@@ -139,6 +127,7 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
       </ul>
     </div>
   </nav>
+  </div>
 );
 
 
@@ -160,22 +149,22 @@ const VisitorNavbar = () => (
       <ul className="navbar-nav">
         <li className="nav-item">
           <Link className="nav-link" to="/product">
-          <span className="material-symbols-outlined">&#xe1a1;</span>Məhsul
+          Məhsul
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/pricing">
-          <span className="material-symbols-outlined">&#xe57d;</span>Qiymətlər
+          Qiymətlər
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/guidance">
-          <span className="material-symbols-outlined">&#xe99e;</span>Tətbiqetmə
+          Tətbiqetmə
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/contact">
-          <span className="material-symbols-outlined">&#xe61b;</span>Əlaqə
+          Əlaqə
           </Link>
         </li>
       </ul>
@@ -219,6 +208,7 @@ const Navbar = () => {
     <div className="container-fluid">
       <div className="row">
         <div className="col-md-12">
+          
           {user ? (
             <LoggedInNavbar user={user} handleLogout={handleLogout} />
           ) : (

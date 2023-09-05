@@ -44,7 +44,7 @@ const UserRegistration = () => {
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-6">
-          <div className="card border border-success">
+          <div className="card border border">
             <div className="card-body">
               <h2 className="card-title text-center">İstifadəçi qeydiyyatı</h2>
               {registrationSuccess ? (

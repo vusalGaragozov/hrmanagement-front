@@ -4,10 +4,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import az from 'date-fns/locale/az';
-import './Müraciətlər.css'; // Import your CSS file
+import './style.css';
 import { AuthContext } from '../Main/AuthContext';
 
-const İcazə_forması = () => {
+const İstifadəçi = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [paymentTiming, setPaymentTiming] = useState('immediate');
@@ -289,4 +289,4 @@ const İcazə_forması = () => {
   );
 };
 
-export default İcazə_forması;
+export default İstifadəçi;

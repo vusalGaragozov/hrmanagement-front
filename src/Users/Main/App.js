@@ -22,6 +22,7 @@ import Qiymətlər from '../../Visitors/Qiymətlər.js';
 import Tətbiqetmə from '../../Visitors/Tətbiqetmə.js';
 import Əlaqə from '../../Visitors/Əlaqə.js';
 import './style.css'; 
+import İstifadəçi from './İstifadəçi.js'
 
 
 
@@ -52,6 +53,7 @@ function App() {
             <Route path="/trainings" element={<Trainings />} />
             <Route path="/kpi" element={<KPI />} />
             <Route path="/recruitment" element={<Recruitment />} />
+            <Route path="/userpage" element={<İstifadəçi />} />
           </Routes>
         </div>
       </Router>
