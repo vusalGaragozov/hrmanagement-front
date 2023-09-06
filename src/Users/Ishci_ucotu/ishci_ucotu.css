@@ -49,8 +49,6 @@
     margin: 0;
     font-family: Arial, sans-serif;
   }
-  
- /* CustomDatePicker.css */
 
 /* CustomDatePicker.css */
 
@@ -83,3 +81,20 @@
   width: 100%; /* or your desired width */
 }
 
+/* Add this CSS to your stylesheet */
+/* Add this CSS for the slide-out animation */
+.slide-out {
+  animation: slideOut 1s ease-in-out forwards;
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+}}
+
+.alert-success {
+  /* Your existing styles for the success message */
+}

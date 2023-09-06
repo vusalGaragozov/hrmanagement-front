@@ -4,25 +4,25 @@ import Navbar from './Navbar.js';
 import Home from './home.js';
 import UserRegistration from './registration.js'; // Fixed the import path
 import Login from './login.js';
-import Tabel from '../Əmək haqqı/Tabel.js'
-import SalaryCalculation from '../Əmək haqqı/Hesablama cədvəli.js';
-import Trainings from '../Təlimlər/Təlimlər.js';
+import Tabel from '../Emek_haqqi/Tabel.js'
+import SalaryCalculation from '../Emek_haqqi/Hesablama_cedveli.js';
+import Trainings from '../Telimler/Telimler.js';
 import KPI from '../KPI/kpi.js';
-import Recruitment from '../İşçi cəlbi/İşçi cəlbi.js';
-import Əməkdaş_siyahısı from '../İşçi uçotu/Əməkdaş siyahısı.js';
-import Yeni_əməkdaş from '../İşçi uçotu/Yeni əməkdaş.js';
-import Məzuniyyyət_cədvəli from '../İşçi uçotu/Məzuniyyət cədvəli.js';
-import İcazə_forması from '../Müraciətlər/İcazə forması.js';
-import Məzuniyyət_müraciəti from '../Müraciətlər/Məzuniyyət müraciəti.js';
-import Xəstəlik_vərəqəsi from '../Müraciətlər/Xəstəlik vərəqəsi.js';
-import Müraciətlər_siyahısı from '../Müraciətlər/Müraciətlər siyahısı.js';
+import Recruitment from '../Ishci_celbi/Ishci_celbi.js';
+import Əməkdaş_siyahısı from '../Ishci_ucotu/Emekdash_siyahisi.js';
+import Yeni_emekdash from '../Ishci_ucotu/Yeni_emekdash.js';
+import Mezuniyyet_cedveli from '../Ishci_ucotu/Mezuniyyet_cedveli.js';
+import İcazə_forması from '../Muracietler/Icaze_formasi.js';
+import Məzuniyyət_müraciəti from '../Muracietler/Mezuniyyet_muracieti.js';
+import Xəstəlik_vərəqəsi from '../Muracietler/Xestelik_vereqesi.js';
+import Müraciətlər_siyahısı from '../Muracietler/Muracietler_siyahisi.js';
 import { AuthProvider } from './AuthContext.js'; // Use AuthContext instead of AuthProvider
-import Məhsul from '../../Visitors/Məhsul.js';
-import Qiymətlər from '../../Visitors/Qiymətlər.js';
-import Tətbiqetmə from '../../Visitors/Tətbiqetmə.js';
-import Əlaqə from '../../Visitors/Əlaqə.js';
+import Məhsul from '../../Visitors/Mehsul.js';
+import Qiymətlər from '../../Visitors/Qiymetler.js';
+import Tətbiqetmə from '../../Visitors/Tetbiqetme.js';
+import Əlaqə from '../../Visitors/Elaqe.js';
 import './style.css'; 
-import İstifadəçi from './İstifadəçi.js'
+import İstifadəçi from './Istifadechi.js'
 
 
 
@@ -46,8 +46,8 @@ function App() {
             <Route path="/sick" element={<Xəstəlik_vərəqəsi />} />
             <Route path="/requestList" element={<Müraciətlər_siyahısı />} />
             <Route path="/stafflist" element={<Əməkdaş_siyahısı />} />
-            <Route path="/vacationtable" element={<Məzuniyyyət_cədvəli />} />
-            <Route path="/newstaff" element={<Yeni_əməkdaş/>} />
+            <Route path="/vacationtable" element={<Mezuniyyet_cedveli />} />
+            <Route path="/newstaff" element={<Yeni_emekdash/>} />
             <Route path="/tabel" element={<Tabel />} />
             <Route path="/salarycalculation" element={<SalaryCalculation />} />
             <Route path="/trainings" element={<Trainings />} />

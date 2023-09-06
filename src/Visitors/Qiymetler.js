@@ -1,14 +1,14 @@
 import React from 'react'; // Import AuthContext
 
 
-const Əməkdaş_siyahısı = () => {
+const Qiymetler = () => {
 
   return (
     <div className="container">
-      <h2>Staff List content</h2>
+      <h2>Qiymətlər content</h2>
      
     </div>
   );
 };
 
-export default Əməkdaş_siyahısı;
+export default Qiymetler;

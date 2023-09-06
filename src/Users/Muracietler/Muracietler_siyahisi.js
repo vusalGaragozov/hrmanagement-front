@@ -3,7 +3,7 @@ import { Table, Button, Dropdown, Form } from 'react-bootstrap';
 import DatePicker from 'react-datepicker'; // Import date picker library
 import 'react-datepicker/dist/react-datepicker.css'; // Import date picker styles
 
-const Müraciətlər_siyahısı = () => {
+const Muracietler_siyahisi = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState([]); // Replace with your actual data
@@ -102,4 +102,4 @@ const Müraciətlər_siyahısı = () => {
   );
 };
 
-export default Müraciətlər_siyahısı;
+export default Muracietler_siyahisi;

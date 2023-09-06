@@ -1,14 +1,14 @@
 import React from 'react'; // Import AuthContext
 
 
-const Recruitment = () => {
+const Mehsul = () => {
 
   return (
     <div className="container">
-      <h2>Recruitment content</h2>
+      <h2>Məhsul content</h2>
      
     </div>
   );
 };
 
-export default Recruitment;
+export default Mehsul;

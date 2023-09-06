@@ -4,10 +4,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import az from 'date-fns/locale/az';
-import './style.css';
+import './Muracietler.css';
 import { AuthContext } from '../Main/AuthContext';
 
-const İstifadəçi = () => {
+const Mezuniyyet_muracieti = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [paymentTiming, setPaymentTiming] = useState('immediate');
@@ -34,7 +34,7 @@ const İstifadəçi = () => {
     }
   };
 
-  const formatDate = (date, includeTime = false, includeMinutes = true) => {
+  const formatDate = (date) => {
     if (date) {
       const day = date.getDate().toString().padStart(2, '0');
       const monthNames = [
@@ -45,59 +45,23 @@ const İstifadəçi = () => {
       const year = date.getFullYear();
       const month = monthNames[monthIndex];
 
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-
       const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
 
-      if (includeTime) {
-        if (includeMinutes) {
-          return `${day} ${capitalizedMonth} ${year}, ${hours}:${minutes}`;
-        } else {
-          return `${day} ${capitalizedMonth} ${year}, ${hours}`;
-        }
-      } else {
-        return `${day} ${capitalizedMonth} ${year}`;
-      }
+      return `${day} ${capitalizedMonth} ${year}`;
     }
     return '';
   };
 
-  const calculateHoursDifference = (start, end) => {
+  const calculateDaysDifference = (start, end) => {
     if (!start || !end) return null;
-  
+
     const startTime = start.getTime();
     const endTime = end.getTime();
     const difference = endTime - startTime;
-  
-    const hoursDifference = Math.floor(difference / (1000 * 3600)); // Calculate hours
-    const minutesDifference = Math.floor((difference % (1000 * 3600)) / (1000 * 60)); // Calculate minutes
-  
-    if (hoursDifference >= 24) {
-      const days = Math.floor(hoursDifference / 24);
-      const remainingHours = hoursDifference % 24;
-  
-      if (minutesDifference === 0) {
-        return `${days} gün və ${remainingHours} saat`;
-      } else {
-        let result = `${days} gün, ${remainingHours} saat`;
-  
-        if (minutesDifference > 0) {
-          result += ` və ${minutesDifference} dəq.`;
-        }
-  
-        return result;
-      }
-    } else {
-      if (minutesDifference === 0) {
-        return `${hoursDifference} saat`;
-      } else {
-        return `${hoursDifference} saat və ${minutesDifference} dəq.`;
-      }
-    }
+    const daysDifference = Math.floor(difference / (1000 * 3600 * 24));
+
+    return daysDifference;
   };
-  
-  
 
   useEffect(() => {
     if (!user) {
@@ -133,14 +97,12 @@ const İstifadəçi = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const formattedStartDate = formatDate(startDate, true, true); // Include time and minutes
-    const formattedEndDate = formatDate(endDate, true, true); // Include time and minutes
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
+    const daysDifference = calculateDaysDifference(startDate, endDate);
 
-    // Declare formattedCurrentDate here
     const currentDate = new Date();
-    const formattedCurrentDate = formatDate(currentDate, false, false); // Include time but exclude minutes
-
-    const hoursdifference = calculateHoursDifference(startDate, endDate);
+    const formattedCurrentDate = formatDate(currentDate);
 
     const text = (
       <div>
@@ -151,14 +113,15 @@ const İstifadəçi = () => {
         <div className="align-text-center">
           Ərizə
         </div>
-        <br />
+        <br/>
         <div className="align-text-left">
-          Yazıb Sizdən xahiş edirəm ki, mənə {formattedStartDate} tarixindən {formattedEndDate} tarixinədək ({hoursdifference}) icazə verəsiniz.
+          Yazıb Sizdən xahiş edirəm ki, mənə {formattedStartDate} tarixindən {formattedEndDate} tarixinədək ({daysDifference} təqvim günü) məzuniyyət verəsiniz.
         </div>
-        <br /><br /><br /><br />
+        <br/><br/><br/><br/>
         <div className="align-text-left">
           Tarix: {formattedCurrentDate}
         </div>
+          
         <div className="align-text-left">
           İmza:
         </div>
@@ -176,8 +139,11 @@ const İstifadəçi = () => {
             <div className="container mt-5">
               <div className="border p-4 rounded mb-4">
                 <div className="text-center mt-3">
+                  <div className="alert alert-info">
+                    <strong>Mövcud gün sayı:</strong> {availableDays} gün
+                  </div>
                   <div className="alert alert-success">
-                    <strong>İl ərzində alınmış icazələr:</strong> {usedDays} saat, 10 dəfə.
+                    <strong>İstifadə olunmuş gün sayı:</strong> {usedDays} gün
                   </div>
                 </div>
               </div>
@@ -188,10 +154,7 @@ const İstifadəçi = () => {
                     <DatePicker
                       selected={startDate}
                       onChange={handleStartDateChange}
-                      dateFormat="MMM d, yyyy HH:mm" // Include time format
-                      showTimeSelect // Enable time selection
-                      timeFormat="HH:mm" // Specify time format
-                      timeIntervals={15} // Specify time intervals
+                      dateFormat="MMM d, yyyy"
                       locale={az}
                       className="form-control"
                     />
@@ -203,17 +166,28 @@ const İstifadəçi = () => {
                     <DatePicker
                       selected={endDate}
                       onChange={handleEndDateChange}
-                      dateFormat="MMM d, yyyy HH:mm" // Include time format
-                      showTimeSelect // Enable time selection
-                      timeFormat="HH:mm" // Specify time format
-                      timeIntervals={15} // Specify time intervals
-                      minDate={startDate} // Set minDate to limit the date range
+                      dateFormat="MMM d, yyyy"
+                      minDate={startDate}
                       locale={az}
                       className="form-control"
                     />
                   </div>
                 </div>
-
+                <div className="mb-3 row">
+                  <label className="col-md-6 col-form-label">Ödəniş vaxtı:</label>
+                  <div className="col-md-6 ">
+                    <div className="input-group">
+                      <select
+                        value={paymentTiming}
+                        onChange={(e) => setPaymentTiming(e.target.value)}
+                        className="form-control"
+                      >
+                        <option value="immediate">Dərhal</option>
+                        <option value="later">Ay sonunda</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
                 <div className="mb-3 row">
                   <label className="col-md-6 col-form-label">Təsdiq edəcək rəhbərlər:</label>
                   <div className="col-md-6">
@@ -289,4 +263,4 @@ const İstifadəçi = () => {
   );
 };
 
-export default İstifadəçi;
+export default Mezuniyyet_muracieti;

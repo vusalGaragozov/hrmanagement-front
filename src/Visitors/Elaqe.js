@@ -1,14 +1,14 @@
 import React from 'react'; // Import AuthContext
 
 
-const Trainings = () => {
+const Elaqe = () => {
 
   return (
     <div className="container">
-      <h2>Trainings content</h2>
+      <h2>Əlaqə content</h2>
      
     </div>
   );
 };
 
-export default Trainings;
+export default Elaqe;

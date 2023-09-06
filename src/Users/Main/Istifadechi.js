@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import az from 'date-fns/locale/az';
-import './Müraciətlər.css'; // Import your CSS file
-import { AuthContext } from '../Main/AuthContext';
+import './style.css';
+import { AuthContext } from './AuthContext';
 
-const Xəstəlik_vərəqəsi = () => {
+const Istifadechi = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [paymentTiming, setPaymentTiming] = useState('immediate');
@@ -15,7 +15,7 @@ const Xəstəlik_vərəqəsi = () => {
   const [senediImzalayacaqRehber, setSenediImzalayacaqRehber] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
   const [generatedText, setGeneratedText] = useState('');
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleStartDateChange = (date) => {
@@ -34,7 +34,7 @@ const Xəstəlik_vərəqəsi = () => {
     }
   };
 
-  const formatDate = (date) => {
+  const formatDate = (date, includeTime = false, includeMinutes = true) => {
     if (date) {
       const day = date.getDate().toString().padStart(2, '0');
       const monthNames = [
@@ -45,23 +45,59 @@ const Xəstəlik_vərəqəsi = () => {
       const year = date.getFullYear();
       const month = monthNames[monthIndex];
 
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+
       const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
 
-      return `${day} ${capitalizedMonth} ${year}`;
+      if (includeTime) {
+        if (includeMinutes) {
+          return `${day} ${capitalizedMonth} ${year}, ${hours}:${minutes}`;
+        } else {
+          return `${day} ${capitalizedMonth} ${year}, ${hours}`;
+        }
+      } else {
+        return `${day} ${capitalizedMonth} ${year}`;
+      }
     }
     return '';
   };
 
-  const calculateDaysDifference = (start, end) => {
+  const calculateHoursDifference = (start, end) => {
     if (!start || !end) return null;
-
+  
     const startTime = start.getTime();
     const endTime = end.getTime();
     const difference = endTime - startTime;
-    const daysDifference = Math.floor(difference / (1000 * 3600 * 24));
-
-    return daysDifference;
+  
+    const hoursDifference = Math.floor(difference / (1000 * 3600)); // Calculate hours
+    const minutesDifference = Math.floor((difference % (1000 * 3600)) / (1000 * 60)); // Calculate minutes
+  
+    if (hoursDifference >= 24) {
+      const days = Math.floor(hoursDifference / 24);
+      const remainingHours = hoursDifference % 24;
+  
+      if (minutesDifference === 0) {
+        return `${days} gün və ${remainingHours} saat`;
+      } else {
+        let result = `${days} gün, ${remainingHours} saat`;
+  
+        if (minutesDifference > 0) {
+          result += ` və ${minutesDifference} dəq.`;
+        }
+  
+        return result;
+      }
+    } else {
+      if (minutesDifference === 0) {
+        return `${hoursDifference} saat`;
+      } else {
+        return `${hoursDifference} saat və ${minutesDifference} dəq.`;
+      }
+    }
   };
+  
+  
 
   useEffect(() => {
     if (!user) {
@@ -97,12 +133,14 @@ const Xəstəlik_vərəqəsi = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const formattedStartDate = formatDate(startDate);
-    const formattedEndDate = formatDate(endDate);
-    const daysDifference = calculateDaysDifference(startDate, endDate);
+    const formattedStartDate = formatDate(startDate, true, true); // Include time and minutes
+    const formattedEndDate = formatDate(endDate, true, true); // Include time and minutes
 
+    // Declare formattedCurrentDate here
     const currentDate = new Date();
-    const formattedCurrentDate = formatDate(currentDate);
+    const formattedCurrentDate = formatDate(currentDate, false, false); // Include time but exclude minutes
+
+    const hoursdifference = calculateHoursDifference(startDate, endDate);
 
     const text = (
       <div>
@@ -113,15 +151,14 @@ const Xəstəlik_vərəqəsi = () => {
         <div className="align-text-center">
           Ərizə
         </div>
-        <br/>
+        <br />
         <div className="align-text-left">
-          Yazıb Sizdən xahiş edirəm ki, mənə {formattedStartDate} tarixindən {formattedEndDate} tarixinədək ({daysDifference} təqvim günü) məzuniyyət verəsiniz.
+          Yazıb Sizdən xahiş edirəm ki, mənə {formattedStartDate} tarixindən {formattedEndDate} tarixinədək ({hoursdifference}) icazə verəsiniz.
         </div>
-        <br/><br/><br/><br/>
+        <br /><br /><br /><br />
         <div className="align-text-left">
           Tarix: {formattedCurrentDate}
         </div>
-          
         <div className="align-text-left">
           İmza:
         </div>
@@ -139,11 +176,8 @@ const Xəstəlik_vərəqəsi = () => {
             <div className="container mt-5">
               <div className="border p-4 rounded mb-4">
                 <div className="text-center mt-3">
-                  <div className="alert alert-info">
-                    <strong>Mövcud gün sayı:</strong> {availableDays} gün
-                  </div>
                   <div className="alert alert-success">
-                    <strong>İstifadə olunmuş gün sayı:</strong> {usedDays} gün
+                    <strong>İl ərzində alınmış icazələr:</strong> {usedDays} saat, 10 dəfə.
                   </div>
                 </div>
               </div>
@@ -154,7 +188,10 @@ const Xəstəlik_vərəqəsi = () => {
                     <DatePicker
                       selected={startDate}
                       onChange={handleStartDateChange}
-                      dateFormat="MMM d, yyyy"
+                      dateFormat="MMM d, yyyy HH:mm" // Include time format
+                      showTimeSelect // Enable time selection
+                      timeFormat="HH:mm" // Specify time format
+                      timeIntervals={15} // Specify time intervals
                       locale={az}
                       className="form-control"
                     />
@@ -166,33 +203,17 @@ const Xəstəlik_vərəqəsi = () => {
                     <DatePicker
                       selected={endDate}
                       onChange={handleEndDateChange}
-                      dateFormat="MMM d, yyyy"
-                      minDate={startDate}
+                      dateFormat="MMM d, yyyy HH:mm" // Include time format
+                      showTimeSelect // Enable time selection
+                      timeFormat="HH:mm" // Specify time format
+                      timeIntervals={15} // Specify time intervals
+                      minDate={startDate} // Set minDate to limit the date range
                       locale={az}
                       className="form-control"
                     />
                   </div>
                 </div>
-                <div className="mb-3 row ">
-                  <label className="col-md-6 col-form-label ">Ödəniş vaxtı:</label>
-                  <div className="col-md-6 ">
-                    <div className="input-group ">
-                      <select
-                        value={paymentTiming}
-                        onChange={(e) => setPaymentTiming(e.target.value)}
-                        className="form-control"
-                      >
-                        <option value="immediate">Dərhal</option>
-                        <option value="later">Ay sonunda</option>
-                      </select>
-                      <div className="input-group-append">
-                        <span className="input-group-text">
-                          <i className="fas fa-caret-down"></i>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
                 <div className="mb-3 row">
                   <label className="col-md-6 col-form-label">Təsdiq edəcək rəhbərlər:</label>
                   <div className="col-md-6">
@@ -268,4 +289,4 @@ const Xəstəlik_vərəqəsi = () => {
   );
 };
 
-export default Xəstəlik_vərəqəsi;
+export default Istifadechi;

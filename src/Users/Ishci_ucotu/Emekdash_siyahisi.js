@@ -1,14 +1,15 @@
 import React from 'react'; // Import AuthContext
 
 
-const Məzuniyyyət_cədvəli = () => {
+
+const Emekdash_siyahisi = () => {
 
   return (
     <div className="container">
-      <h2>Vacation Table content</h2>
+      <h2>Staff List content</h2>
      
     </div>
   );
 };
 
-export default Məzuniyyyət_cədvəli;
+export default Emekdash_siyahisi;
