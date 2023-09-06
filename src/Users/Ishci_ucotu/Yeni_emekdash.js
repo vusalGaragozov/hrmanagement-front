@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './ishci_ucotu.css';
@@ -6,8 +6,11 @@ import az from 'date-fns/locale/az';
 import '@fortawesome/fontawesome-free/css/all.css';
 import axios from 'axios';
 import { API_URL } from '../Other/config';
+import { AuthContext } from '../Main/AuthContext.js';
+import { format } from 'date-fns';
 
 const Yeni_emekdash = () => {
+  const { user } = useContext(AuthContext);
   const [personalInfo, setPersonalInfo] = useState({
     name: '',
     surname: '',
@@ -20,6 +23,8 @@ const Yeni_emekdash = () => {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
+
+
 
   const resetForm = () => {
     setPersonalInfo({
@@ -109,8 +114,17 @@ const Yeni_emekdash = () => {
 
   const handlePersonalInfoChange = (e) => {
     const { name, value } = e.target;
-    setPersonalInfo({ ...personalInfo, [name]: value });
-
+  
+    // Check if the input field is the "FINCode" field
+    if (name === 'FINCode') {
+      // Capitalize the input value and restrict it to 7 characters
+      const formattedValue = value.slice(0, 7).toUpperCase();
+      setPersonalInfo({ ...personalInfo, [name]: formattedValue });
+    } else {
+      // For other fields, update the state normally
+      setPersonalInfo({ ...personalInfo, [name]: value });
+    }
+  
     // Add the "is-invalid" class when the field is empty or has an invalid email format
     if (value.trim() === '' || (name === 'email' && !isValidEmail(value))) {
       setValidationErrors({ ...validationErrors, [name]: true });
@@ -119,6 +133,7 @@ const Yeni_emekdash = () => {
       setValidationErrors({ ...validationErrors, [name]: false });
     }
   };
+  
 
   const handleCorporateInfoChange = (e) => {
     const { name, value } = e.target;
@@ -170,6 +185,16 @@ const Yeni_emekdash = () => {
     }
     return true; // If all checks pass, the form is valid
   };
+
+  const formattedPersonalInfo = {
+    ...personalInfo,
+    birthDate: personalInfo.birthDate ? format(personalInfo.birthDate, 'dd-MM-yyyy') : null,
+  };
+
+  const formattedCorporateInfo = {
+    ...corporateInfo,
+    startDate: corporateInfo.startDate ? format(corporateInfo.startDate, 'dd-MM-yyyy') : null,
+  };
   
   const handleAddStaffMember = async (e) => {
     e.preventDefault(); // Prevent form submission
@@ -200,24 +225,24 @@ const Yeni_emekdash = () => {
     setValidationErrors({});
 
     try {
-      // Send a POST request to your backend API
       const response = await axios.post(`${API_URL}/api/staffmember`, {
-        personalInfo,
-        corporateInfo,
+        addedBy_company: user.organization,
+        addedBy_email: user.email,
+        personalInfo: formattedPersonalInfo, // Use the formatted data
+        corporateInfo: formattedCorporateInfo, // Use the formatted data
       });
 
       if (response.status === 201) {
-        // Staff member added successfully
-        // You can optionally reset the form or display a success message
         setShowSuccess(true);
-
-        // Reset the form fields
         resetForm();
-
-        // Show the success message and set a timer to hide it after 3 seconds
         setIsSuccessVisible(true);
+
+        // After 3 seconds, hide the success message and reset showSuccess
+        setTimeout(() => {
+          setIsSuccessVisible(false);
+          setShowSuccess(false);
+        }, 3000);
       } else {
-        // Handle errors here
         alert('Error adding staff member');
       }
     } catch (error) {
@@ -472,15 +497,13 @@ const Yeni_emekdash = () => {
             </div>
           </div>
         </div>
-        {isSuccessVisible ? (
-  <div className="alert alert-success mt-3" role="alert">
-    Əməkdaş uğurla əlavə edilmişdir
-  </div>
-) : (
-  <div className="alert alert-success mt-3 slide-out" role="alert">
-    Əməkdaş uğurla əlavə edilmişdir
-  </div>
-)}
+        {showSuccess && (
+          <div className={`alert alert-success mt-3 ${isSuccessVisible ? 'slideOut' : ''}`} role="alert">
+            Əməkdaş uğurla əlavə edilmişdir
+          </div>
+        )}
+
+     
 
         <button type="submit" className="btn btn-primary" onClick={handleAddStaffMember}>
           Əlavə et
