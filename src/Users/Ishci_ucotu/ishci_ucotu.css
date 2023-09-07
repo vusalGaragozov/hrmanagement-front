@@ -1,4 +1,8 @@
 /* Apply.js Sidebar */
+
+.ishci_ucotu {
+  font-family: 'Blinker', sans-serif;
+}
 .sidebar {
     min-height: 10vh;
     width: 200px;

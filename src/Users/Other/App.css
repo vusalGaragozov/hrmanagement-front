@@ -1,5 +1,5 @@
-body {
-  font-family: 'Fira Sans', sans-serif;
+body, .underline-hover, .navbar-nav, .form-group, .form-label, .custom-logout-btn {
+  font-family: 'Blinker', sans-serif;
 }
 
 .App {

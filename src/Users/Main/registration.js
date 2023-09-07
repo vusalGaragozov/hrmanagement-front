@@ -41,7 +41,7 @@ const UserRegistration = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 main">
       <div className="row justify-content-center">
         <div className="col-6">
           <div className="card border border">

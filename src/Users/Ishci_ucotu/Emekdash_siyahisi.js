@@ -194,7 +194,7 @@ const StaffTable = () => {
   }, [state.filters, staffMembers]);
 
   return (
-    <div className="container">
+    <div className="container ishci_ucotu">
       <h2>Staff Members</h2>
       <table {...getTableProps()} className="table table-striped">
         <thead>

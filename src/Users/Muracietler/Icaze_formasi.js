@@ -175,7 +175,7 @@ const Icaze_formasi = () => {
   };
 
   return (
-    <div className="container text-left">
+    <div className="container text-left muracietler">
       <div className="row">
         <div className="col-md-6">
           <main className="col-md-12">

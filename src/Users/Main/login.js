@@ -36,7 +36,7 @@ const Login = () => {
   };
 
   return (
-    <div className="container" style={{ marginTop: '4rem' }}>
+    <div className="container main" style={{ marginTop: '4rem' }}>
       <div className="row">
         <div className="col-7 mx-auto border border rounded p-4">
           {/* Add border and border-success classes */}

@@ -253,7 +253,7 @@ const Yeni_emekdash = () => {
 
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 ishci_ucotu">
       <form>
         {/* Personal Information */}
         <div className="mb-3">

@@ -110,21 +110,22 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
         </li>
       </ul>
       <ul className="navbar-nav ml-auto">
-        <li className="nav-item">
-          <span className="nav-link">
-          <span className="material-symbols-outlined">&#xe7fd;</span> {user.firstname} {user.lastname}
-          </span>
-        </li>
-        <li className="nav-item">
-          <button
-            className="nav-link btn custom-logout-btn"
-            onClick={handleLogout}
-            style={{ backgroundColor: 'red', color: 'white' }}
-          >
-            <span className="material-symbols-outlined">&#xe9ba;</span>Çıxış
-          </button>
-        </li>
-      </ul>
+  <li className="nav-item">
+    <span className="nav-link">
+      <span className="material-symbols-outlined">&#xe7fd;</span> {user.firstname} {user.lastname}
+    </span>
+  </li>
+  <li className="nav-item">
+    <button
+      className="nav-link btn custom-logout-btn"
+      onClick={handleLogout}
+      style={{ backgroundColor: 'red', color: 'white' }}
+    >
+      <span className="material-symbols-outlined">&#xe9ba;</span>Çıxış
+    </button>
+  </li>
+</ul>
+
     </div>
   </nav>
   </div>
@@ -205,7 +206,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid d-flex justify-content-center align-items-center main">
       <div className="row">
         <div className="col-md-12">
           

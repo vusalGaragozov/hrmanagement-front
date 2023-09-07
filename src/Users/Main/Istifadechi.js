@@ -169,7 +169,7 @@ const Istifadechi = () => {
   };
 
   return (
-    <div className="container text-left">
+    <div className="container text-left main">
       <div className="row">
         <div className="col-md-6">
           <main className="col-md-12">

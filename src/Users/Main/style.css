@@ -1,12 +1,8 @@
-/* App.css */
-body {
-  font-family: 'Blinker', sans-serif;
-  /* You can replace 'Poppins' with the specific font you want to use from Google Fonts */
-}
-
-
-
 /* CSS */
+
+.main {
+  font-family: 'Blinker', sans-serif;
+}
 .underline-hover {
   position: relative;
   transition: background-color 0.3s;
@@ -21,15 +17,6 @@ body {
   height: 2px;
   background-color: #007bff; /* Change this color to the desired underline color */
 }
-
-/* style.css */
-
-.navbar-nav {
-  margin-left: 130px; /* Adjust the margin as needed */
-}
-/* style.css */
-
-/* style.css */
 
 .form-group {
 position: relative;
@@ -75,7 +62,6 @@ color: white; /* Set the desired font color */
   margin-right: 5px; /* Add margin to the right of the icon (adjust the value as needed) */
   transition: color 0.3s; /* Add a smooth color transition effect */
 }
-
 
 
 

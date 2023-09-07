@@ -6,7 +6,7 @@ const Home = () => {
   const { user } = useContext(AuthContext); // Access the user from AuthContext
 
   return (
-    <div className="container">
+    <div className="container main">
       <h2>IR İdarəetmə Moduluna xoş gəlmisiniz!</h2>
       {user ? (
         <p>Siz {user.firstname} {user.lastname} olaraq daxil olmusuz.</p>

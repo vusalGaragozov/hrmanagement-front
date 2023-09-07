@@ -24,8 +24,8 @@ const Muracietler_siyahisi = () => {
   };
 
   return (
-    <div>
-      <div className="d-flex align-items-center mb-3 ">
+    <div className='muracietler'>
+      <div className="d-flex align-items-center mb-3">
 
         <Form.Group className="mr-3m ">
           <DatePicker
