@@ -1,4 +1,9 @@
 /* CSS */
+body {
+  font-family: 'Fira Sans', sans-serif;
+}
+
+
 .underline-hover {
     position: relative;
     transition: background-color 0.3s;
@@ -55,9 +60,7 @@
 
 /* Example CSS */
 
-body {
-  font-family: 'Fira Sans', sans-serif;
-}
+
 
   
  
