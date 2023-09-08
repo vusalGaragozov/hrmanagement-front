@@ -11,6 +11,9 @@ import { format } from 'date-fns';
 
 const Yeni_emekdash = () => {
   const { user } = useContext(AuthContext);
+  
+  
+
   const [personalInfo, setPersonalInfo] = useState({
     name: '',
     surname: '',
@@ -23,8 +26,6 @@ const Yeni_emekdash = () => {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
-
-
 
   const resetForm = () => {
     setPersonalInfo({
@@ -45,7 +46,8 @@ const Yeni_emekdash = () => {
       annualLeaveDays: '',
       contractDuration: '',
       weeklyWorkingHours: '',
-    });setIsSuccessVisible(false);
+    });
+    setIsSuccessVisible(false);
   };
 
   // Function to hide the success message after a delay
@@ -65,7 +67,7 @@ const Yeni_emekdash = () => {
 
   const handleEmailBlur = (e) => {
     const { name, value } = e.target;
-  
+
     // Check if the email is in a valid format
     if (!isValidEmail(value)) {
       // Display an error message or handle the validation as needed
@@ -76,7 +78,7 @@ const Yeni_emekdash = () => {
       setValidationErrors({ ...validationErrors, [name]: true });
     }
   };
-  
+
   const [corporateInfo, setCorporateInfo] = useState({
     department: '',
     position: '',
@@ -114,7 +116,7 @@ const Yeni_emekdash = () => {
 
   const handlePersonalInfoChange = (e) => {
     const { name, value } = e.target;
-  
+
     // Check if the input field is the "FINCode" field
     if (name === 'FINCode') {
       // Capitalize the input value and restrict it to 7 characters
@@ -124,7 +126,7 @@ const Yeni_emekdash = () => {
       // For other fields, update the state normally
       setPersonalInfo({ ...personalInfo, [name]: value });
     }
-  
+
     // Add the "is-invalid" class when the field is empty or has an invalid email format
     if (value.trim() === '' || (name === 'email' && !isValidEmail(value))) {
       setValidationErrors({ ...validationErrors, [name]: true });
@@ -133,7 +135,6 @@ const Yeni_emekdash = () => {
       setValidationErrors({ ...validationErrors, [name]: false });
     }
   };
-  
 
   const handleCorporateInfoChange = (e) => {
     const { name, value } = e.target;
@@ -154,7 +155,7 @@ const Yeni_emekdash = () => {
     } else if (field === 'startDate') {
       setCorporateInfo({ ...corporateInfo, startDate: date });
     }
-    
+
     // Remove the "is-invalid" class when the user selects a date
     setValidationErrors({ ...validationErrors, [field]: false });
   };
@@ -169,9 +170,9 @@ const Yeni_emekdash = () => {
       gender,
       birthDate,
       FINCode,
-      email
+      email,
     } = personalInfo;
-  
+
     if (
       !name ||
       !surname ||
@@ -179,7 +180,7 @@ const Yeni_emekdash = () => {
       !gender ||
       !birthDate ||
       !FINCode ||
-      !isValidEmail(email) 
+      !isValidEmail(email)
     ) {
       return false;
     }
@@ -188,16 +189,28 @@ const Yeni_emekdash = () => {
 
   const formattedPersonalInfo = {
     ...personalInfo,
-    birthDate: personalInfo.birthDate ? format(personalInfo.birthDate, 'dd-MM-yyyy') : null,
-  };
-
-  const formattedCorporateInfo = {
-    ...corporateInfo,
-    startDate: corporateInfo.startDate ? format(corporateInfo.startDate, 'dd-MM-yyyy') : null,
+    birthDate: personalInfo.birthDate
+      ? format(personalInfo.birthDate, 'dd-MM-yyyy')
+      : null,
   };
   
+  const formattedCorporateInfo = {
+    ...corporateInfo,
+    startDate: corporateInfo.startDate
+      ? format(corporateInfo.startDate, 'dd-MM-yyyy')
+      : null,
+  };
+  
+
   const handleAddStaffMember = async (e) => {
     e.preventDefault(); // Prevent form submission
+
+    if (!user) {
+      console.error('User is not defined or null.');
+      // Handle the error or return early as needed
+      return;
+    }
+
     if (!isFormValid()) {
       // If the form is not valid, mark the invalid fields
       setValidationErrors((prevState) => ({
@@ -247,268 +260,335 @@ const Yeni_emekdash = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('An error occurred while adding the staff member. See console for details.');
+      alert(
+        'An error occurred while adding the staff member. See console for details.'
+      );
     }
   };
 
-
   return (
     <div className="container mt-5 ishci_ucotu">
-      <form>
-        {/* Personal Information */}
-        <div className="mb-3">
-          <h3>Şəxsi məlumatlar:</h3>
-          <div className="row g-2">
-            <div className={`col-md-4 ${validationErrors.name ? 'is-invalid' : ''}`}>
-              <input
-                type="text"
-                className={`form-control ${validationErrors.name ? 'is-invalid' : ''}`}
-                placeholder="Ad"
-                name="name"
-                value={personalInfo.name}
-                onChange={handlePersonalInfoChange}
-                required
-              />
-              {validationErrors.name && (
-    <div className="invalid-feedback">Zəhmət olmasa adınızı daxil edin.</div>
-  )}
+      <div className="row">
+        <div className="col-md-12">
+          <div className="d-flex justify-content-center">
+            <div className="col-md-4 border rounded p-3 register-margin-left">
+              <h3 className='register-underline'>Şəxsi məlumatlar:</h3>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.name ? 'is-invalid' : ''
+                  }`}
+                  placeholder="Ad"
+                  name="name"
+                  value={personalInfo.name}
+                  onChange={handlePersonalInfoChange}
+                  required
+                />
+                {validationErrors.name && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa adınızı daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.surname ? 'is-invalid' : ''
+                  }`}
+                  placeholder="Soyad"
+                  name="surname"
+                  value={personalInfo.surname}
+                  onChange={handlePersonalInfoChange}
+                  required
+                />
+                {validationErrors.surname && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa Soyadınızı daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.fatherName ? 'is-invalid' : ''
+                  }`}
+                  placeholder="Ata adı"
+                  name="fatherName"
+                  value={personalInfo.fatherName}
+                  onChange={handlePersonalInfoChange}
+                  required
+                />
+                {validationErrors.fatherName && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa Ata adınızı daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <select
+                  id="gender"
+                  className={`form-select ${
+                    validationErrors.gender ? 'is-invalid' : ''
+                  }`}
+                  name="gender"
+                  value={personalInfo.gender}
+                  onChange={handlePersonalInfoChange}
+                  required
+                >
+                  <option value="">Cins</option>
+                  <option value="Kişi">Kişi</option>
+                  <option value="Qadın">Qadın</option>
+                </select>
+                {validationErrors.gender && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa cinsinizi daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <DatePicker
+                  selected={personalInfo.birthDate}
+                  onChange={(date) => handleDateChange(date, 'birthDate')}
+                  className={`form-control ${
+                    validationErrors.birthDate ? 'is-invalid' : ''
+                  }`}
+                  locale={az}
+                  placeholderText="Doğum tarixi"
+                  showYearDropdown
+                  yearDropdownItemNumber={50}
+                  showMonthDropdown
+                  dateFormat="MMM d, yyyy"
+                  minDate={new Date('1958-01-01')}
+                  maxDate={new Date('2005-12-31')}
+                />
+                {validationErrors.birthDate && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa doğum tarixinizi daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.FINCode ? 'is-invalid' : ''
+                  }`}
+                  placeholder="FİN kod"
+                  name="FINCode"
+                  value={personalInfo.FINCode}
+                  onChange={handlePersonalInfoChange}
+                  required
+                />
+                {validationErrors.FINCode && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa FİN kodunuzu daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="email"
+                  className={`form-control ${
+                    validationErrors.email ||
+                    (personalInfo.email !== '' &&
+                      !isValidEmail(personalInfo.email))
+                      ? 'is-invalid'
+                      : ''
+                  }`}
+                  placeholder="E-mail"
+                  name="email"
+                  value={personalInfo.email}
+                  onChange={handlePersonalInfoChange}
+                  onBlur={handleEmailBlur}
+                  required
+                />
+                {personalInfo.email !== '' &&
+                  !isValidEmail(personalInfo.email) && (
+                    <div className="invalid-feedback">
+                      Email ünvanı doğru formatda daxil edin
+                    </div>
+                  )}
+                {validationErrors.email && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa email ünvanınızı daxil edin.
+                  </div>
+                )}
+              </div>
             </div>
-            <div className={`col-md-4 ${validationErrors.surname ? 'is-invalid' : ''}`}>
-              <input
-                type="text"
-                className={`form-control ${validationErrors.surname ? 'is-invalid' : ''}`}
-                placeholder="Soyad"
-                name="surname"
-                value={personalInfo.surname}
-                onChange={handlePersonalInfoChange}
-                required
-              />
-              {validationErrors.surname && (
-    <div className="invalid-feedback">Zəhmət olmasa Soyadınızı daxil edin.</div>
-  )}
+            <div className="col-md-4 border rounded p-3 register-margin-right">
+              <h3 className='register-underline'>Korporativ məlumatlar:</h3>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.department ? 'is-invalid' : ''
+                  }`}
+                  placeholder="Şöbə"
+                  name="department"
+                  value={corporateInfo.department}
+                  onChange={handleCorporateInfoChange}
+                  required
+                />
+                {validationErrors.department && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa şöbəni daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.position ? 'is-invalid' : ''
+                  }`}
+                  placeholder="Vəzifə"
+                  name="position"
+                  value={corporateInfo.position}
+                  onChange={handleCorporateInfoChange}
+                  required
+                />
+                {validationErrors.position && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa vəzifəni daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.grossSalary ? 'is-invalid' : ''
+                  }`}
+                  placeholder="Brüt əmək haqqı"
+                  name="grossSalary"
+                  value={corporateInfo.grossSalary}
+                  onChange={handleCorporateInfoChange}
+                  required
+                />
+                {validationErrors.grossSalary && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa brüt əmək haqqını daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.field ? 'is-invalid' : ''
+                  }`}
+                  placeholder="Sahə"
+                  name="field"
+                  value={corporateInfo.field}
+                  onChange={handleCorporateInfoChange}
+                  required
+                />
+                {validationErrors.field && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa sahəni daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <DatePicker
+                  selected={corporateInfo.startDate}
+                  onChange={(date) => handleDateChange(date, 'startDate')}
+                  className={`form-control ${
+                    validationErrors.startDate ? 'is-invalid' : ''
+                  }`}
+                  locale={az}
+                  placeholderText="İşə başlama tarixi"
+                  showYearDropdown
+                  yearDropdownItemNumber={50}
+                  showMonthDropdown
+                  dateFormat="MMM d, yyyy"
+                  maxDate={new Date()}
+                />
+                {validationErrors.startDate && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa işə başlama tarixini daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.annualLeaveDays ? 'is-invalid' : ''
+                  }`}
+                  placeholder="İllik müddəti"
+                  name="annualLeaveDays"
+                  value={corporateInfo.annualLeaveDays}
+                  onChange={handleCorporateInfoChange}
+                  required
+                />
+                {validationErrors.annualLeaveDays && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa illik müddəti daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.contractDuration ? 'is-invalid' : ''
+                  }`}
+                  placeholder="Müqavilə müddəti"
+                  name="contractDuration"
+                  value={corporateInfo.contractDuration}
+                  onChange={handleCorporateInfoChange}
+                  required
+                />
+                {validationErrors.contractDuration && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa müqavilə müddətini daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  className={`form-control ${
+                    validationErrors.weeklyWorkingHours ? 'is-invalid' : ''
+                  }`}
+                  placeholder="Həftəlik iş saatı"
+                  name="weeklyWorkingHours"
+                  value={corporateInfo.weeklyWorkingHours}
+                  onChange={handleCorporateInfoChange}
+                  required
+                />
+                {validationErrors.weeklyWorkingHours && (
+                  <div className="invalid-feedback">
+                    Zəhmət olmasa həftəlik iş saatını daxil edin.
+                  </div>
+                )}
+              </div>
             </div>
-            <div className={`col-md-4 ${validationErrors.fatherName ? 'is-invalid' : ''}`}>
-              <input
-                type="text"
-                className={`form-control ${validationErrors.fatherName ? 'is-invalid' : ''}`}
-                placeholder="Ata adı"
-                name="fatherName"
-                value={personalInfo.fatherName}
-                onChange={handlePersonalInfoChange}
-                required
-              />
-              {validationErrors.fatherName && (
-    <div className="invalid-feedback">Zəhmət olmasa Ata adınızı daxil edin.</div>
-  )}
-      
-            </div>
-            <div className={`col-md-4 ${validationErrors.gender ? 'is-invalid' : ''}`}>
-              <select
-                id="gender"
-                className={`form-select ${validationErrors.gender ? 'is-invalid' : ''}`}
-                name="gender"
-                value={personalInfo.gender}
-                onChange={handlePersonalInfoChange}
-                required
-              >
-                <option value="">Cins</option>
-                <option value="Kişi">Kişi</option>
-                <option value="Qadın">Qadın</option>
-              </select>
-              {validationErrors.gender && (
-    <div className="invalid-feedback">Zəhmət olmasa cinsinizi daxil edin.</div>
-  )}
-            </div>
-            <div className={`col-md-4 ${validationErrors.birthDate ? 'is-invalid' : ''}`}>
-              <DatePicker
-                selected={personalInfo.birthDate}
-                onChange={(date) => handleDateChange(date, 'birthDate')}
-                className={`form-control ${validationErrors.birthDate ? 'is-invalid' : ''}`}
-                locale={az}
-                placeholderText="Doğum tarixi"
-                showYearDropdown
-                yearDropdownItemNumber={50} // Adjust this value as needed
-                showMonthDropdown
-                dateFormat="MMM d, yyyy"
-                minDate={new Date('1958-01-01')}
-                maxDate={new Date('2005-12-31')}
-              />
-              {validationErrors.birthDate && (
-    <div className="invalid-feedback">Zəhmət olmasa doğum tarixinizi daxil edin.</div>
-  )}
-            </div>
-            <div className={`col-md-4 ${validationErrors.FINCode ? 'is-invalid' : ''}`}>
-              <input
-                type="text"
-                className={`form-control ${validationErrors.FINCode ? 'is-invalid' : ''}`}
-                placeholder="FİN kod"
-                name="FINCode"
-                value={personalInfo.FINCode}
-                onChange={handlePersonalInfoChange}
-                required
-              />
-              {validationErrors.FINCode && (
-    <div className="invalid-feedback">Zəhmət olmasa FİN kodunuzu daxil edin.</div>
-  )}
-            </div>
-            <div className={`col-md-4 ${validationErrors.email ? 'is-invalid' : ''}`}>
-              <input
-                type="email"
-                className={`form-control ${
-                  validationErrors.email || (personalInfo.email !== '' && !isValidEmail(personalInfo.email))
-                    ? 'is-invalid'
-                    : ''
-                }`}
-                placeholder="E-mail"
-                name="email"
-                value={personalInfo.email}
-                onChange={handlePersonalInfoChange}
-                onBlur={handleEmailBlur}
-                required
-              />
-              {personalInfo.email !== '' && !isValidEmail(personalInfo.email) && (
-                <div className="invalid-feedback">Email ünvanı doğru formatda daxil edin</div>
-              )}
-              {validationErrors.email && (
-    <div className="invalid-feedback">Zəhmət olmasa email ünvanınızı daxil edin.</div>
-  )}
+          </div>
+          <div className="d-flex mt-3 justify-content-end">
+            
+            <button
+              className="btn btn-primary register-button ml-auto"
+              onClick={handleAddStaffMember}
+            >
+              Əlavə et
+            </button>
+          </div>
+        </div>
+      </div>
+      {showSuccess && (
+        <div className="row mt-4">
+          <div className="col-md-12">
+            <div className="alert alert-success" role="alert">
+              İşçi əlavə edildi!
             </div>
           </div>
         </div>
-
-        {/* Corporate Information */}
-        <div className="mb-3">
-          <h3>Korporativ məlumatlar:</h3>
-          <div className="row g-2">
-            <div className={`col-md-4 ${validationErrors.department ? 'is-invalid' : ''}`}>
-              <input
-                type="text"
-                className={`form-control ${validationErrors.department ? 'is-invalid' : ''}`}
-                placeholder="Şöbə"
-                name="department"
-                value={corporateInfo.department}
-                onChange={handleCorporateInfoChange}
-                required
-              />
-              {validationErrors.department && (
-    <div className="invalid-feedback">Şöbənizi daxil edin.</div>
-  )}
-            </div>
-            <div className={`col-md-4 ${validationErrors.position ? 'is-invalid' : ''}`}>
-              <input
-                type="text"
-                className={`form-control ${validationErrors.position ? 'is-invalid' : ''}`}
-                placeholder="Vəzifə"
-                name="position"
-                value={corporateInfo.position}
-                onChange={handleCorporateInfoChange}
-                required
-              />
-              {validationErrors.position && (
-    <div className="invalid-feedback">Vəzifənizi daxil edin.</div>
-  )}
-            </div>
-            <div className={`col-md-4 ${validationErrors.grossSalary ? 'is-invalid' : ''}`}>
-              <input
-                type="number"
-                className={`form-control ${validationErrors.grossSalary ? 'is-invalid' : ''}`}
-                placeholder="Əmək haqqı (gross)"
-                name="grossSalary"
-                value={corporateInfo.grossSalary}
-                onChange={handleCorporateInfoChange}
-                required
-              />
-               {validationErrors.grossSalary && (
-    <div className="invalid-feedback">Vəzifənizi daxil edin. </div> )}
-     </div>
-            <div className={`col-md-4 ${validationErrors.field ? 'is-invalid' : ''}`}>
-              <input
-                type="text"
-                className={`form-control ${validationErrors.field ? 'is-invalid' : ''}`}
-                placeholder="Sahə (dövlət və qeyri-dövlət)"
-                name="field"
-                value={corporateInfo.field}
-                onChange={handleCorporateInfoChange}
-                required
-              />
-              {validationErrors.field && (
-    <div className="invalid-feedback">Sahənizi daxil edin.</div>
-  )}
-              
-            </div>
-            <div className={`col-md-4 ${validationErrors.startDate ? 'is-invalid' : ''}`}>
-              <DatePicker
-                selected={corporateInfo.startDate}
-                onChange={(date) => handleDateChange(date, 'startDate')}
-                className={`form-control ${validationErrors.startDate ? 'is-invalid' : ''}`}
-                locale={az}
-                placeholderText="İşə başlama tarixi"
-                showYearDropdown
-                yearDropdownItemNumber={3}
-                showMonthDropdown
-                dateFormat="MMM d, yyyy"
-                required
-              />
-               {validationErrors.startDate && (
-    <div className="invalid-feedback">İşə başlama tarixini daxil edin.</div>
-  )}
-            </div>
-            <div className={`col-md-4 ${validationErrors.annualLeaveDays ? 'is-invalid' : ''}`}>
-              <input
-                type="number"
-                className={`form-control ${validationErrors.annualLeaveDays ? 'is-invalid' : ''}`}
-                placeholder="İllik məzuniyyət günləri"
-                name="annualLeaveDays"
-                value={corporateInfo.annualLeaveDays}
-                onChange={handleCorporateInfoChange}
-                required
-              />
-               {validationErrors.annualLeaveDays && (
-    <div className="invalid-feedback">İllik məzuniyyət gün sayınızı daxil edin.</div>
-  )}
-            </div>
-            <div className={`col-md-4 ${validationErrors.contractDuration ? 'is-invalid' : ''}`}>
-              <input
-                type="number"
-                className={`form-control ${validationErrors.contractDuration ? 'is-invalid' : ''}`}
-                placeholder="Müqavilə müddəti (ayla)"
-                name="contractDuration"
-                value={corporateInfo.contractDuration}
-                onChange={handleCorporateInfoChange}
-                required
-              />
-               {validationErrors.contractDuration && (
-    <div className="invalid-feedback">Müqavilənizin müddətini daxil edin.</div>
-  )}
-            </div>
-            <div className={`col-md-4 ${validationErrors.weeklyWorkingHours ? 'is-invalid' : ''}`}>
-              <input
-                type="number"
-                className={`form-control ${validationErrors.weeklyWorkingHours ? 'is-invalid' : ''}`}
-                placeholder="Həftəlik iş saatı"
-                name="weeklyWorkingHours"
-                value={corporateInfo.weeklyWorkingHours}
-                onChange={handleCorporateInfoChange}
-                required
-              />
-               {validationErrors.weeklyWorkingHours && (
-    <div className="invalid-feedback">Həftəlik iş saatı sayını daxil edin.</div>
-  )}
-            </div>
-          </div>
-        </div>
-        {showSuccess && (
-          <div className={`alert alert-success mt-3 ${isSuccessVisible ? 'slideOut' : ''}`} role="alert">
-            Əməkdaş uğurla əlavə edilmişdir
-          </div>
-        )}
-
-     
-
-        <button type="submit" className="btn btn-primary" onClick={handleAddStaffMember}>
-          Əlavə et
-        </button>
-      </form>
+      )}
     </div>
   );
 };

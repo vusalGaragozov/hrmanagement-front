@@ -94,3 +94,37 @@
   100% {
     transform: translateX(100%);
 }}
+
+.register-margin-left {
+
+margin-right: 5px;
+}
+
+.register-margin-right {
+  margin-left: 5px;
+}
+
+.register-button {
+  display: block;
+  margin: 0 auto;
+  width: calc(45%);
+}
+
+.register-underline {
+  position: relative; /* Set relative positioning for the container */
+  text-align: center; /* Center-align the text */
+  color: #333; /* Set the text color to grey */
+  margin-bottom: 20px; /* Add space below the section title */
+}
+
+.register-underline::after {
+  content: ''; /* Required for the pseudo-element to appear */
+  display: block;
+  width: 90%; /* Use a percentage-based width for responsiveness */
+  height: 0.1px; /* Adjust the thickness of the line */
+  background-color: #b0acac; /* Set the color of the line to grey */
+  margin: 0 auto; /* Center the line horizontally */
+  margin-top: 10px; /* Adjust the space between the text and the line */
+}
+
+

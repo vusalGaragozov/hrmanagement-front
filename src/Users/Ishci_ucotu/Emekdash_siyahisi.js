@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext, useMemo } from 'react';
 import { format } from 'date-fns';
 import { AuthContext } from '../Main/AuthContext';
 import { useTable, useFilters } from 'react-table';
+import Select from 'react-select';
 
 const StaffTable = () => {
   const { user } = useContext(AuthContext);
@@ -19,6 +20,7 @@ const StaffTable = () => {
         }}
         value={column.filter || ''}
         placeholder={`Filter ${column.Header}`}
+        className="form-control"
       />
     );
   };
@@ -32,6 +34,7 @@ const StaffTable = () => {
         }}
         value={column.filter || ''}
         placeholder={`Filter ${column.Header}`}
+        className="form-control"
       />
     );
   };
@@ -45,6 +48,7 @@ const StaffTable = () => {
         }}
         value={column.filter || ''}
         placeholder={`Filter ${column.Header}`}
+        className="form-control"
       />
     );
   };
@@ -67,95 +71,59 @@ const StaffTable = () => {
       .catch((error) => console.error('Error fetching staff members:', error));
   }, [user]);
 
+  // Define an array to keep track of visible columns
+  const [visibleColumns, setVisibleColumns] = useState([]);
 
+  // Define the full columns array
   const columns = [
-    {
-      Header: '#',
-      accessor: 'id', // Replace with your unique identifier for staff members
-    },
     {
       Header: 'Ad',
       accessor: 'personalInfo.name',
-      Filter: TextColumnFilter, // Add filter to this column
+      Filter: TextColumnFilter,
     },
     {
       Header: 'Soyad',
       accessor: 'personalInfo.surname',
-      Filter: TextColumnFilter, // Add filter to this column
+      Filter: TextColumnFilter,
     },
     {
       Header: 'Ata adı',
       accessor: 'personalInfo.fatherName',
-      Filter: TextColumnFilter, // Add filter to this column
+      Filter: TextColumnFilter,
     },
     {
       Header: 'Cins',
       accessor: 'personalInfo.gender',
-      Filter: TextColumnFilter, // Add filter to this column
+      Filter: TextColumnFilter,
     },
     {
       Header: 'Doğum tarixi',
       accessor: 'personalInfo.birthDate',
-      Cell: ({ value }) => formatDate(value), // Format date
-      Filter: DateColumnFilter, // Add filter to this column
+      Cell: ({ value }) => formatDate(value),
+      Filter: DateColumnFilter,
     },
     {
       Header: 'FIN kod',
       accessor: 'personalInfo.FINCode',
-      Filter: TextColumnFilter, // Add filter to this column
+      Filter: TextColumnFilter,
     },
     {
       Header: 'Email',
       accessor: 'personalInfo.email',
-      Filter: TextColumnFilter, // Add filter to this column
+      Filter: TextColumnFilter,
     },
     {
       Header: 'Şöbə',
       accessor: 'corporateInfo.department',
-      Filter: TextColumnFilter, // Add filter to this column
-    },
-    {
-      Header: 'Vəzifə',
-      accessor: 'corporateInfo.position',
-      Filter: TextColumnFilter, // Add filter to this column
-    },
-    {
-      Header: 'Əmək haqqı',
-      accessor: 'corporateInfo.grossSalary',
-      Filter: NumberColumnFilter, // Add filter to this column
-    },
-    {
-      Header: 'Sahə',
-      accessor: 'corporateInfo.field',
-      Filter: TextColumnFilter, // Add filter to this column
-    },
-    {
-      Header: 'İşə başlama tarixi',
-      accessor: 'corporateInfo.startDate',
-      Cell: ({ value }) => formatDate(value), // Format date
-      Filter: DateColumnFilter, // Add filter to this column
-    },
-    {
-      Header: 'İllik məzuniyyət norması',
-      accessor: 'corporateInfo.annualLeaveDays',
-      Filter: NumberColumnFilter, // Add filter to this column
-    },
-    {
-      Header: 'Müqavilə müddəti',
-      accessor: 'corporateInfo.contractDuration',
-      Filter: TextColumnFilter, // Add filter to this column
-    },
-    {
-      Header: 'Həftəlik iş saatı',
-      accessor: 'corporateInfo.weeklyWorkingHours',
-      Filter: NumberColumnFilter, // Add filter to this column
+      Filter: TextColumnFilter,
     },
     // Add more columns as needed
   ];
 
-
-  // Memoize the columns configuration
-  const columnsMemo = useMemo(() => columns, []);
+  // Create a dynamic columns array based on visibleColumns
+  const dynamicColumns = useMemo(() => {
+    return columns.filter((column) => visibleColumns.includes(column.accessor));
+  }, [visibleColumns]);
 
   // Create an instance of the table
   const {
@@ -168,7 +136,7 @@ const StaffTable = () => {
     setFilter,
   } = useTable(
     {
-      columns: columnsMemo,
+      columns: dynamicColumns,
       data: filteredStaffMembers,
     },
     useFilters
@@ -193,15 +161,39 @@ const StaffTable = () => {
     setFilteredStaffMembers(filteredData);
   }, [state.filters, staffMembers]);
 
+  // Options for react-select to select columns
+  const columnOptions = columns.map((column) => ({
+    label: column.Header,
+    value: column.accessor,
+  }));
+
   return (
     <div className="container ishci_ucotu">
       <h2>Staff Members</h2>
-      <table {...getTableProps()} className="table table-striped">
+
+      {/* Use react-select for column selection */}
+      <Select
+        isMulti
+        options={columnOptions}
+        onChange={(selectedOptions) => {
+          // Extract the selected columns
+          const selectedColumns = selectedOptions.map((option) => option.value);
+          // Update the visibleColumns state
+          setVisibleColumns(selectedColumns);
+        }}
+        className="mb-3"
+        placeholder="Select columns"
+      />
+
+      {/* Render the table */}
+      <table {...getTableProps()} className="table table-striped table-bordered table-hover">
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                <th {...column.getHeaderProps()} style={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
+                  {column.render('Header')}
+                </th>
               ))}
             </tr>
           ))}
@@ -226,4 +218,3 @@ const StaffTable = () => {
 };
 
 export default StaffTable;
-

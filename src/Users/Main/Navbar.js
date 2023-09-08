@@ -5,9 +5,7 @@ import { API_URL } from '../Other/config';
 import { AuthContext } from '../Main/AuthContext';
 
 const LoggedInNavbar = ({ user, handleLogout }) => (
-  <div className="mx-auto"> {/* Add mx-auto to center-align */}
-  <nav className="navbar navbar-expand-lg navbar-light bg-light ">
-  
+  <nav className="navbar navbar-expand-lg navbar-light bg-light">
     <button
       className="navbar-toggler"
       type="button"
@@ -20,18 +18,17 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
       <span className="navbar-toggler-icon"></span>
     </button>
     <div className="collapse navbar-collapse" id="navbarNav">
-      <ul className="navbar-nav ">
+      <ul className="navbar-nav ml-auto">
         <li className="nav-item dropdown">
           <a
             className="nav-link dropdown-toggle"
-            
             id="navbarDropdown1"
             role="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
           >
-          Müraciətlər
+            Müraciətlər
           </a>
           <div className="dropdown-menu" aria-labelledby="navbarDropdown1">
             <Link className="dropdown-item" to="/vacation">
@@ -51,14 +48,13 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
         <li className="nav-item dropdown">
           <a
             className="nav-link dropdown-toggle"
-            
             id="navbarDropdown2"
             role="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
           >
-          İşçi uçotu
+            İşçi uçotu
           </a>
           <div className="dropdown-menu" aria-labelledby="navbarDropdown2">
             <Link className="dropdown-item" to="/newstaff">
@@ -75,7 +71,6 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
         <li className="nav-item dropdown">
           <a
             className="nav-link dropdown-toggle"
-          
             id="navbarDropdown3"
             role="button"
             data-toggle="dropdown"
@@ -95,46 +90,40 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/trainings">
-          Təlimlər
+            Təlimlər
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/kpi">
-          KPİ
+            KPİ
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/trainings">
-          İşçi cəlbi
+            İşçi cəlbi
           </Link>
         </li>
+        <li className="nav-item ml-3">
+          <span className="nav-link">
+            <span className="material-symbols-outlined">&#xe7fd;</span> {user.firstname} {user.lastname}
+          </span>
+        </li>
+        <li className="nav-item">
+          <button
+            className="nav-link btn custom-logout-btn"
+            onClick={handleLogout}
+            style={{ backgroundColor: 'red', color: 'white' }}
+          >
+            <span className="material-symbols-outlined">&#xe9ba;</span>Çıxış
+          </button>
+        </li>
       </ul>
-      <ul className="navbar-nav ml-auto">
-  <li className="nav-item">
-    <span className="nav-link">
-      <span className="material-symbols-outlined">&#xe7fd;</span> {user.firstname} {user.lastname}
-    </span>
-  </li>
-  <li className="nav-item">
-    <button
-      className="nav-link btn custom-logout-btn"
-      onClick={handleLogout}
-      style={{ backgroundColor: 'red', color: 'white' }}
-    >
-      <span className="material-symbols-outlined">&#xe9ba;</span>Çıxış
-    </button>
-  </li>
-</ul>
-
     </div>
   </nav>
-  </div>
 );
 
-
 const VisitorNavbar = () => (
-  <nav className="navbar navbar-expand-lg navbar-light bg-light ">
-   
+  <nav className="navbar navbar-expand-lg navbar-light bg-light">
     <button
       className="navbar-toggler"
       type="button"
@@ -150,34 +139,34 @@ const VisitorNavbar = () => (
       <ul className="navbar-nav">
         <li className="nav-item">
           <Link className="nav-link" to="/product">
-          Məhsul
+            Məhsul
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/pricing">
-          Qiymətlər
+            Qiymətlər
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/guidance">
-          Tətbiqetmə
+            Tətbiqetmə
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/contact">
-          Əlaqə
+            Əlaqə
           </Link>
         </li>
       </ul>
-      <ul className="navbar-nav style={{ textAlign: 'right' }}">
-        <li className="nav-item ">
-          <Link className="nav-link underline-hover " to="/register">
-          <span className="material-symbols-outlined">&#xe174;</span> Qeydiyyat
+      <ul className="navbar-nav ml-auto">
+        <li className="nav-item">
+          <Link className="nav-link underline-hover" to="/register">
+            <span className="material-symbols-outlined">&#xe174;</span> Qeydiyyat
           </Link>
         </li>
         <li className="nav-item">
           <Link className="nav-link underline-hover" to="/login">
-          <span className="material-symbols-outlined">&#xea77;</span>Daxil ol
+            <span className="material-symbols-outlined">&#xea77;</span> Daxil ol
           </Link>
         </li>
       </ul>
@@ -209,7 +198,6 @@ const Navbar = () => {
     <div className="container-fluid d-flex justify-content-center align-items-center main">
       <div className="row">
         <div className="col-md-12">
-          
           {user ? (
             <LoggedInNavbar user={user} handleLogout={handleLogout} />
           ) : (

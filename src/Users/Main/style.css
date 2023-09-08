@@ -63,7 +63,7 @@ color: white; /* Set the desired font color */
   transition: color 0.3s; /* Add a smooth color transition effect */
 }
 
-
-
-
-
+.select-prefix {
+  max-width: 80px;
+  margin-right: 10px;
+}
