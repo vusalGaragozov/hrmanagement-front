@@ -126,5 +126,67 @@ margin-right: 5px;
   margin: 0 auto; /* Center the line horizontally */
   margin-top: 10px; /* Adjust the space between the text and the line */
 }
+/* CSS for the StaffTable component */
+.container {
+  max-width: 100%;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* CSS for a modern business-style page title */
+.page-title {
+  margin: 0;
+  font-size: 28px; /* Adjust the font size as needed */
+  font-weight: bold; /* Bold text */
+  color: #333; /* Dark gray color */
+  padding-bottom: 10px; /* Space below the title */
+  border-bottom: 2px solid #007bff; /* Blue underline */
+  display: flex;
+  align-items: center;
+}
+
+/* Optional: Add a margin below the page title for spacing */
+.page-title + p {
+  margin-top: 10px; /* Adjust the margin as needed */
+}
 
 
+/* Style for the Excel export button */
+button {
+  background-color: #ffffff; /* Blue color */
+  color: #fff; /* White text color */
+  border: none;
+  padding: 10px 0px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+/* Change button color on hover */
+button:hover {
+  background-color: #ffffff; /* Darker blue on hover */
+}
+
+/* Style for the rounded rectangle container */
+.button-container {
+  background-color: #f0f0f0; /* Light gray background color */
+  padding: 10px; /* Adjust padding as needed */
+  border-radius: 5px; /* Rounded corners */
+}
+
+/* Style for the button inside the rounded rectangle */
+.button-container button {
+  background-color: #007bff; /* Blue color */
+  color: #fff; /* White text color */
+}
+
+/* Change button color inside the rounded rectangle on hover */
+.button-container button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}

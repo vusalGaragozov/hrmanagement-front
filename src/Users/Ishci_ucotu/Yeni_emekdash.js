@@ -462,7 +462,7 @@ const Yeni_emekdash = () => {
                   className={`form-control ${
                     validationErrors.grossSalary ? 'is-invalid' : ''
                   }`}
-                  placeholder="Brüt əmək haqqı"
+                  placeholder="Əmək haqqı"
                   name="grossSalary"
                   value={corporateInfo.grossSalary}
                   onChange={handleCorporateInfoChange}
@@ -470,7 +470,7 @@ const Yeni_emekdash = () => {
                 />
                 {validationErrors.grossSalary && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa brüt əmək haqqını daxil edin.
+                    Zəhmət olmasa gross əmək haqqını daxil edin.
                   </div>
                 )}
               </div>
@@ -519,7 +519,7 @@ const Yeni_emekdash = () => {
                   className={`form-control ${
                     validationErrors.annualLeaveDays ? 'is-invalid' : ''
                   }`}
-                  placeholder="İllik müddəti"
+                  placeholder="İllik məzuniyyət gün sayı"
                   name="annualLeaveDays"
                   value={corporateInfo.annualLeaveDays}
                   onChange={handleCorporateInfoChange}
@@ -537,7 +537,7 @@ const Yeni_emekdash = () => {
                   className={`form-control ${
                     validationErrors.contractDuration ? 'is-invalid' : ''
                   }`}
-                  placeholder="Müqavilə müddəti"
+                  placeholder="Müqavilə müddəti (ayla)"
                   name="contractDuration"
                   value={corporateInfo.contractDuration}
                   onChange={handleCorporateInfoChange}
