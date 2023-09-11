@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useContext, useMemo } from 'react';
-import { format } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns'; 
 import { AuthContext } from '../Main/AuthContext';
 import { useTable, useFilters } from 'react-table';
 import Select from 'react-select';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import az from 'date-fns/locale/az';
 import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -12,11 +15,20 @@ const StaffTable = () => {
 
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal
-  const [editedFields, setEditedFields] = useState({}); // State to store edited fields
+  const [editedFields, setEditedFields] = useState({
+    personalInfo: {
+      name: '',
+      surname: '',
+      // Add other nested fields here
+    },});
 
-  const formatDate = (dateString) => {
-    return format(new Date(dateString), 'dd-MM-yyyy');
-  };
+    const formatDate = (dateString) => {
+      if (!dateString || !isValid(parseISO(dateString))) {
+        // Handle invalid date format or empty date string
+        return 'Invalid Date';
+      }
+      return format(new Date(dateString), 'dd-MM-yyyy');
+    };
 
   const TextColumnFilter = ({ column }) => {
     return (
@@ -47,6 +59,8 @@ const StaffTable = () => {
   };
 
   const handleRowClick = (staffMember) => {
+    console.log('Clicked staff member:', staffMember); // Debugging statement
+
     setSelectedStaff(staffMember);
     setEditedFields(staffMember); // Initialize edited fields with current data
     setIsModalOpen(true); // Open the modal
@@ -56,33 +70,80 @@ const StaffTable = () => {
     setIsModalOpen(false); // Close the modal
   };
 
-  const handleFieldChange = (e, field) => {
+  const handleFieldChange = (e, field, category) => {
     const { value } = e.target;
     setEditedFields((prevFields) => ({
       ...prevFields,
-      [field]: value,
+      [category]: {
+        ...prevFields[category],
+        [field]: value,
+      },
     }));
   };
-
+  
+  
   const handleUpdate = () => {
-    // Send the edited fields to the backend
-    fetch(`http://localhost:3001/api/staffmembers/${selectedStaff.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(editedFields),
-    })
-      .then((response) => response.json())
-      .then((updatedStaffMember) => {
-        // Update the selected staff member with the response from the backend
-        setSelectedStaff(updatedStaffMember);
-
-        // Close the modal
-        setIsModalOpen(false);
+    if (!selectedStaff || !selectedStaff._id) {
+      console.error('Selected staff member is missing ID');
+      return;
+    }
+    const staffId = selectedStaff._id; // Extract the ID
+    const formattedBirthDate = formatDate(editedFields.personalInfo.birthDate);
+    const formattedStartDate = formatDate(editedFields.corporateInfo.startDate); // Format the startDate
+  
+    // Validate corporateInfo.startDate before attempting to update
+    if (
+      editedFields.corporateInfo &&
+      typeof editedFields.corporateInfo.startDate === 'string' &&
+      !isNaN(Date.parse(editedFields.corporateInfo.startDate))
+    ) {
+      // The startDate is a valid date string
+      const updatedFields = {
+        ...editedFields,
+        personalInfo: {
+          ...editedFields.personalInfo,
+          birthDate: formattedBirthDate,
+        },
+        corporateInfo: {
+          ...editedFields.corporateInfo,
+          startDate: formattedStartDate, // Update the startDate
+        },
+      };
+  
+      // Send the edited fields to the backend
+      fetch(`http://localhost:3001/api/staffmembers/${staffId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedFields),
       })
-      .catch((error) => console.error('Error updating staff member:', error));
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((updatedStaffMember) => {
+          console.log('Response from backend:', updatedStaffMember);
+          // Update the selected staff member with the response from the backend
+          setSelectedStaff(updatedStaffMember);
+          // Close the modal
+          setIsModalOpen(false);
+        })
+        .catch((error) => {
+          console.error('Error updating staff member:', error);
+          // Log the response content for debugging
+          error.response.text().then((text) => {
+            console.error('Response content:', text);
+          });
+        });
+    } else {
+      console.error('Invalid startDate format');
+    }
   };
+  
+  
 
   const [staffMembers, setStaffMembers] = useState([]);
   const [filteredStaffMembers, setFilteredStaffMembers] = useState([]);
@@ -216,33 +277,168 @@ const StaffTable = () => {
   const renderModal = () => {
     return (
       <Modal show={isModalOpen} onHide={handleModalClose} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Staff Member Details</Modal.Title>
+        <Modal.Header closeButton className='Modal-font'>
+          <Modal.Title className='Modal-font'>İşçi məlumatları</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className='Modal-font'>
           {/* Display staff member details here */}
           {selectedStaff && (
             <div>
-              <p>Name: {selectedStaff.personalInfo.name}</p>
-              <p>Surname: {selectedStaff.personalInfo.surname}</p>
+  <p className='modal-header'>
+  <span className='bold-text'>Ad:</span> {selectedStaff.personalInfo.name}
+</p>
+<p className='modal-header'>
+  <span className='bold-text'>Soyad:</span> {selectedStaff.personalInfo.surname}
+</p>
+
+
               <hr />
-              <h5>Edit Fields:</h5>
+              <h5>Dəyişiklik et:</h5>
               <div className="form-group">
-                <label>Name:</label>
+                <label>Ad:</label>
                 <input
                   type="text"
                   className="form-control"
-                  value={editedFields.personalInfo.name}
-                  onChange={(e) => handleFieldChange(e, 'personalInfo.name')}
+                  value={editedFields.personalInfo.name || ''}
+                  onChange={(e) => handleFieldChange(e, 'name','personalInfo')}
                 />
               </div>
               <div className="form-group">
-                <label>Surname:</label>
+                <label>Soyad:</label>
                 <input
                   type="text"
                   className="form-control"
-                  value={editedFields.personalInfo.surname}
-                  onChange={(e) => handleFieldChange(e, 'personalInfo.surname')}
+                  value={editedFields.personalInfo.surname || ''}
+                  onChange={(e) => handleFieldChange(e, 'surname','personalInfo')}
+                />
+              </div>
+              <div className="form-group">
+                <label>Ata adı:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.personalInfo.fatherName || ''}
+                  onChange={(e) => handleFieldChange(e, 'fatherName','personalInfo')}
+                />
+              </div>
+              <div className="form-group">
+                <label>Cins:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.personalInfo.gender || ''}
+                  onChange={(e) => handleFieldChange(e, 'gender','personalInfo')}
+                />
+              </div>
+              <div className="form-group">
+  <label>Doğum tarixi:</label>
+  <div>
+  <DatePicker
+    selected={editedFields.personalInfo.birthDate ? new Date(editedFields.personalInfo.birthDate) : null}
+    onChange={(date) => handleFieldChange(date, 'birthDate', 'personalInfo')}
+    locale={az}
+                  placeholderText="Doğum tarixi"
+                  showYearDropdown
+                  yearDropdownItemNumber={50}
+                  showMonthDropdown
+                  dateFormat="MMM d, yyyy"
+                  minDate={new Date('1958-01-01')}
+                  maxDate={new Date('2005-12-31')}
+    className="form-control"
+   
+  />
+  </div>
+</div>
+              <div className="form-group">
+                <label>FİN kod:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.personalInfo.FINCode || ''}
+                  onChange={(e) => handleFieldChange(e, 'FINCode','personalInfo')}
+                />
+              </div>
+              <div className="form-group">
+                <label>Email:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.personalInfo.email || ''}
+                  onChange={(e) => handleFieldChange(e, 'email','personalInfo')}
+                />
+              </div>
+              <div className="form-group">
+                <label>Şöbə:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.corporateInfo.department || ''}
+                  onChange={(e) => handleFieldChange(e, 'department','corporateInfo')}
+                />
+              </div>
+              <div className="form-group">
+                <label>Vəzifə:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.corporateInfo.position || ''}
+                  onChange={(e) => handleFieldChange(e, 'position','corporateInfo')}
+                />
+              </div>
+              <div className="form-group">
+                <label>Əmək haqqı:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.corporateInfo.grossSalary || ''}
+                  onChange={(e) => handleFieldChange(e, 'grossSalary','corporateInfo')}
+                />
+              </div>
+              <div className="form-group">
+                <label>Sahə:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.corporateInfo.field || ''}
+                  onChange={(e) => handleFieldChange(e, 'field','corporateInfo')}
+                />
+              </div>
+              <div className="form-group">
+  <label>İşə başlama tarixi:</label>
+  <div>
+  <DatePicker
+    selected={editedFields.corporateInfo.startDate ? new Date(editedFields.corporateInfo.startDate) : null}
+    onChange={(date) => handleFieldChange(date, 'startDate', 'corporateInfo')}
+    dateFormat="MMM d, yyyy"
+    className="form-control"
+    placeholderText="İşə başlama tarixi"
+  /></div>
+</div>
+              <div className="form-group">
+                <label>İllik məzuniyyət gün sayı:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.corporateInfo.annualLeaveDays || ''}
+                  onChange={(e) => handleFieldChange(e, 'annualLeaveDays','corporateInfo')}
+                />
+              </div>
+              <div className="form-group">
+                <label>Müqavilə müddəti (ayla):</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.corporateInfo.contractDuration || ''}
+                  onChange={(e) => handleFieldChange(e, 'contractDuration','corporateInfo')}
+                />
+              </div>
+              <div className="form-group">
+                <label>Həftəlik iş saatı:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={editedFields.corporateInfo.weeklyWorkingHours || ''}
+                  onChange={(e) => handleFieldChange(e, 'weeklyWorkingHours','corporateInfo')}
                 />
               </div>
               {/* Add more editable fields */}
@@ -251,10 +447,10 @@ const StaffTable = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleModalClose}>
-            Close
+            Bağla
           </Button>
           <Button variant="primary" onClick={handleUpdate}>
-            Update
+            Əlavə et
           </Button>
         </Modal.Footer>
       </Modal>

@@ -190,3 +190,15 @@ button:hover {
 .button-container button:hover {
   background-color: #0056b3; /* Darker blue on hover */
 }
+
+.bold-text {
+  font-weight: bold;
+}
+
+.Modal-font {
+  font-family: Blinker, sans-serif;
+  padding-bottom: 10px; /* Space below the title */
+  border-bottom: 2px solid #007bff; /* Blue underline */
+}
+
+
