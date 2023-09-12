@@ -48,20 +48,6 @@
 
     const [selectedGender, setSelectedGender] = useState('');
 
-    const TextColumnFilter = ({ column }) => {
-      return (
-        <input
-          type="text"
-          onChange={(e) => {
-            const value = e.target.value || undefined;
-            column.setFilter(value);
-          }}
-          value={column.filterValue || ''}
-          placeholder={`Filter ${column.Header}`}
-          className="form-control"
-        />
-      );
-    };
     
 // Helper function to format a number with commas
 function formatNumber(number) {
@@ -139,18 +125,6 @@ const DateColumnFilter = ({ column }) => {
         },
       }));
     };
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     const validateData = (data) => {
       const errors = {
         personalInfo: {
@@ -251,9 +225,6 @@ const DateColumnFilter = ({ column }) => {
         console.error('Invalid startDate format');
       }
     };
-    
-    
-
     const [staffMembers, setStaffMembers] = useState([]);
     const [filteredStaffMembers, setFilteredStaffMembers] = useState([]);
 
@@ -286,48 +257,48 @@ const DateColumnFilter = ({ column }) => {
       {
         Header: 'Ad',
         accessor: 'personalInfo.name',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Soyad',
         accessor: 'personalInfo.surname',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Ata adı',
         accessor: 'personalInfo.fatherName',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Cins',
         accessor: 'personalInfo.gender',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Doğum tarixi',
         accessor: 'personalInfo.birthDate',
         Cell: ({ value }) => formatDate(value),
-        Filter: DateColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'FIN kod',
         accessor: 'personalInfo.FINCode',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Email',
         accessor: 'personalInfo.email',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Vəzifə',
         accessor: 'corporateInfo.position',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Əmək haqqı',
         accessor: 'corporateInfo.grossSalary',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
         Cell: ({ cell: { value } }) => {
           // Check if the value is a valid number
           const formattedValue = parseFloat(value);
@@ -341,29 +312,29 @@ const DateColumnFilter = ({ column }) => {
       {
         Header: 'Sahə',
         accessor: 'corporateInfo.field',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Başlama tarixi',
         accessor: 'corporateInfo.startDate',
         Cell: ({ value }) => formatDate(value),
-        Filter: DateColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       
       {
         Header: 'İllik məzuniyyət gün sayı',
         accessor: 'corporateInfo.annualLeaveDays',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Müqavilə müddəti',
         accessor: 'corporateInfo.contractDuration',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Həftəlik iş saatı',
         accessor: 'corporateInfo.weeklyWorkingHours',
-        Filter: TextColumnFilter,
+        Filter: DefaultColumnFilter,
       },
     ];
 
@@ -392,7 +363,7 @@ const DateColumnFilter = ({ column }) => {
     // Handle changes in the filters
     useEffect(() => {
       const filterValues = state.filters;
-
+    
       // Apply filters to your data
       let filteredData = [...staffMembers];
       filterValues.forEach((filter) => {
@@ -404,9 +375,10 @@ const DateColumnFilter = ({ column }) => {
           });
         }
       });
-
+    
       setFilteredStaffMembers(filteredData);
     }, [state.filters, staffMembers]);
+    
 
     // Options for react-select to select columns with user-friendly labels
     const columnOptions = columns.map((column) => ({
@@ -436,8 +408,6 @@ const DateColumnFilter = ({ column }) => {
     <span className="bold-text">Soyad:</span> {selectedStaff.personalInfo.surname}
   </p>
 </div>
-
-
                 <hr />
                 <div className="form-group">
     <label>Ad:</label>
@@ -487,15 +457,13 @@ const DateColumnFilter = ({ column }) => {
                 </div>
                 <div className="form-group">
   <label>Cins:</label>
-  <select
+  <input
     className={`form-control ${validationErrors.personalInfo.gender ? 'is-invalid' : ''}`}
-    value={selectedGender}
-    onChange={(e) => setSelectedGender(e.target.value)}
-  >
-    <option value="">Cins seçin</option>
-    <option value="Kişi">Kişi</option>
-    <option value="Qadın">Qadın</option>
-  </select>
+    value={editedFields.personalInfo && editedFields.personalInfo.gender ? editedFields.personalInfo.gender : ''}
+    onChange={(e) => handleFieldChange(e.target.value, 'gender', 'personalInfo')}
+                  />{validationErrors.personalInfo.gender && (
+                    <div className="invalid-feedback">{validationErrors.personalInfo.gender}</div>
+                  )}
   {selectedGender === '' && ( // Check if no gender is selected
     <div className="invalid-feedback">Cins seçimi boş qala bilməz.</div>
   )}
@@ -506,28 +474,20 @@ const DateColumnFilter = ({ column }) => {
     <div className="alert alert-danger mt-2 small-notification">{clearedFields.gender}</div>
   )}
 </div>
-
-
-
                 <div className="form-group">
     <label>Doğum tarixi:</label>
     <div>
 <DatePicker
   selected={editedFields.personalInfo.birthDate ? new Date(editedFields.personalInfo.birthDate) : null}
   onChange={(date) => handleFieldChange(
-    date ? format(date, 'MMM d, yyyy') : null,
+    date ? format(date, 'yyyy-MM-dd') : null,
     'birthDate',
     'personalInfo'
   )}
   locale={az}
-  placeholderText="Doğum tarixi"
-  showYearDropdown
-  yearDropdownItemNumber={50}
-  showMonthDropdown
-  dateFormat="MMM d, yyyy"
-  minDate={new Date('1958-01-01')}
-  maxDate={new Date('2005-12-31')}
+  dateFormat="yyyy-MM-dd"
   className={`form-control ${validationErrors.personalInfo.birthDate ? 'is-invalid' : ''}`}
+  placeholderText="Doğum tarixi"
 />
 {validationErrors.personalInfo.birthDate && (
       <div className="invalid-feedback">{validationErrors.personalInfo.birthDate}</div>

@@ -358,11 +358,8 @@ const Yeni_emekdash = () => {
                   locale={az}
                   placeholderText="Doğum tarixi"
                   showYearDropdown
-                  yearDropdownItemNumber={50}
                   showMonthDropdown
                   dateFormat="MMM d, yyyy"
-                  minDate={new Date('1958-01-01')}
-                  maxDate={new Date('2005-12-31')}
                 />
                 {validationErrors.birthDate && (
                   <div className="invalid-feedback">
@@ -502,10 +499,8 @@ const Yeni_emekdash = () => {
                   locale={az}
                   placeholderText="İşə başlama tarixi"
                   showYearDropdown
-                  yearDropdownItemNumber={50}
                   showMonthDropdown
                   dateFormat="MMM d, yyyy"
-                  maxDate={new Date()}
                 />
                 {validationErrors.startDate && (
                   <div className="invalid-feedback">
