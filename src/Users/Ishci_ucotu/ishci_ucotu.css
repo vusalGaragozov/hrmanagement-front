@@ -192,13 +192,39 @@ button:hover {
 }
 
 .bold-text {
-  font-weight: bold;
+  font-size: 14px; /* Decrease font size for labels */
 }
 
 .Modal-font {
   font-family: Blinker, sans-serif;
-  padding-bottom: 10px; /* Space below the title */
+  font-weight:bold; /* Space below the title */
   border-bottom: 2px solid #007bff; /* Blue underline */
 }
 
+/* Add this to your CSS file or style block */
+.small-notification {
+  font-size: 12px; /* Adjust the font size as needed */
+  padding: 2px 5px; /* Adjust the padding as needed */
+  height: 10px !important; /* Adjust the height as needed */
+  display: flex;
+  align-items: center; /* Vertically center the content */
+}
+/* Apply styles to the whole block of name and surname */
+.name-surname-block {
+  background-color: #3498db; /* Background color for the whole block */
+  padding-top: 0px; /* Decrease padding for a more compact height */
+  padding-bottom: 0px;
+  margin-left: 30px;
+  margin-right: 30px;
+  border-radius: 5px; /* Add rounded corners for style */
+  color: #fff; /* Text color for the whole block */
+  margin-bottom: 10px; /* Adjust the margin as needed */
+}
+.modal-header {
+  font-size: 14px; /* Decrease font size for values */
+  margin: 0; /* Remove margin to reduce spacing */
+}
 
+h5[modal-change] {
+  text-align: center !important;
+}

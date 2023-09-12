@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import az from 'date-fns/locale/az';
 import { format } from 'date-fns';
 
 const AddStaffMemberModal = ({ show, onHide, onAdd }) => {
@@ -15,32 +14,18 @@ const AddStaffMemberModal = ({ show, onHide, onAdd }) => {
     email: '',
   });
 
-  const [validationErrors, setValidationErrors] = useState({
-    name: false,
-    surname: false,
-    fatherName: false,
-    gender: false,
-    birthDate: false,
-    FINCode: false,
-    email: false,
-  });
+  const [validationErrors, setValidationErrors] = useState({});
 
   const handlePersonalInfoChange = (e) => {
     const { name, value } = e.target;
     setPersonalInfo({ ...personalInfo, [name]: value });
 
-    if (value.trim() === '' || (name === 'email' && !isValidEmail(value))) {
-      setValidationErrors({ ...validationErrors, [name]: true });
-    } else {
-      setValidationErrors({ ...validationErrors, [name]: false });
-    }
+    // Remove the "is-invalid" class when the user starts typing in a field
+    setValidationErrors({ ...validationErrors, [name]: undefined });
   };
 
   const handleDateChange = (date, field) => {
-    if (field === 'birthDate') {
-      setPersonalInfo({ ...personalInfo, birthDate: date });
-    }
-    setValidationErrors({ ...validationErrors, [field]: false });
+    setPersonalInfo({ ...personalInfo, [field]: date });
   };
 
   const isFormValid = () => {
@@ -54,32 +39,59 @@ const AddStaffMemberModal = ({ show, onHide, onAdd }) => {
       email,
     } = personalInfo;
 
-    if (
-      !name ||
-      !surname ||
-      !fatherName ||
-      !gender ||
-      !birthDate ||
-      !FINCode ||
-      !isValidEmail(email)
-    ) {
-      return false;
+    const errors = {};
+
+    if (!name) {
+      errors.name = 'Please enter a name.';
     }
-    return true;
+    
+
+    if (!surname) {
+      errors.surname = 'Please enter a surname.';
+    }
+
+    if (!fatherName) {
+      errors.fatherName = 'Please enter a father name.';
+    }
+
+    if (!gender) {
+      errors.gender = 'Please select a gender.';
+    }
+
+    if (!birthDate) {
+      errors.birthDate = 'Please select a birth date.';
+    }
+
+    if (!FINCode) {
+      errors.FINCode = 'Please enter an FIN code.';
+    }
+
+    if (!isValidEmail(email)) {
+      errors.email = 'Please enter a valid email address.';
+    }
+
+    setValidationErrors(errors);
+
+    // Check if there are any errors
+    return Object.keys(errors).length === 0;
   };
 
-  const formattedPersonalInfo = {
-    ...personalInfo,
-    birthDate: personalInfo.birthDate
-      ? format(personalInfo.birthDate, 'dd-MM-yyyy')
-      : null,
-  };
-
-  const handleAddClick = () => {
-    if (isFormValid()) {
-      onAdd(formattedPersonalInfo);
-      onHide();
+  const handleAddClick = (e) => {
+    e.preventDefault(); // Prevent form submission
+    console.log('Clicked Add button');
+    if (!isFormValid()) {
+      // Form is not valid, do not proceed
+      console.log('Form is not valid:', validationErrors);
+      return;
     }
+
+    const formattedPersonalInfo = {
+      ...personalInfo,
+      birthDate: personalInfo.birthDate ? format(personalInfo.birthDate, 'dd-MM-yyyy') : null,
+    };
+
+    onAdd(formattedPersonalInfo);
+    onHide();
   };
 
   const isValidEmail = (email) => {
@@ -88,7 +100,7 @@ const AddStaffMemberModal = ({ show, onHide, onAdd }) => {
   };
 
   return (
-    <div className={`modal ${show ? 'show' : ''}`}>
+    <div className={`modal ${show ? 'show' : ''}`} tabIndex="-1">
       <div className="modal-dialog">
         <div className="modal-content">
           <div className="modal-header">
@@ -112,9 +124,7 @@ const AddStaffMemberModal = ({ show, onHide, onAdd }) => {
                 required
               />
               {validationErrors.name && (
-                <div className="invalid-feedback">
-                  Please enter a name.
-                </div>
+                <div className="invalid-feedback">{validationErrors.name}</div>
               )}
             </div>
             <div className="mb-3">
@@ -130,9 +140,7 @@ const AddStaffMemberModal = ({ show, onHide, onAdd }) => {
                 required
               />
               {validationErrors.surname && (
-                <div className="invalid-feedback">
-                  Please enter a surname.
-                </div>
+                <div className="invalid-feedback">{validationErrors.surname}</div>
               )}
             </div>
             <div className="mb-3">
@@ -148,51 +156,40 @@ const AddStaffMemberModal = ({ show, onHide, onAdd }) => {
                 required
               />
               {validationErrors.fatherName && (
-                <div className="invalid-feedback">
-                  Please enter a father's name.
-                </div>
+                <div className="invalid-feedback">{validationErrors.fatherName}</div>
               )}
             </div>
             <div className="mb-3">
-              <select
-                className={`form-select ${
+              <input
+                type="text"
+                className={`form-control ${
                   validationErrors.gender ? 'is-invalid' : ''
                 }`}
+                placeholder="Gender"
                 name="gender"
                 value={personalInfo.gender}
                 onChange={handlePersonalInfoChange}
                 required
-              >
-                <option value="">Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
+              />
               {validationErrors.gender && (
-                <div className="invalid-feedback">
-                  Please select a gender.
-                </div>
+                <div className="invalid-feedback">{validationErrors.gender}</div>
               )}
             </div>
             <div className="mb-3">
+              <label>Date of Birth</label>
+              <br />
               <DatePicker
                 selected={personalInfo.birthDate}
                 onChange={(date) => handleDateChange(date, 'birthDate')}
+                dateFormat="dd-MM-yyyy"
                 className={`form-control ${
                   validationErrors.birthDate ? 'is-invalid' : ''
                 }`}
-                locale={az}
-                placeholderText="Birth Date"
-                showYearDropdown
-                yearDropdownItemNumber={50}
-                showMonthDropdown
-                dateFormat="MMM d, yyyy"
-                minDate={new Date('1958-01-01')}
-                maxDate={new Date('2005-12-31')}
+                placeholderText="Select a date"
+                required
               />
               {validationErrors.birthDate && (
-                <div className="invalid-feedback">
-                  Please enter a valid birth date.
-                </div>
+                <div className="invalid-feedback">{validationErrors.birthDate}</div>
               )}
             </div>
             <div className="mb-3">
@@ -208,18 +205,14 @@ const AddStaffMemberModal = ({ show, onHide, onAdd }) => {
                 required
               />
               {validationErrors.FINCode && (
-                <div className="invalid-feedback">
-                  Please enter a FIN code.
-                </div>
+                <div className="invalid-feedback">{validationErrors.FINCode}</div>
               )}
             </div>
             <div className="mb-3">
               <input
                 type="email"
                 className={`form-control ${
-                  validationErrors.email || !isValidEmail(personalInfo.email)
-                    ? 'is-invalid'
-                    : ''
+                  validationErrors.email ? 'is-invalid' : ''
                 }`}
                 placeholder="Email"
                 name="email"
@@ -227,26 +220,21 @@ const AddStaffMemberModal = ({ show, onHide, onAdd }) => {
                 onChange={handlePersonalInfoChange}
                 required
               />
-              {!isValidEmail(personalInfo.email) && (
-                <div className="invalid-feedback">
-                  Please enter a valid email address.
-                </div>
+              {validationErrors.email && (
+                <div className="invalid-feedback">{validationErrors.email}</div>
               )}
             </div>
-            {/* Add other personal info fields with similar structure */}
+            {/* Add more input fields as needed */}
           </div>
           <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onHide}
-            >
+            <button type="button" className="btn btn-secondary" onClick={onHide}>
               Close
             </button>
             <button
               type="button"
               className="btn btn-primary"
               onClick={handleAddClick}
+              disabled={!isFormValid()}
             >
               Add
             </button>
