@@ -12,8 +12,6 @@ import { format } from 'date-fns';
 const Yeni_emekdash = () => {
   const { user } = useContext(AuthContext);
   
-  
-
   const [personalInfo, setPersonalInfo] = useState({
     name: '',
     surname: '',
@@ -89,6 +87,7 @@ const Yeni_emekdash = () => {
     contractDuration: '',
     weeklyWorkingHours: '',
   });
+  const currentDate = new Date();
 
   const [validationErrors, setValidationErrors] = useState({
     name: false,
@@ -149,16 +148,25 @@ const Yeni_emekdash = () => {
     }
   };
 
-  const handleDateChange = (date, field) => {
-    if (field === 'birthDate') {
-      setPersonalInfo({ ...personalInfo, birthDate: date });
-    } else if (field === 'startDate') {
-      setCorporateInfo({ ...corporateInfo, startDate: date });
-    }
+// Calculate minDate and maxDate
+const startBirthDate = new Date();
+startBirthDate.setFullYear(currentDate.getFullYear() - 65);
 
-    // Remove the "is-invalid" class when the user selects a date
-    setValidationErrors({ ...validationErrors, [field]: false });
-  };
+const endBirthDate = new Date();
+endBirthDate.setFullYear(currentDate.getFullYear() - 18);
+
+const handleDateChange = (date, field) => {
+  // Handle date changes for the specified field
+  if (field === 'birthDate') {
+    setPersonalInfo({ ...personalInfo, birthDate: date });
+  } else if (field === 'startDate') {
+    setCorporateInfo({ ...corporateInfo, startDate: date });
+  }
+
+  // Remove the "is-invalid" class when the user selects a date
+  setValidationErrors({ ...validationErrors, [field]: false });
+};
+
 
   const isFormValid = () => {
     // Add your form validation logic here
@@ -349,23 +357,26 @@ const Yeni_emekdash = () => {
                 )}
               </div>
               <div className="mb-3">
-                <DatePicker
-                  selected={personalInfo.birthDate}
-                  onChange={(date) => handleDateChange(date, 'birthDate')}
-                  className={`form-control ${
-                    validationErrors.birthDate ? 'is-invalid' : ''
-                  }`}
-                  locale={az}
-                  placeholderText="Doğum tarixi"
-                  showYearDropdown
-                  showMonthDropdown
-                  dateFormat="MMM d, yyyy"
-                />
-                {validationErrors.birthDate && (
-                  <div className="invalid-feedback">
-                    Zəhmət olmasa doğum tarixinizi daxil edin.
-                  </div>
-                )}
+              <DatePicker
+        selected={personalInfo.birthDate}
+        onChange={(date) => handleDateChange(date, 'birthDate')}
+        className={`form-control ${
+          validationErrors.birthDate ? 'is-invalid' : ''
+        }`}
+        locale="az"
+        placeholderText="Doğum tarixi"
+        showYearDropdown
+        showMonthDropdown
+        dateFormat="MMM d, yyyy"
+        minDate={startBirthDate} // Set minDate
+        maxDate={endBirthDate}   // Set maxDate
+        yearDropdownItemNumber={100}
+      />
+      {validationErrors.birthDate && (
+        <div className="invalid-feedback">
+          Zəhmət olmasa doğum tarixinizi daxil edin.
+        </div>
+      )}
               </div>
               <div className="mb-3">
                 <input

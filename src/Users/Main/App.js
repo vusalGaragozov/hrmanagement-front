@@ -23,6 +23,7 @@ import Tətbiqetmə from '../../Visitors/Tetbiqetme.js';
 import Əlaqə from '../../Visitors/Elaqe.js';
 import './style.css'; 
 import İstifadəçi from './Istifadechi.js'
+import Ezamiyyetler from '../Muracietler/Ezamiyyetler.js';
 
 
 
@@ -54,6 +55,7 @@ function App() {
             <Route path="/kpi" element={<KPI />} />
             <Route path="/recruitment" element={<Recruitment />} />
             <Route path="/userpage" element={<İstifadəçi />} />
+            <Route path="/business_trips" element={<Ezamiyyetler />} />
           </Routes>
         </div>
       </Router>

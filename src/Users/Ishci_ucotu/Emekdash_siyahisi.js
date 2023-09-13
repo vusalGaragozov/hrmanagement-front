@@ -9,14 +9,12 @@
   import ReactHTMLTableToExcel from 'react-html-table-to-excel';
   import Modal from 'react-bootstrap/Modal';
   import Button from 'react-bootstrap/Button';
-  import DefaultColumnFilter from './DefaultColumnFilter'; // You need to create this filter component
-
 
   const StaffTable = () => {
     const { user } = useContext(AuthContext);
 
     const [selectedStaff, setSelectedStaff] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false); // State to control the modal
+    const [isModalOpen, setIsModalOpen] = useState(false); 
     const [editedFields, setEditedFields] = useState({
       personalInfo: {
         name: '',
@@ -34,22 +32,17 @@
           // Add fields and initial error messages for corporateInfo here
         },
       });
-
-
-      const formatDate = (dateString) => {
+      const [filterMenusVisible, setFilterMenusVisible] = useState({});
+      const formatDate = (dateString, dateFormat = 'dd-MM-yyyy') => {
         if (!dateString || !isValid(parseISO(dateString))) {
           // Handle invalid date format or empty date string
           return 'Invalid Date';
         }
-        return format(new Date(dateString), 'MMM d, yyyy', { locale: az });
+        return format(new Date(dateString), dateFormat, { locale: az });
       };
       
-      
-
     const [selectedGender, setSelectedGender] = useState('');
 
-    
-// Helper function to format a number with commas
 function formatNumber(number) {
   if (number === null || number === undefined) {
     return '';
@@ -57,66 +50,67 @@ function formatNumber(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-// Helper function to remove commas and convert the formatted number back to its original format
 function unformatNumber(formattedNumber) {
   return formattedNumber.replace(/,/g, '');
 }
 
-const DateColumnFilter = ({ column }) => {
-  return (
-    <input
-      type="date"
-      onChange={(e) => {
-        const parsedDate = e.target.value ? format(new Date(e.target.value), 'yyyy-MM-dd') : undefined;
-        column.setFilter(parsedDate);
-      }}
-      value={column.filterValue || ''}
-      placeholder={`Filter ${column.Header}`}
-      className="form-control"
-    />
-  );
-};
-    
+ const [isButtonEnabled, setIsButtonEnabled] = useState(true); 
+ const [isEmailValid, setIsEmailValid] = useState(true);
+
+const currentDate = new Date();
+const startBirthDate = new Date();
+const emailFormatRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+let emailValue = '';
+startBirthDate.setFullYear(currentDate.getFullYear() - 65);
+const isValidEmail = emailFormatRegex.test(emailValue);
+const endBirthDate = new Date();
+endBirthDate.setFullYear(currentDate.getFullYear() - 18);
 
     const handleRowClick = (staffMember) => {
-      console.log('Clicked staff member:', staffMember); // Debugging statement
-    
+      console.log('Clicked staff member:', staffMember); 
       setSelectedStaff(staffMember);
     
-      // Make a deep copy of selectedStaff and set it as the initial state for editedFields
       setEditedFields(JSON.parse(JSON.stringify(staffMember)));
     
-      setIsModalOpen(true); // Open the modal
+      setIsModalOpen(true); 
     };
-    
-
     const handleModalClose = () => {
-      setIsModalOpen(false); // Close the modal
+      setIsModalOpen(false); 
     };
     const isFieldEmpty = (fieldValue) => {
       return fieldValue === '' || fieldValue === null;
     };
-    const [clearedFields, setClearedFields] = useState({}); // Initialize cleared fields
+    const [clearedFields, setClearedFields] = useState({});
 
     const handleFieldChange = (updatedValue, field, category) => {
       if (isFieldEmpty(updatedValue)) {
-        // Show a Bootstrap notification only if the field is fully deleted
         setClearedFields({
           ...clearedFields,
           [field]: 'Boş qala bilməz.',
         });
       } else {
-        // Clear the notification for this field
         const { [field]: clearedField, ...rest } = clearedFields;
         setClearedFields(rest);
       }
     
-      // Check if the field being updated is 'startDate'
       if (field === 'startDate' && updatedValue) {
-        // Format the date and update it in editedFields
         updatedValue = format(new Date(updatedValue), 'yyyy-MM-dd');
       }
+      let emailValue;
+
+      if (field === 'email') {
+        const emailValue = updatedValue;
+        const isValidEmail = emailFormatRegex.test(emailValue);
+        setIsEmailValid(isValidEmail); // Update email validation state
     
+        setValidationErrors((prevErrors) => ({
+          ...prevErrors,
+          personalInfo: {
+            ...prevErrors.personalInfo,
+            email: isValidEmail ? '' : 'Email formatı yanlışdır!',
+          },
+      }));
+    }
       setEditedFields((prevFields) => ({
         ...prevFields,
         [category]: {
@@ -130,14 +124,11 @@ const DateColumnFilter = ({ column }) => {
         personalInfo: {
           name: '',
           surname: '',
-          // Add other nested fields here
         },
         corporateInfo: {
-          // Add fields and initial error messages for corporateInfo here
         },
       };
     
-      // Check if required fields are filled
       if (!data.personalInfo.name) {
         errors.personalInfo.name = 'Name is required.';
       }
@@ -145,18 +136,18 @@ const DateColumnFilter = ({ column }) => {
       if (!data.personalInfo.surname) {
         errors.personalInfo.surname = 'Surname is required.';
       }
-    
-      // Add more validation checks as needed for other fields
-    
-      setValidationErrors(errors);
-    
-      // Check if there are any validation errors
+
+      setValidationErrors((prevErrors) => ({
+        ...prevErrors,
+        personalInfo: {
+          ...prevErrors.personalInfo,
+          email: isValidEmail ? '' : 'Email formatı yanlışdır!',
+        },}));
+        handleFieldChange(emailValue, 'email', 'personalInfo');
       return Object.values(errors).every((category) =>
         Object.values(category).every((error) => !error)
       );
     };
-    
-    
     
     const handleUpdate = () => {
       if (!selectedStaff || !selectedStaff._id) {
@@ -164,23 +155,19 @@ const DateColumnFilter = ({ column }) => {
         return;
       }
     
-      // Add your validation logic here
-      if (!validateData(editedFields)) {
-        // Handle validation error, e.g., display an error message
+      if (!validateData(editedFields, emailValue)) {
         console.error('Validation failed');
         return;
       }
-      const staffId = selectedStaff._id; // Extract the ID
+      const staffId = selectedStaff._id; 
       const formattedBirthDate = formatDate(editedFields.personalInfo.birthDate);
-      const formattedStartDate = formatDate(editedFields.corporateInfo.startDate); // Format the startDate
+      const formattedStartDate = formatDate(editedFields.corporateInfo.startDate); 
     
-      // Validate corporateInfo.startDate before attempting to update
       if (
         editedFields.corporateInfo &&
         typeof editedFields.corporateInfo.startDate === 'string' &&
         !isNaN(Date.parse(editedFields.corporateInfo.startDate))
       ) {
-        // The startDate is a valid date string
         const updatedFields = {
           ...editedFields,
           personalInfo: {
@@ -189,11 +176,9 @@ const DateColumnFilter = ({ column }) => {
           },
           corporateInfo: {
             ...editedFields.corporateInfo,
-            startDate: formattedStartDate, // Update the startDate
+            startDate: formattedStartDate, 
           },
         };
-    
-        // Send the edited fields to the backend
         fetch(`http://localhost:3001/api/staffmembers/${staffId}`, {
           method: 'PUT',
           headers: {
@@ -209,14 +194,11 @@ const DateColumnFilter = ({ column }) => {
           })
           .then((updatedStaffMember) => {
             console.log('Response from backend:', updatedStaffMember);
-            // Update the selected staff member with the response from the backend
             setSelectedStaff(updatedStaffMember);
-            // Close the modal
             setIsModalOpen(false);
           })
           .catch((error) => {
             console.error('Error updating staff member:', error);
-            // Log the response content for debugging
             error.response.text().then((text) => {
               console.error('Response content:', text);
             });
@@ -229,11 +211,9 @@ const DateColumnFilter = ({ column }) => {
     const [filteredStaffMembers, setFilteredStaffMembers] = useState([]);
 
     useEffect(() => {
-      // Fetch staff members from your backend
       fetch('http://localhost:3001/api/staffmembers')
         .then((response) => response.json())
         .then((data) => {
-          // Filter the staff members added by the currently logged-in user
           const userStaffMembers = data.filter(
             (staffMember) => staffMember.addedBy_email === user.email
           );
@@ -243,7 +223,6 @@ const DateColumnFilter = ({ column }) => {
         .catch((error) => console.error('Error fetching staff members:', error));
     }, [user]);
 
-    // Define an array to keep track of visible columns
     const [visibleColumns, setVisibleColumns] = useState([
       'personalInfo.name',
       'personalInfo.surname',
@@ -252,55 +231,44 @@ const DateColumnFilter = ({ column }) => {
       'personalInfo.FINCode',
     ]);
 
-    // Define the full columns array with user-friendly labels
     const columns = [
       {
         Header: 'Ad',
         accessor: 'personalInfo.name',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Soyad',
         accessor: 'personalInfo.surname',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Ata adı',
         accessor: 'personalInfo.fatherName',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Cins',
         accessor: 'personalInfo.gender',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Doğum tarixi',
         accessor: 'personalInfo.birthDate',
         Cell: ({ value }) => formatDate(value),
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'FIN kod',
         accessor: 'personalInfo.FINCode',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Email',
         accessor: 'personalInfo.email',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Vəzifə',
         accessor: 'corporateInfo.position',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Əmək haqqı',
         accessor: 'corporateInfo.grossSalary',
-        Filter: DefaultColumnFilter,
         Cell: ({ cell: { value } }) => {
-          // Check if the value is a valid number
           const formattedValue = parseFloat(value);
           if (!isNaN(formattedValue)) {
             return formattedValue.toLocaleString('en-US');
@@ -312,38 +280,31 @@ const DateColumnFilter = ({ column }) => {
       {
         Header: 'Sahə',
         accessor: 'corporateInfo.field',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Başlama tarixi',
         accessor: 'corporateInfo.startDate',
         Cell: ({ value }) => formatDate(value),
-        Filter: DefaultColumnFilter,
       },
       
       {
         Header: 'İllik məzuniyyət gün sayı',
         accessor: 'corporateInfo.annualLeaveDays',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Müqavilə müddəti',
         accessor: 'corporateInfo.contractDuration',
-        Filter: DefaultColumnFilter,
       },
       {
         Header: 'Həftəlik iş saatı',
         accessor: 'corporateInfo.weeklyWorkingHours',
-        Filter: DefaultColumnFilter,
       },
     ];
 
-    // Create a dynamic columns array based on visibleColumns
     const dynamicColumns = useMemo(() => {
       return columns.filter((column) => visibleColumns.includes(column.accessor));
     }, [visibleColumns]);
 
-    // Create an instance of the table
     const {
       getTableProps,
       getTableBodyProps,
@@ -360,11 +321,19 @@ const DateColumnFilter = ({ column }) => {
       useFilters
     );
 
-    // Handle changes in the filters
+    useEffect(() => {
+      // Check if all validation errors are empty and email is valid
+      const isEmailValid = !validationErrors.personalInfo.email;
+      const allErrorsEmpty = Object.values(validationErrors).every((category) =>
+        Object.values(category).every((error) => !error)
+      );
+    
+      // Update isButtonEnabled based on email validation and other validation errors
+      setIsButtonEnabled(isEmailValid && allErrorsEmpty);
+    }, [validationErrors]);
     useEffect(() => {
       const filterValues = state.filters;
     
-      // Apply filters to your data
       let filteredData = [...staffMembers];
       filterValues.forEach((filter) => {
         const { id, value } = filter;
@@ -378,18 +347,13 @@ const DateColumnFilter = ({ column }) => {
     
       setFilteredStaffMembers(filteredData);
     }, [state.filters, staffMembers]);
-    
-
-    // Options for react-select to select columns with user-friendly labels
     const columnOptions = columns.map((column) => ({
-      label: column.Header, // Display the user-friendly label
-      value: column.accessor, // Use the accessor as the value
+      label: column.Header, 
+      value: column.accessor, 
     }));
 
-    // Determine whether to show the 'Number' column
     const showNumberColumn = dynamicColumns.length > 0;
 
-    // Modal component
     const renderModal = () => {
       return (
         <Modal show={isModalOpen} onHide={handleModalClose} centered>
@@ -397,7 +361,6 @@ const DateColumnFilter = ({ column }) => {
             <Modal.Title className='Modal-font'>İşçi məlumatların dəyişdirilməsi</Modal.Title>
           </Modal.Header>
           <Modal.Body className='Modal-font'>
-            {/* Display staff member details here */}
             {selectedStaff && (
               <div>
 <div className="name-surname-block">
@@ -457,14 +420,16 @@ const DateColumnFilter = ({ column }) => {
                 </div>
                 <div className="form-group">
   <label>Cins:</label>
-  <input
+  <select
     className={`form-control ${validationErrors.personalInfo.gender ? 'is-invalid' : ''}`}
     value={editedFields.personalInfo && editedFields.personalInfo.gender ? editedFields.personalInfo.gender : ''}
     onChange={(e) => handleFieldChange(e.target.value, 'gender', 'personalInfo')}
-                  />{validationErrors.personalInfo.gender && (
-                    <div className="invalid-feedback">{validationErrors.personalInfo.gender}</div>
-                  )}
-  {selectedGender === '' && ( // Check if no gender is selected
+  >
+    <option value="">Select Gender</option>
+    <option value="Kişi">Kişi</option>
+    <option value="Qadın">Qadın</option>
+  </select>
+  {selectedGender === '' && (
     <div className="invalid-feedback">Cins seçimi boş qala bilməz.</div>
   )}
   {validationErrors.personalInfo.gender && (
@@ -474,10 +439,11 @@ const DateColumnFilter = ({ column }) => {
     <div className="alert alert-danger mt-2 small-notification">{clearedFields.gender}</div>
   )}
 </div>
+
                 <div className="form-group">
     <label>Doğum tarixi:</label>
     <div>
-<DatePicker
+    <DatePicker
   selected={editedFields.personalInfo.birthDate ? new Date(editedFields.personalInfo.birthDate) : null}
   onChange={(date) => handleFieldChange(
     date ? format(date, 'yyyy-MM-dd') : null,
@@ -485,10 +451,16 @@ const DateColumnFilter = ({ column }) => {
     'personalInfo'
   )}
   locale={az}
-  dateFormat="yyyy-MM-dd"
+  dateFormat="yyyy-MM-dd" 
   className={`form-control ${validationErrors.personalInfo.birthDate ? 'is-invalid' : ''}`}
   placeholderText="Doğum tarixi"
+  showYearDropdown
+  showMonthDropdown
+  minDate={startBirthDate}
+  maxDate={endBirthDate}
+  yearDropdownItemNumber={100}
 />
+
 {validationErrors.personalInfo.birthDate && (
       <div className="invalid-feedback">{validationErrors.personalInfo.birthDate}</div>
     )}
@@ -512,19 +484,40 @@ const DateColumnFilter = ({ column }) => {
                   )}
                 </div>
                 <div className="form-group">
-                  <label>Email:</label>
-                  <input
-                    type="text"
-                    className={`form-control ${validationErrors.personalInfo.email ? 'is-invalid' : ''}`}
-                    value={editedFields.personalInfo && editedFields.personalInfo.email ? editedFields.personalInfo.email : ''}
-                    onChange={(e) => handleFieldChange(e.target.value, 'email', 'personalInfo')}
-                  />{validationErrors.personalInfo.email && (
-                    <div className="invalid-feedback">{validationErrors.personalInfo.email}</div>
-                  )}
-                  {clearedFields.email && (
-                    <div className="alert alert-danger mt-2 small-notification">{clearedFields.email}</div>
-                  )}
-                </div>
+  <label>Email:</label>
+  <input
+    type="text"
+    className={`form-control ${
+      validationErrors.personalInfo.email ? 'is-invalid' : ''
+    }`}
+    value={
+      editedFields.personalInfo && editedFields.personalInfo.email
+        ? editedFields.personalInfo.email
+        : ''
+    }
+    onChange={(e) => {
+      const emailValue = e.target.value;
+      const emailFormatRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+      const isValidEmail = emailFormatRegex.test(emailValue);
+
+      setValidationErrors((prevErrors) => ({
+        ...prevErrors,
+        personalInfo: {
+          ...prevErrors.personalInfo,
+          email: isValidEmail ? '' : 'Email formatı yanlışdır!',
+        },
+      }));
+
+      handleFieldChange(emailValue, 'email', 'personalInfo');
+    }}
+  />
+  {validationErrors.personalInfo.email && (
+    <div className="invalid-feedback">{validationErrors.personalInfo.email}</div>
+  )}
+  {clearedFields.email && (
+    <div className="alert alert-danger mt-2 small-notification">{clearedFields.email}</div>
+  )}
+</div>
                 <div className="form-group">
                   <label>Şöbə:</label>
                   <input
@@ -559,16 +552,22 @@ const DateColumnFilter = ({ column }) => {
     type="text"
     className={`form-control ${validationErrors.corporateInfo.grossSalary ? 'is-invalid' : ''}`}
     value={formatNumber(editedFields.corporateInfo && editedFields.corporateInfo.grossSalary)}
-    onChange={(e) => handleFieldChange(unformatNumber(e.target.value), 'grossSalary', 'corporateInfo')}
+    onChange={(e) => {
+      let input = e.target.value;
+      input = input.replace(/[^0-9]/g, '');
+      if (input.length > 5) {
+        input = input.substr(0, 5);
+      }
+      handleFieldChange(unformatNumber(input), 'grossSalary', 'corporateInfo');
+    }}
   />
-  {validationErrors.personalInfo.grossSalary && (
+  {validationErrors.corporateInfo.grossSalary && (
     <div className="invalid-feedback">{validationErrors.corporateInfo.grossSalary}</div>
   )}
   {clearedFields.grossSalary && (
     <div className="alert alert-danger mt-2 small-notification">{clearedFields.grossSalary}</div>
   )}
 </div>
-
                 <div className="form-group">
                   <label>Sahə:</label>
                   <input
@@ -594,7 +593,7 @@ const DateColumnFilter = ({ column }) => {
     'corporateInfo'
   )}
   locale={az}
-  dateFormat="yyyy-MM-dd" // Corrected date format
+  dateFormat="yyyy-MM-dd" 
   className={`form-control ${validationErrors.corporateInfo.startDate ? 'is-invalid' : ''}`}
   placeholderText="İşə başlama tarixi"
 />
@@ -609,7 +608,7 @@ const DateColumnFilter = ({ column }) => {
                 <div className="form-group">
                   <label>İllik məzuniyyət gün sayı:</label>
                   <input
-                    type="text"
+                    type="number"
                     className={`form-control ${validationErrors.corporateInfo.annualLeaveDays ? 'is-invalid' : ''}`}
                     value={editedFields.corporateInfo && editedFields.corporateInfo.annualLeaveDays ? editedFields.corporateInfo.annualLeaveDays : ''}
                     onChange={(e) => handleFieldChange(e.target.value, 'annualLeaveDays', 'corporateInfo')}
@@ -623,7 +622,7 @@ const DateColumnFilter = ({ column }) => {
                 <div className="form-group">
                   <label>Müqavilə müddəti (ayla):</label>
                   <input
-                    type="text"
+                    type="number"
                     className={`form-control ${validationErrors.corporateInfo.contractDuration ? 'is-invalid' : ''}`}
                     value={editedFields.corporateInfo && editedFields.corporateInfo.contractDuration ? editedFields.corporateInfo.contractDuration : ''}
                     onChange={(e) => handleFieldChange(e.target.value, 'contractDuration', 'corporateInfo')}
@@ -637,7 +636,7 @@ const DateColumnFilter = ({ column }) => {
                 <div className="form-group">
                   <label>Həftəlik iş saatı:</label>
                   <input
-                    type="text"
+                    type="number"
                     className={`form-control ${validationErrors.corporateInfo.weeklyWorkingHours ? 'is-invalid' : ''}`}
                     value={editedFields.corporateInfo && editedFields.corporateInfo.weeklyWorkingHours ? editedFields.corporateInfo.weeklyWorkingHours : ''}
                     onChange={(e) => handleFieldChange(e.target.value, 'weeklyWorkingHours', 'corporateInfo')}
@@ -648,7 +647,6 @@ const DateColumnFilter = ({ column }) => {
                     <div className="alert alert-danger mt-2 small-notification">{clearedFields.weeklyWorkingHours}</div>
                   )}
                 </div>
-                {/* Add more editable fields */}
               </div>
             )}
           </Modal.Body>
@@ -656,7 +654,7 @@ const DateColumnFilter = ({ column }) => {
             <Button variant="secondary" onClick={handleModalClose}>
               Bağla
             </Button>
-            <Button variant="primary" onClick={handleUpdate}>
+            <Button variant="primary" onClick={handleUpdate} disabled={!isButtonEnabled}>
               Əlavə et
             </Button>
           </Modal.Footer>
@@ -672,14 +670,12 @@ const DateColumnFilter = ({ column }) => {
           <ReactHTMLTableToExcel
             id="test-table-xls-button"
             className="btn btn-primary"
-            table="table-to-xls" // ID of the table to export
-            filename="staff-members" // File name for the exported file
+            table="table-to-xls" 
+            filename="staff-members" 
             sheet="staff-members"
             buttonText="Excel fayl endir"
           />
         </div>
-
-        {/* Use react-select for column selection */}
         <Select
           isMulti
           options={columnOptions}
@@ -688,16 +684,12 @@ const DateColumnFilter = ({ column }) => {
             value: column,
           }))}
           onChange={(selectedOptions) => {
-            // Extract the selected columns
             const selectedColumns = selectedOptions.map((option) => option.value);
-            // Update the visibleColumns state
             setVisibleColumns(selectedColumns);
           }}
           className="mb-3"
           placeholder="Məlumat əlavə et..."
         />
-
-        {/* Render the table */}
         <table
           {...getTableProps()}
           id="table-to-xls"
@@ -732,7 +724,7 @@ const DateColumnFilter = ({ column }) => {
                 <tr
                   {...row.getRowProps()}
                   onClick={() => handleRowClick(row.original)}
-                  style={{ cursor: 'pointer' }} // Add cursor pointer for clickable rows
+                  style={{ cursor: 'pointer' }} 
                 >
                   {showNumberColumn && (
                     <td style={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
@@ -748,7 +740,6 @@ const DateColumnFilter = ({ column }) => {
           </tbody>
         </table>
 
-        {/* Modal component */}
         {isModalOpen && renderModal()}
       </div>
     );

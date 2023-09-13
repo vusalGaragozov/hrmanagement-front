@@ -34,6 +34,9 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
             <Link className="dropdown-item" to="/vacation">
               Məzuniyyət müraciəti
             </Link>
+            <Link className="dropdown-item" to="/business_trips">
+              Ezamiyyətlər
+            </Link>
             <Link className="dropdown-item" to="/away">
               İcazə forması
             </Link>

@@ -1,25 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import '@fortawesome/fontawesome-free/css/all.css';
 import az from 'date-fns/locale/az';
 import './Muracietler.css';
 import { AuthContext } from '../Main/AuthContext';
-import mammoth from 'mammoth';
 
-
-const Mezuniyyet_muracieti = () => {
+const Ezamiyyetler = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [paymentTiming, setPaymentTiming] = useState('immediate');
   const [approvers, setApprovers] = useState('');
   const [senediImzalayacaqRehber, setSenediImzalayacaqRehber] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
-  const [generatedText, setGeneratedText] = useState({
-    textForWebPage: '',
-    textForPrinting: '',
-  });
-  const { user } = useContext(AuthContext);
+  const [generatedText, setGeneratedText] = useState('');
+  const {user} = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleStartDateChange = (date) => {
@@ -87,29 +83,16 @@ const Mezuniyyet_muracieti = () => {
     }
   }, [startDate, endDate, paymentTiming, approvers, senediImzalayacaqRehber]);
 
-  const handleSave = async () => {
-    const textToSave = generatedText.textForPrinting;
-  
-    try {
-      const result = await mammoth.convertHtml(textToSave, {
-        styleMap: [
-          "p[style-name='text-for-printing'] => p",
-          "div[style-name='text-for-printing'] => div",
-        ],
-      });
-  
-      const blob = new Blob([result.value], { type: 'application/msword' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'mazuniyyet.docx';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error converting HTML to Word document:', error);
-    }
+  const handleSave = () => {
+    const textToSave = generatedText.textContent;
+    const blob = new Blob([textToSave], { type: 'application/msword' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'mazuniyyet.docx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
-  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -121,55 +104,31 @@ const Mezuniyyet_muracieti = () => {
     const currentDate = new Date();
     const formattedCurrentDate = formatDate(currentDate);
 
-    // For the web page, hide the content with a CSS class
-    const textForWebPage = `
-      <div class="hidden-for-print">
-        <div class="text-for-webpage">
-          Şirkətin rəhbəri, ${senediImzalayacaqRehber} cənablarına, həmin şirkətdə Maliyyə meneceri vəzifəsində çalışan Vüsal Qaragözov tərəfindən
-        </div>
-        <br /> <br />
-        <div class="text-center">
-          Ərizə
-        </div>
-        <br />
-        <div class="text-for-webpage">
-          Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz.
-        </div>
-        <br /><br /><br /><br />
-        <div class="text-for-webpage">
-          Tarix: ${formattedCurrentDate}
-        </div>
-        <div class="text-for-webpage">
-          İmza:
-        </div>
-      </div>
-    `;
-
-    // For printing, include the content without the hidden class
-    const textForPrinting = `
+    const text = (
       <div>
-        <div class="text-for-printing">
-          Şirkətin rəhbəri, ${senediImzalayacaqRehber} cənablarına, həmin şirkətdə Maliyyə meneceri vəzifəsində çalışan Vüsal Qaragözov t
+        <div className="align-text-right">
+          Şirkətin rəhbəri, {senediImzalayacaqRehber} cənablarına, həmin şirkətdə Maliyyə meneceri vəzifəsində çalışan Vüsal Qaragözov tərəfindən
         </div>
         <br /> <br />
-        <div class="text-center">
+        <div className="align-text-center">
           Ərizə
         </div>
-        <br />
-        <div class="text-for-printing">
-          Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz.
+        <br/>
+        <div className="align-text-left">
+          Yazıb Sizdən xahiş edirəm ki, mənə {formattedStartDate} tarixindən {formattedEndDate} tarixinədək ({daysDifference} təqvim günü) məzuniyyət verəsiniz.
         </div>
-        <br /><br /><br /><br />
-        <div class="text-for-printing">
-          Tarix: ${formattedCurrentDate}
+        <br/><br/><br/><br/>
+        <div className="align-text-left">
+          Tarix: {formattedCurrentDate}
         </div>
-        <div class="text-for-printing">
+          
+        <div className="align-text-left">
           İmza:
         </div>
       </div>
-    `;
+    );
 
-    setGeneratedText({ textForWebPage, textForPrinting });
+    setGeneratedText(text);
   };
 
   return (
@@ -214,10 +173,10 @@ const Mezuniyyet_muracieti = () => {
                     />
                   </div>
                 </div>
-                <div className="mb-3 row">
-                  <label className="col-md-6 col-form-label">Ödəniş vaxtı:</label>
+                <div className="mb-3 row ">
+                  <label className="col-md-6 col-form-label ">Ödəniş vaxtı:</label>
                   <div className="col-md-6 ">
-                    <div className="input-group">
+                    <div className="input-group ">
                       <select
                         value={paymentTiming}
                         onChange={(e) => setPaymentTiming(e.target.value)}
@@ -226,6 +185,11 @@ const Mezuniyyet_muracieti = () => {
                         <option value="immediate">Dərhal</option>
                         <option value="later">Ay sonunda</option>
                       </select>
+                      <div className="input-group-append">
+                        <span className="input-group-text">
+                          <i className="fas fa-caret-down"></i>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -278,45 +242,7 @@ const Mezuniyyet_muracieti = () => {
               </button>
               <button
                 className={`btn btn-primary ${isFormValid ? '' : 'disabled'}`}
-                onClick={() => {
-                  const printWindow = window.open('', '', 'width=600,height=600');
-                  printWindow.document.open();
-                  printWindow.document.write(`
-                    <html>
-                    <head>
-                      <title>Print</title>
-                      <style>
-                        @page {
-                          size: A4;
-                          margin: 0;
-                        }
-                        body {
-                          margin: 0;
-                          padding: 0;
-                        }
-                        #printable-content {
-                          display: flex;
-                          flex-direction: column;
-                          justify-content: center;
-                          align-items: center;
-                          min-height: 100vh;
-                        }
-                        .text-for-printing {
-                          text-align: left;
-                        }
-                      </style>
-                    </head>
-                    <body>
-                      <div id="printable-content">
-                        ${generatedText.textForPrinting}
-                      </div>
-                    </body>
-                    </html>
-                  `);
-                  printWindow.document.close();
-                  printWindow.print();
-                  printWindow.close();
-                }}
+                onClick={() => window.print()}
                 style={{ margin: '0 10px' }}
               >
                 Çap et
@@ -330,9 +256,9 @@ const Mezuniyyet_muracieti = () => {
               </button>
             </div>
             <hr style={{ margin: '20px 0', borderColor: '#6c757d' }} />
-            {generatedText.textForWebPage && (
+            {generatedText && (
               <div className="mt-5">
-                <p dangerouslySetInnerHTML={{ __html: generatedText.textForWebPage }} />
+                <p>{generatedText}</p>
               </div>
             )}
           </div>
@@ -342,4 +268,4 @@ const Mezuniyyet_muracieti = () => {
   );
 };
 
-export default Mezuniyyet_muracieti;
+export default Ezamiyyetler;

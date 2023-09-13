@@ -1,0 +1,31 @@
+/* print.css */
+
+/* Hide unnecessary elements */
+body * {
+    display: none !important;
+  }
+  
+  /* Display only the content you want to print */
+  #printable-content {
+    display: block !important;
+  }
+  
+  /* Define A4 paper size */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  
+  /* Ensure content fits on one page */
+  @media print {
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  
+    #printable-content {
+      margin: 0;
+      padding: 20px;
+    }
+  }
+  
