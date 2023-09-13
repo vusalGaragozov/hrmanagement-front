@@ -24,6 +24,7 @@ import Əlaqə from '../../Visitors/Elaqe.js';
 import './style.css'; 
 import İstifadəçi from './Istifadechi.js'
 import Ezamiyyetler from '../Muracietler/Ezamiyyetler.js';
+import Struktur from '../Struktur/Struktur.js';
 
 
 
@@ -56,6 +57,7 @@ function App() {
             <Route path="/recruitment" element={<Recruitment />} />
             <Route path="/userpage" element={<İstifadəçi />} />
             <Route path="/business_trips" element={<Ezamiyyetler />} />
+            <Route path="/structure" element={<Struktur />} />
           </Routes>
         </div>
       </Router>

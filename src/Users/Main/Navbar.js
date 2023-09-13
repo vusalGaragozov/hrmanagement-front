@@ -106,6 +106,11 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
             İşçi cəlbi
           </Link>
         </li>
+        <li className="nav-item">
+          <Link className="nav-link" to="/structure">
+            Struktur
+          </Link>
+        </li>
         <li className="nav-item ml-3">
           <span className="nav-link">
             <span className="material-symbols-outlined">&#xe7fd;</span> {user.firstname} {user.lastname}

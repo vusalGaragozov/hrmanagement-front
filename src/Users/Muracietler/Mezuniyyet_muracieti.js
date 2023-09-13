@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import az from 'date-fns/locale/az';
 import './Muracietler.css';
 import { AuthContext } from '../Main/AuthContext';
-import mammoth from 'mammoth';
+import html2pdf from 'html2pdf.js';
+
+
 
 
 const Mezuniyyet_muracieti = () => {
@@ -15,10 +17,48 @@ const Mezuniyyet_muracieti = () => {
   const [approvers, setApprovers] = useState('');
   const [senediImzalayacaqRehber, setSenediImzalayacaqRehber] = useState('');
   const [isFormValid, setIsFormValid] = useState(false);
+  const pdfRef = useRef();
   const [generatedText, setGeneratedText] = useState({
     textForWebPage: '',
     textForPrinting: '',
   });
+  const handleDownloadPdf = () => {
+    console.log('handleDownloadPdf called');
+    const pdfOptions = {
+      margin: 10,
+      filename: 'document.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    };
+
+    const content = document.getElementById('pdf-content');
+    console.log('pdfOptions:', pdfOptions);
+    console.log('content:', content);
+
+    if (content) {
+      // Use html2pdf to generate and save the PDF
+      html2pdf()
+        .set(pdfOptions)
+        .from(content)
+        .save()
+        .then(() => {
+          console.log('PDF saved successfully.');
+        })
+        .catch((error) => {
+          console.error('Error saving PDF:', error);
+        });
+    }
+  };
+  useEffect(() => {
+    // Wait for the content to be rendered
+    const contentElement = document.getElementById('pdf-content');
+  
+    if (contentElement) {
+      // Content is available, proceed with PDF generation
+      handleDownloadPdf();
+    }
+  }, []); 
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -87,30 +127,10 @@ const Mezuniyyet_muracieti = () => {
     }
   }, [startDate, endDate, paymentTiming, approvers, senediImzalayacaqRehber]);
 
-  const handleSave = async () => {
-    const textToSave = generatedText.textForPrinting;
-  
-    try {
-      const result = await mammoth.convertHtml(textToSave, {
-        styleMap: [
-          "p[style-name='text-for-printing'] => p",
-          "div[style-name='text-for-printing'] => div",
-        ],
-      });
-  
-      const blob = new Blob([result.value], { type: 'application/msword' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'mazuniyyet.docx';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Error converting HTML to Word document:', error);
-    }
+  const handleSave = () => {
+
   };
   
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -123,7 +143,7 @@ const Mezuniyyet_muracieti = () => {
 
     // For the web page, hide the content with a CSS class
     const textForWebPage = `
-      <div class="hidden-for-print">
+      <div class="hidden-for-print" id="pdf-content" >
         <div class="text-for-webpage">
           Şirkətin rəhbəri, ${senediImzalayacaqRehber} cənablarına, həmin şirkətdə Maliyyə meneceri vəzifəsində çalışan Vüsal Qaragözov tərəfindən
         </div>
@@ -322,12 +342,14 @@ const Mezuniyyet_muracieti = () => {
                 Çap et
               </button>
               <button
-                className={`btn btn-primary ${isFormValid ? '' : 'disabled'}`}
-                onClick={handleSave}
-                style={{ marginLeft: '10px' }}
-              >
-                Yüklə
-              </button>
+          className={`btn btn-primary ${isFormValid ? '' : 'disabled'}`}
+          onClick={handleDownloadPdf}
+          style={{ marginRight: '10px' }}
+        >
+          Yüklə
+        </button>
+
+
             </div>
             <hr style={{ margin: '20px 0', borderColor: '#6c757d' }} />
             {generatedText.textForWebPage && (
