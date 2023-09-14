@@ -8,6 +8,7 @@ import axios from 'axios';
 import { API_URL } from '../Other/config';
 import { AuthContext } from '../Main/AuthContext.js';
 import { format } from 'date-fns';
+import numeral from 'numeral';
 
 const Yeni_emekdash = () => {
   const { user } = useContext(AuthContext);
@@ -77,6 +78,19 @@ const Yeni_emekdash = () => {
     }
   };
 
+  const handleGrossSalaryChange = (e) => {
+    const { name, value } = e.target;
+
+    // Remove non-numeric characters and limit to 5 digits
+    const numericValue = value.replace(/\D/g, '').substring(0, 5);
+
+    // Conditionally set the value to an empty string when numericValue is zero or input is empty
+    const formattedValue = numericValue === '0' || value === '' ? '' : numeral(numericValue).format('0,0');
+    
+    setCorporateInfo({ ...corporateInfo, [name]: formattedValue });
+  };
+  
+  
   const [corporateInfo, setCorporateInfo] = useState({
     department: '',
     position: '',
@@ -137,16 +151,19 @@ const Yeni_emekdash = () => {
 
   const handleCorporateInfoChange = (e) => {
     const { name, value } = e.target;
-    setCorporateInfo({ ...corporateInfo, [name]: value });
-
-    // Add the "is-invalid" class when the field is empty
-    if (value.trim() === '') {
+    
+    // Add the "is-invalid" class when the field is empty or has an invalid value
+    if (value.trim() === '' || (name === 'grossSalary' && isNaN(value))) {
       setValidationErrors({ ...validationErrors, [name]: true });
     } else {
-      // Remove the "is-invalid" class when the field is not empty
+      // Remove the "is-invalid" class when the field is not empty and has a valid value
       setValidationErrors({ ...validationErrors, [name]: false });
     }
+  
+    // Update the corporateInfo state with the input value
+    setCorporateInfo({ ...corporateInfo, [name]: value });
   };
+  
 
 // Calculate minDate and maxDate
 const startBirthDate = new Date();
@@ -465,17 +482,19 @@ const handleDateChange = (date, field) => {
                 )}
               </div>
               <div className="mb-3">
-                <input
-                  type="text"
-                  className={`form-control ${
-                    validationErrors.grossSalary ? 'is-invalid' : ''
-                  }`}
-                  placeholder="Əmək haqqı"
-                  name="grossSalary"
-                  value={corporateInfo.grossSalary}
-                  onChange={handleCorporateInfoChange}
-                  required
-                />
+              <input
+        type="text"
+        className={`form-control ${
+          validationErrors.grossSalary ? 'is-invalid' : ''
+        }`}
+        placeholder="Əmək haqqı"
+        name="grossSalary"
+        value={corporateInfo.grossSalary}
+        onChange={handleGrossSalaryChange} // Use onChange instead of onBlur
+        required
+      />
+
+
                 {validationErrors.grossSalary && (
                   <div className="invalid-feedback">
                     Zəhmət olmasa gross əmək haqqını daxil edin.
@@ -521,7 +540,7 @@ const handleDateChange = (date, field) => {
               </div>
               <div className="mb-3">
                 <input
-                  type="text"
+                  type="number"
                   className={`form-control ${
                     validationErrors.annualLeaveDays ? 'is-invalid' : ''
                   }`}
@@ -539,7 +558,7 @@ const handleDateChange = (date, field) => {
               </div>
               <div className="mb-3">
                 <input
-                  type="text"
+                  type="number"
                   className={`form-control ${
                     validationErrors.contractDuration ? 'is-invalid' : ''
                   }`}
@@ -557,7 +576,7 @@ const handleDateChange = (date, field) => {
               </div>
               <div className="mb-3">
                 <input
-                  type="text"
+                  type="number"
                   className={`form-control ${
                     validationErrors.weeklyWorkingHours ? 'is-invalid' : ''
                   }`}

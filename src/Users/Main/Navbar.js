@@ -107,6 +107,11 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
           </Link>
         </li>
         <li className="nav-item">
+          <Link className="nav-link" to="/calculator">
+            Kalkulyator
+          </Link>
+        </li>
+        <li className="nav-item">
           <Link className="nav-link" to="/structure">
             Struktur
           </Link>

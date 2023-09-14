@@ -6,7 +6,7 @@ import UserRegistration from './registration.js'; // Fixed the import path
 import Login from './login.js';
 import Tabel from '../Emek_haqqi/Tabel.js'
 import SalaryCalculation from '../Emek_haqqi/Hesablama_cedveli.js';
-import Trainings from '../Telimler/Telimler.js';
+import Telimler from '../Telimler/Telimler.js';
 import KPI from '../KPI/kpi.js';
 import Recruitment from '../Ishci_celbi/Ishci_celbi.js';
 import Əməkdaş_siyahısı from '../Ishci_ucotu/Emekdash_siyahisi.js';
@@ -25,6 +25,7 @@ import './style.css';
 import İstifadəçi from './Istifadechi.js'
 import Ezamiyyetler from '../Muracietler/Ezamiyyetler.js';
 import Struktur from '../Struktur/Struktur.js';
+import Kalkulyator from '../Kalkulyator/Kalkulyator.js';
 
 
 
@@ -52,12 +53,13 @@ function App() {
             <Route path="/newstaff" element={<Yeni_emekdash/>} />
             <Route path="/tabel" element={<Tabel />} />
             <Route path="/salarycalculation" element={<SalaryCalculation />} />
-            <Route path="/trainings" element={<Trainings />} />
+            <Route path="/trainings" element={<Telimler />} />
             <Route path="/kpi" element={<KPI />} />
             <Route path="/recruitment" element={<Recruitment />} />
             <Route path="/userpage" element={<İstifadəçi />} />
             <Route path="/business_trips" element={<Ezamiyyetler />} />
             <Route path="/structure" element={<Struktur />} />
+            <Route path="/calculator" element={<Kalkulyator />} />
           </Routes>
         </div>
       </Router>

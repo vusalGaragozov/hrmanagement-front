@@ -26,42 +26,10 @@ const Struktur = () => {
                     children: [
                         {
                             label: 'Sales'
+                           
                         },
                         {
                             label: 'Marketing'
-                        }
-                    ]
-                },
-                {
-                    expanded: true,
-                    type: 'person',
-                    data: {
-                        image: 'https://primefaces.org/cdn/primereact/images/avatar/stephenshaw.png',
-                        name: 'Stephen Shaw',
-                        title: 'CTO'
-                    },
-                    children: [
-                        {
-                            label: 'Development'
-                        },
-                        {
-                            label: 'UI/UX Design'
-                        }
-                    ]
-                }, {
-                    expanded: true,
-                    type: 'person',
-                    data: {
-                        image: 'https://primefaces.org/cdn/primereact/images/avatar/stephenshaw.png',
-                        name: 'Stephen Shaw',
-                        title: 'CTO'
-                    },
-                    children: [
-                        {
-                            label: 'Development'
-                        },
-                        {
-                            label: 'UI/UX Design'
                         }
                     ]
                 }, {

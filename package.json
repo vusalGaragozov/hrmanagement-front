@@ -21,6 +21,7 @@
     "luxon": "^3.4.2",
     "moment": "^2.29.4",
     "mongoose": "^7.4.5",
+    "numeral": "^2.0.6",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "path-browserify": "^1.0.1",
