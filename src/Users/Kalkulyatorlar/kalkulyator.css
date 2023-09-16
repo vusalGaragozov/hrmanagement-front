@@ -1,0 +1,19 @@
+.kalkulyator {
+    font-family: 'Blinker', sans-serif;
+  }
+
+  .summary-row {
+    font-weight: bold;
+    background-color: #88e0ba; /* Background color for the summary row */
+    }
+  
+.summary-header  {
+    margin: 0;
+    font-size: 28px; /* Adjust the font size as needed */
+    font-weight: bold; /* Bold text */
+    color: #333; /* Dark gray color */
+    padding-bottom: 10px; /* Space below the title */
+    border-bottom: 2px solid #007bff; /* Blue underline */
+    display: flex;
+    align-items: center;
+  }

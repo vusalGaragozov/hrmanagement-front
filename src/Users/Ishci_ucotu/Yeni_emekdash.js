@@ -9,9 +9,12 @@ import { API_URL } from '../Other/config';
 import { AuthContext } from '../Main/AuthContext.js';
 import { format } from 'date-fns';
 import numeral from 'numeral';
+import Select from 'react-select';
 
 const Yeni_emekdash = () => {
   const { user } = useContext(AuthContext);
+  const [registeredStaffMembers, setRegisteredStaffMembers] = useState([]);
+
   
   const [personalInfo, setPersonalInfo] = useState({
     name: '',
@@ -37,7 +40,7 @@ const Yeni_emekdash = () => {
       email: '',
     });
     setCorporateInfo({
-      department: '',
+      lineManager: null,
       position: '',
       grossSalary: '',
       field: '',
@@ -47,6 +50,30 @@ const Yeni_emekdash = () => {
       weeklyWorkingHours: '',
     });
     setIsSuccessVisible(false);
+  };
+
+  useEffect(() => {
+    // Fetch registered staff members when the component mounts
+    fetchRegisteredStaffMembers();
+  }, []);
+
+  const fetchRegisteredStaffMembers = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/registeredstaffmembers', {
+        credentials: 'include', // Include credentials for CORS
+      });
+      const data = await response.json();
+      setRegisteredStaffMembers(data);
+    } catch (error) {
+      console.error('Error fetching registered staff members:', error);
+    }
+  };
+
+  const handleLineManagerChange = (selectedOption) => {
+    setCorporateInfo({
+      ...corporateInfo,
+      lineManager: selectedOption,
+    });
   };
 
   // Function to hide the success message after a delay
@@ -80,19 +107,20 @@ const Yeni_emekdash = () => {
 
   const handleGrossSalaryChange = (e) => {
     const { name, value } = e.target;
-
-    // Remove non-numeric characters and limit to 5 digits
-    const numericValue = value.replace(/\D/g, '').substring(0, 5);
-
+  
+    // Remove commas and convert to a number
+    const numericValue = parseFloat(value.replace(/,/g, ''));
+  
     // Conditionally set the value to an empty string when numericValue is zero or input is empty
-    const formattedValue = numericValue === '0' || value === '' ? '' : numeral(numericValue).format('0,0');
-    
+    const formattedValue = isNaN(numericValue) ? '' : numericValue;
+  
     setCorporateInfo({ ...corporateInfo, [name]: formattedValue });
   };
   
   
+  
   const [corporateInfo, setCorporateInfo] = useState({
-    department: '',
+    lineManager: '',
     position: '',
     grossSalary: '',
     field: '',
@@ -111,7 +139,7 @@ const Yeni_emekdash = () => {
     birthDate: false,
     FINCode: false,
     email: false,
-    department: false,
+    lineManager: false,
     position: false,
     grossSalary: false,
     field: false,
@@ -247,9 +275,9 @@ const handleDateChange = (date, field) => {
         birthDate: personalInfo.birthDate === null,
         FINCode: personalInfo.FINCode.trim() === '',
         email: !isValidEmail(personalInfo.email),
-        department: corporateInfo.department.trim() === '',
+        lineManager: corporateInfo.lineManager.value ? false : true, // Check if lineManager has a value
         position: corporateInfo.position.trim() === '',
-        grossSalary: corporateInfo.grossSalary.trim() === '', // Add this line for grossSalary
+        grossSalary: !isNaN(parseFloat(corporateInfo.grossSalary.replace(/,/g, ''))) ? false : true, // Check if grossSalary is a valid number
         field: corporateInfo.field.trim() === '', // Add this line for field
         startDate: corporateInfo.startDate === null, // Add this line for startDate
         annualLeaveDays: corporateInfo.annualLeaveDays.trim() === '', // Add this line for annualLeaveDays
@@ -263,11 +291,25 @@ const handleDateChange = (date, field) => {
     setValidationErrors({});
 
     try {
+      const lineManagerName = corporateInfo.lineManager
+      ? `${corporateInfo.lineManager.label}` // Extract the name and surname from the selected option
+      : '';
+      const grossSalaryValue = corporateInfo.grossSalary
+      ? String(corporateInfo.grossSalary)
+      : '';
       const response = await axios.post(`${API_URL}/api/staffmember`, {
         addedBy_company: user.organization,
         addedBy_email: user.email,
         personalInfo: formattedPersonalInfo, // Use the formatted data
-        corporateInfo: formattedCorporateInfo, // Use the formatted data
+        corporateInfo: {
+          ...corporateInfo,
+          // Update lineManager and grossSalary as needed
+          lineManager: lineManagerName, // Send line manager's name and surname
+          grossSalary: grossSalaryValue, // Use the valid numeric value or 0
+          startDate: corporateInfo.startDate
+            ? format(new Date(corporateInfo.startDate), 'dd-MM-yyyy')
+            : null,
+        },
       });
 
       if (response.status === 201) {
@@ -380,7 +422,6 @@ const handleDateChange = (date, field) => {
         className={`form-control ${
           validationErrors.birthDate ? 'is-invalid' : ''
         }`}
-        locale="az"
         placeholderText="Doğum tarixi"
         showYearDropdown
         showMonthDropdown
@@ -446,23 +487,16 @@ const handleDateChange = (date, field) => {
             <div className="col-md-4 border rounded p-3 register-margin-right">
               <h3 className='register-underline'>Korporativ məlumatlar:</h3>
               <div className="mb-3">
-                <input
-                  type="text"
-                  className={`form-control ${
-                    validationErrors.department ? 'is-invalid' : ''
-                  }`}
-                  placeholder="Şöbə"
-                  name="department"
-                  value={corporateInfo.department}
-                  onChange={handleCorporateInfoChange}
-                  required
-                />
-                {validationErrors.department && (
-                  <div className="invalid-feedback">
-                    Zəhmət olmasa şöbəni daxil edin.
-                  </div>
-                )}
-              </div>
+        <Select
+          options={registeredStaffMembers.map((staffMember) => ({
+            value: staffMember._id, // Use a unique identifier for value
+            label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname}`,
+          }))}
+          value={corporateInfo.lineManager}
+          onChange={handleLineManagerChange}
+          placeholder="Xətti rəhbəri seçin"
+        />
+      </div>
               <div className="mb-3">
                 <input
                   type="text"
@@ -494,7 +528,6 @@ const handleDateChange = (date, field) => {
         required
       />
 
-
                 {validationErrors.grossSalary && (
                   <div className="invalid-feedback">
                     Zəhmət olmasa gross əmək haqqını daxil edin.
@@ -502,20 +535,23 @@ const handleDateChange = (date, field) => {
                 )}
               </div>
               <div className="mb-3">
-                <input
-                  type="text"
-                  className={`form-control ${
+                <select
+                  id="field"
+                  className={`form-select ${
                     validationErrors.field ? 'is-invalid' : ''
                   }`}
-                  placeholder="Sahə"
                   name="field"
                   value={corporateInfo.field}
                   onChange={handleCorporateInfoChange}
                   required
-                />
+                >
+                  <option value="">Sektor</option>
+                  <option value="Qeyri-dövlət və qeyri-neft sektoru">Qeyri-dövlət və qeyri-neft sektoru</option>
+                  <option value="Dövlət və neft sektoru">Dövlət və neft sektoru</option>
+                </select>
                 {validationErrors.field && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa sahəni daxil edin.
+                    Zəhmət olmasa sektoru daxil edin.
                   </div>
                 )}
               </div>
@@ -526,7 +562,6 @@ const handleDateChange = (date, field) => {
                   className={`form-control ${
                     validationErrors.startDate ? 'is-invalid' : ''
                   }`}
-                  locale={az}
                   placeholderText="İşə başlama tarixi"
                   showYearDropdown
                   showMonthDropdown

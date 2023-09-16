@@ -522,14 +522,14 @@ endBirthDate.setFullYear(currentDate.getFullYear() - 18);
                   <label>Şöbə:</label>
                   <input
                     type="text"
-                    className={`form-control ${validationErrors.corporateInfo.department ? 'is-invalid' : ''}`}
-                    value={editedFields.corporateInfo && editedFields.corporateInfo.department ? editedFields.corporateInfo.department : ''}
-                    onChange={(e) => handleFieldChange(e.target.value, 'department', 'corporateInfo')}
-                  />{validationErrors.corporateInfo.department && (
-                    <div className="invalid-feedback">{validationErrors.corporateInfo.department}</div>
+                    className={`form-control ${validationErrors.corporateInfo.lineManager ? 'is-invalid' : ''}`}
+                    value={editedFields.corporateInfo && editedFields.corporateInfo.lineManager ? editedFields.corporateInfo.lineManager : ''}
+                    onChange={(e) => handleFieldChange(e.target.value, 'lineManager', 'corporateInfo')}
+                  />{validationErrors.corporateInfo.lineManager && (
+                    <div className="invalid-feedback">{validationErrors.corporateInfo.lineManager}</div>
                   )}
-                  {clearedFields.department && (
-                    <div className="alert alert-danger mt-2 small-notification">{clearedFields.department}</div>
+                  {clearedFields.lineManager && (
+                    <div className="alert alert-danger mt-2 small-notification">{clearedFields.lineManager}</div>
                   )}
                 </div>
                 <div className="form-group">

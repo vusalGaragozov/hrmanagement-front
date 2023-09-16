@@ -106,10 +106,32 @@ const LoggedInNavbar = ({ user, handleLogout }) => (
             İşçi cəlbi
           </Link>
         </li>
-        <li className="nav-item">
-          <Link className="nav-link" to="/calculator">
+        <li className="nav-item dropdown">
+          <a
+            className="nav-link dropdown-toggle"
+            id="navbarDropdown3"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
             Kalkulyator
-          </Link>
+          </a>
+          <div className="dropdown-menu" aria-labelledby="navbarDropdown3">
+            <Link className="dropdown-item" to="/calculator">
+              Əmək haqqı
+            </Link>
+            <Link className="dropdown-item" to="/vacation_calculator">
+              Məzuniyyət
+            </Link>
+            <Link className="dropdown-item" to="/trip_payment">
+              Ezamiyyət
+            </Link>
+            <Link className="dropdown-item" to="/sick_leave_calculator">
+              Xəstəlik vərəqəsi
+            </Link>
+          
+          </div>
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/structure">

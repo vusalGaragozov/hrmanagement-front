@@ -25,7 +25,10 @@ import './style.css';
 import İstifadəçi from './Istifadechi.js'
 import Ezamiyyetler from '../Muracietler/Ezamiyyetler.js';
 import Struktur from '../Struktur/Struktur.js';
-import Kalkulyator from '../Kalkulyator/Kalkulyator.js';
+import Emek_haqqi from '../Kalkulyatorlar/Emek_haqqi.js';
+import Mezuniyyet from '../Kalkulyatorlar/Mezuniyyet.js';
+import Ezamiyyet from '../Kalkulyatorlar/Ezamiyyet.js';
+import Xestelik_vereqesi from '../Kalkulyatorlar/Xestelik_vereqesi.js';
 
 
 
@@ -59,7 +62,10 @@ function App() {
             <Route path="/userpage" element={<İstifadəçi />} />
             <Route path="/business_trips" element={<Ezamiyyetler />} />
             <Route path="/structure" element={<Struktur />} />
-            <Route path="/calculator" element={<Kalkulyator />} />
+            <Route path="/calculator" element={<Emek_haqqi />} />
+            <Route path="/vacation_calculator" element={<Mezuniyyet />} />
+            <Route path="/trip_payment" element={<Mezuniyyet />} />
+            <Route path="/sick_leave_calculator" element={<Xestelik_vereqesi />} />
           </Routes>
         </div>
       </Router>
