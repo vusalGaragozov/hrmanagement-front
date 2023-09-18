@@ -1,95 +1,49 @@
-import React, { useState } from 'react';
-import { OrganizationChart } from 'primereact/organizationchart';
-import "primereact/resources/themes/lara-light-indigo/theme.css";     
-import "primereact/resources/primereact.min.css";   
+import React, { useEffect, useState } from 'react';
+import axios from 'axios'; // Assuming you have Axios installed
+import './OrganizationalStructure.css'; // Import your CSS for styling
 
 const Struktur = () => {
-    const [selection, setSelection] = useState([]);
-    const [data] = useState([
-        {
-            expanded: true,
-            type: 'person',
-            data: {
-                image: 'https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png',
-                name: 'Amy Elsner',
-                title: 'CEO'
-            },
-            children: [
-                {
-                    expanded: true,
-                    type: 'person',
-                    data: {
-                        image: 'https://primefaces.org/cdn/primereact/images/avatar/annafali.png',
-                        name: 'Anna Fali',
-                        title: 'CMO'
-                    },
-                    children: [
-                        {
-                            label: 'Sales'
-                           
-                        },
-                        {
-                            label: 'Marketing'
-                        }
-                    ]
-                }, {
-                    expanded: true,
-                    type: 'person',
-                    data: {
-                        image: 'https://primefaces.org/cdn/primereact/images/avatar/stephenshaw.png',
-                        name: 'Stephen Shaw',
-                        title: 'CTO'
-                    },
-                    children: [
-                        {
-                            label: 'Development'
-                        },
-                        {
-                            label: 'UI/UX Design'
-                        }
-                    ]
-                }, {
-                    expanded: true,
-                    type: 'person',
-                    data: {
-                        image: 'https://primefaces.org/cdn/primereact/images/avatar/stephenshaw.png',
-                        name: 'Stephen Shaw',
-                        title: 'CTO'
-                    },
-                    children: [
-                        {
-                            label: 'Development'
-                        },
-                        {
-                            label: 'UI/UX Design'
-                        }
-                    ]
-                }
-            ]
-        }
-    ]);
+  const [staffMembers, setStaffMembers] = useState([]);
 
-    const nodeTemplate = (node) => {
-        if (node.type === 'person') {
-            return (
-                <div className="flex flex-column">
-                    <div className="flex flex-column align-items-center">
-                        <img alt={node.data.name} src={node.data.image} className="mb-3 w-3rem h-3rem" />
-                        <span className="font-bold mb-2">{node.data.name}</span>
-                        <span>{node.data.title}</span>
-                    </div>
-                </div>
-            );
-        }
+  useEffect(() => {
+    // Fetch staff members from your API on port 3001
+    axios.get('http://localhost:3001/api/registeredstaffmembers') // Replace with your backend URL
+      .then((response) => {
+        setStaffMembers(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
 
-        return node.label;
+  // Create a function to recursively build the organizational structure
+  const buildOrgStructure = (lineManager, allStaffMembers) => {
+    const children = allStaffMembers.filter((member) => member.corporateInfo.lineManager === lineManager._id);
+
+    return (;
+        <div className={`org-node${lineManager.corporateInfo.position === 'CEO' ? ' ceo' : ''}`}>
+          <div className="org-info">
+            <p>{`${lineManager.personalInfo.name} ${lineManager.personalInfo.surname}`}</p>
+            <p>{lineManager.corporateInfo.position}</p>
+          </div>
+          {children.map((child) => buildOrgStructure(child, allStaffMembers))}
+        </div>
+      );
     };
 
-    return (
-        <div className="card overflow-x-auto">
-            <OrganizationChart value={data} selectionMode="multiple" selection={selection} onSelectionChange={(e) => setSelection(e.data)} nodeTemplate={nodeTemplate} />
-        </div>
-    )
-}
+  // Find the CEO (assuming the CEO has no line manager)
+  const ceo = staffMembers.find((member) => member.corporateInfo.position === 'CEO');
+
+  if (!ceo) {
+    return <div>No CEO found</div>;
+  }
+
+  return (
+    <div className="organizational-structure">
+      <h1>Organizational Structure</h1>
+      <div className="org-chart">{buildOrgStructure(ceo, staffMembers)}</div>
+    </div>
+  );
+};
 
 export default Struktur;

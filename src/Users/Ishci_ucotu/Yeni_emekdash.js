@@ -10,12 +10,22 @@ import { AuthContext } from '../Main/AuthContext.js';
 import { format } from 'date-fns';
 import numeral from 'numeral';
 import Select from 'react-select';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Yeni_emekdash = () => {
   const { user } = useContext(AuthContext);
   const [registeredStaffMembers, setRegisteredStaffMembers] = useState([]);
+  const [isLineManagerSelected, setIsLineManagerSelected] = useState(true);
+  const [lineManagerError, setLineManagerError] = useState(false);
 
-  
+  const isEmailAlreadyRegistered = (email) => {
+    return registeredStaffMembers.some(
+      (staffMember) =>
+        staffMember.personalInfo.email.toLowerCase() === email.toLowerCase()
+    );
+  };
   const [personalInfo, setPersonalInfo] = useState({
     name: '',
     surname: '',
@@ -53,14 +63,13 @@ const Yeni_emekdash = () => {
   };
 
   useEffect(() => {
-    // Fetch registered staff members when the component mounts
     fetchRegisteredStaffMembers();
   }, []);
 
   const fetchRegisteredStaffMembers = async () => {
     try {
       const response = await fetch('http://localhost:3001/api/registeredstaffmembers', {
-        credentials: 'include', // Include credentials for CORS
+        credentials: 'include', 
       });
       const data = await response.json();
       setRegisteredStaffMembers(data);
@@ -72,52 +81,34 @@ const Yeni_emekdash = () => {
   const handleLineManagerChange = (selectedOption) => {
     setCorporateInfo({
       ...corporateInfo,
-      lineManager: selectedOption,
+      lineManager: selectedOption, 
     });
+  
+    const isSelected = !!selectedOption.value; 
+    setIsLineManagerSelected(isSelected);
+    setLineManagerError(!isSelected); 
+  
+    console.log('Selected Line Manager:', selectedOption.value);
   };
-
-  // Function to hide the success message after a delay
+  
   const hideSuccessMessage = () => {
     setIsSuccessVisible(false);
   };
 
-  // Use useEffect to automatically hide the success message after 3 seconds
-  useEffect(() => {
-    if (isSuccessVisible) {
-      const timeoutId = setTimeout(() => {
-        hideSuccessMessage(); // Hide the success message after 3 seconds
-      }, 3000); // 3 seconds
-      return () => clearTimeout(timeoutId); // Cleanup on unmount or if isSuccessVisible changes
-    }
-  }, [isSuccessVisible]);
-
   const handleEmailBlur = (e) => {
     const { name, value } = e.target;
-
-    // Check if the email is in a valid format
     if (!isValidEmail(value)) {
-      // Display an error message or handle the validation as needed
-      // You can also set a state variable to track the email validation status
-      // For now, let's display a console error message
       console.error('Invalid email address');
-      // Add the "is-invalid" class to highlight the invalid email field
       setValidationErrors({ ...validationErrors, [name]: true });
     }
   };
-
   const handleGrossSalaryChange = (e) => {
     const { name, value } = e.target;
-  
-    // Remove commas and convert to a number
     const numericValue = parseFloat(value.replace(/,/g, ''));
-  
-    // Conditionally set the value to an empty string when numericValue is zero or input is empty
-    const formattedValue = isNaN(numericValue) ? '' : numericValue;
-  
-    setCorporateInfo({ ...corporateInfo, [name]: formattedValue });
+    const isValidValue = !isNaN(numericValue) && numericValue >= 0 && numericValue <= 99999;
+   const formattedValue = isValidValue && value.length <= 6 ? numericValue.toLocaleString('en-US') : corporateInfo.grossSalary;
+  setCorporateInfo({ ...corporateInfo, [name]: formattedValue });
   };
-  
-  
   
   const [corporateInfo, setCorporateInfo] = useState({
     lineManager: '',
@@ -150,50 +141,35 @@ const Yeni_emekdash = () => {
   });
 
   const isValidEmail = (email) => {
-    // Regular expression for email format validation
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailRegex.test(email);
   };
 
   const handlePersonalInfoChange = (e) => {
     const { name, value } = e.target;
-
-    // Check if the input field is the "FINCode" field
     if (name === 'FINCode') {
-      // Capitalize the input value and restrict it to 7 characters
       const formattedValue = value.slice(0, 7).toUpperCase();
       setPersonalInfo({ ...personalInfo, [name]: formattedValue });
     } else {
-      // For other fields, update the state normally
       setPersonalInfo({ ...personalInfo, [name]: value });
     }
-
-    // Add the "is-invalid" class when the field is empty or has an invalid email format
     if (value.trim() === '' || (name === 'email' && !isValidEmail(value))) {
       setValidationErrors({ ...validationErrors, [name]: true });
     } else {
-      // Remove the "is-invalid" class when the field is not empty and has a valid email format
       setValidationErrors({ ...validationErrors, [name]: false });
     }
   };
 
   const handleCorporateInfoChange = (e) => {
     const { name, value } = e.target;
-    
-    // Add the "is-invalid" class when the field is empty or has an invalid value
     if (value.trim() === '' || (name === 'grossSalary' && isNaN(value))) {
       setValidationErrors({ ...validationErrors, [name]: true });
     } else {
-      // Remove the "is-invalid" class when the field is not empty and has a valid value
       setValidationErrors({ ...validationErrors, [name]: false });
     }
-  
-    // Update the corporateInfo state with the input value
     setCorporateInfo({ ...corporateInfo, [name]: value });
   };
   
-
-// Calculate minDate and maxDate
 const startBirthDate = new Date();
 startBirthDate.setFullYear(currentDate.getFullYear() - 65);
 
@@ -201,21 +177,15 @@ const endBirthDate = new Date();
 endBirthDate.setFullYear(currentDate.getFullYear() - 18);
 
 const handleDateChange = (date, field) => {
-  // Handle date changes for the specified field
   if (field === 'birthDate') {
     setPersonalInfo({ ...personalInfo, birthDate: date });
   } else if (field === 'startDate') {
     setCorporateInfo({ ...corporateInfo, startDate: date });
   }
-
-  // Remove the "is-invalid" class when the user selects a date
   setValidationErrors({ ...validationErrors, [field]: false });
 };
 
-
   const isFormValid = () => {
-    // Add your form validation logic here
-    // Check each field's value and return false if any validation fails
     const {
       name,
       surname,
@@ -226,19 +196,17 @@ const handleDateChange = (date, field) => {
       email,
     } = personalInfo;
 
-    if (
-      !name ||
-      !surname ||
-      !fatherName ||
-      !gender ||
-      !birthDate ||
-      !FINCode ||
-      !isValidEmail(email)
-    ) {
-      return false;
-    }
-    return true; // If all checks pass, the form is valid
-  };
+    const isPersonalInfoValid =
+    name &&
+    surname &&
+    fatherName &&
+    gender &&
+    birthDate &&
+    FINCode &&
+    isValidEmail(email);
+
+  return isPersonalInfoValid;
+};
 
   const formattedPersonalInfo = {
     ...personalInfo,
@@ -254,18 +222,31 @@ const handleDateChange = (date, field) => {
       : null,
   };
   
-
   const handleAddStaffMember = async (e) => {
-    e.preventDefault(); // Prevent form submission
-
+    e.preventDefault(); 
+  
     if (!user) {
       console.error('User is not defined or null.');
-      // Handle the error or return early as needed
       return;
     }
-
+    setValidationErrors({});
+    setLineManagerError(false); 
+  
+    const hasValidationErrors = Object.values(validationErrors).some(
+      (error) => error
+    );
+  
+    if (hasValidationErrors || !isLineManagerSelected) {
+      console.error('Form has validation errors or line manager is not selected.');
+      setValidationErrors((prevState) => ({
+        ...prevState,
+        lineManager: !isLineManagerSelected,
+      }));
+      setLineManagerError(!isLineManagerSelected); 
+      return;
+    }
+  
     if (!isFormValid()) {
-      // If the form is not valid, mark the invalid fields
       setValidationErrors((prevState) => ({
         ...prevState,
         name: personalInfo.name.trim() === '',
@@ -275,64 +256,66 @@ const handleDateChange = (date, field) => {
         birthDate: personalInfo.birthDate === null,
         FINCode: personalInfo.FINCode.trim() === '',
         email: !isValidEmail(personalInfo.email),
-        lineManager: corporateInfo.lineManager.value ? false : true, // Check if lineManager has a value
         position: corporateInfo.position.trim() === '',
-        grossSalary: !isNaN(parseFloat(corporateInfo.grossSalary.replace(/,/g, ''))) ? false : true, // Check if grossSalary is a valid number
-        field: corporateInfo.field.trim() === '', // Add this line for field
-        startDate: corporateInfo.startDate === null, // Add this line for startDate
-        annualLeaveDays: corporateInfo.annualLeaveDays.trim() === '', // Add this line for annualLeaveDays
-        contractDuration: corporateInfo.contractDuration.trim() === '', // Add this line for contractDuration
-        weeklyWorkingHours: corporateInfo.weeklyWorkingHours.trim() === '', // Add this line for weeklyWorkingHours
+        grossSalary: !isNaN(parseFloat(corporateInfo.grossSalary.toString().replace(/,/g, ''))) ? false : true,
+        field: corporateInfo.field.trim() === '',
+        startDate: corporateInfo.startDate === null, 
+        annualLeaveDays: corporateInfo.annualLeaveDays.trim() === '', 
+        contractDuration: corporateInfo.contractDuration.trim() === '', 
+        weeklyWorkingHours: corporateInfo.weeklyWorkingHours.trim() === '', 
+        lineManager: corporateInfo.lineManager.trim() === '', 
       }));
       return;
     }
-
-    // Clear any previous validation errors
-    setValidationErrors({});
-
+  
+    const emailAlreadyRegistered = isEmailAlreadyRegistered(personalInfo.email);
+  
+    if (emailAlreadyRegistered) {
+      toast.error('Bu email artıq qeydiyyatdan keçmişdir.', {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      return;
+    }
+    if (emailAlreadyRegistered) {
+      console.error('Email is already registered.');
+      return;
+    }
+  
     try {
       const lineManagerName = corporateInfo.lineManager
-      ? `${corporateInfo.lineManager.label}` // Extract the name and surname from the selected option
-      : '';
+        ? `${corporateInfo.lineManager.label}` 
+        : '';
       const grossSalaryValue = corporateInfo.grossSalary
-      ? String(corporateInfo.grossSalary)
-      : '';
+        ? numeral(corporateInfo.grossSalary).value() 
+        : '';
+        
       const response = await axios.post(`${API_URL}/api/staffmember`, {
         addedBy_company: user.organization,
         addedBy_email: user.email,
-        personalInfo: formattedPersonalInfo, // Use the formatted data
+        personalInfo: formattedPersonalInfo, 
         corporateInfo: {
           ...corporateInfo,
-          // Update lineManager and grossSalary as needed
-          lineManager: lineManagerName, // Send line manager's name and surname
-          grossSalary: grossSalaryValue, // Use the valid numeric value or 0
+          lineManager: lineManagerName, 
+          grossSalary: grossSalaryValue, 
           startDate: corporateInfo.startDate
             ? format(new Date(corporateInfo.startDate), 'dd-MM-yyyy')
             : null,
         },
       });
-
+  
       if (response.status === 201) {
-        setShowSuccess(true);
+        toast.success('İşçi uğurla əlavə edildi', {
+          position: toast.POSITION.TOP_CENTER,
+        });
         resetForm();
-        setIsSuccessVisible(true);
-
-        // After 3 seconds, hide the success message and reset showSuccess
-        setTimeout(() => {
-          setIsSuccessVisible(false);
-          setShowSuccess(false);
-        }, 3000);
+        return;
       } else {
-        alert('Error adding staff member');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert(
-        'An error occurred while adding the staff member. See console for details.'
-      );
     }
   };
-
+  
   return (
     <div className="container mt-5 ishci_ucotu">
       <div className="row">
@@ -426,8 +409,8 @@ const handleDateChange = (date, field) => {
         showYearDropdown
         showMonthDropdown
         dateFormat="MMM d, yyyy"
-        minDate={startBirthDate} // Set minDate
-        maxDate={endBirthDate}   // Set maxDate
+        minDate={startBirthDate} 
+        maxDate={endBirthDate}  
         yearDropdownItemNumber={100}
       />
       {validationErrors.birthDate && (
@@ -486,17 +469,28 @@ const handleDateChange = (date, field) => {
             </div>
             <div className="col-md-4 border rounded p-3 register-margin-right">
               <h3 className='register-underline'>Korporativ məlumatlar:</h3>
-              <div className="mb-3">
-        <Select
-          options={registeredStaffMembers.map((staffMember) => ({
-            value: staffMember._id, // Use a unique identifier for value
-            label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname}`,
-          }))}
-          value={corporateInfo.lineManager}
-          onChange={handleLineManagerChange}
-          placeholder="Xətti rəhbəri seçin"
-        />
-      </div>
+              <div className="mb-3" id="lineManagerInput">
+              <Select
+  options={[
+    ...(registeredStaffMembers.length === 0
+      ? [{ value: 'CEO', label: 'Rəhbər (ilk əməkdaş rəhbər olmalıdır)' }]
+      : []),
+    ...registeredStaffMembers.map((staffMember) => ({
+      value: staffMember._id,
+      label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
+    })),
+  ]}
+  value={corporateInfo.lineManager}
+  onChange={handleLineManagerChange}
+  placeholder="Xətti rəhbəri seçin"
+/>
+  {lineManagerError && (
+    <div className="invalid-feedback">
+      Xətti rəhbəri seçilməyib. Zəhmət olmasa xətti rəhbəri seçin.
+    </div>
+  )}
+</div>
+
               <div className="mb-3">
                 <input
                   type="text"
@@ -524,7 +518,7 @@ const handleDateChange = (date, field) => {
         placeholder="Əmək haqqı"
         name="grossSalary"
         value={corporateInfo.grossSalary}
-        onChange={handleGrossSalaryChange} // Use onChange instead of onBlur
+        onChange={handleGrossSalaryChange} 
         required
       />
 
@@ -640,15 +634,7 @@ const handleDateChange = (date, field) => {
           </div>
         </div>
       </div>
-      {showSuccess && (
-        <div className="row mt-4">
-          <div className="col-md-12">
-            <div className="alert alert-success" role="alert">
-              İşçi əlavə edildi!
-            </div>
-          </div>
-        </div>
-      )}
+            <ToastContainer />
     </div>
   );
 };

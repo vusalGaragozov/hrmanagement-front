@@ -1,0 +1,47 @@
+.organizational-structure {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .org-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .org-node {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px;
+    width: 200px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .org-info p {
+    margin: 0;
+  }
+  
+  .org-node p:first-child {
+    font-weight: bold;
+  }
+  
+  /* Style for the CEO node */
+  .org-node.ceo {
+    background-color: #3498db;
+    color: #fff;
+  }
+  
+  /* Style for child nodes */
+  .org-node.child {
+    background-color: #f7f7f7;
+  }
+  
+  /* Style for hover effect */
+  .org-node:hover {
+    background-color: #f2f2f2;
+    cursor: pointer;
+  }
+  
