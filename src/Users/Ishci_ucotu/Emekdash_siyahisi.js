@@ -262,6 +262,10 @@ endBirthDate.setFullYear(currentDate.getFullYear() - 18);
         accessor: 'personalInfo.email',
       },
       {
+        Header: 'Telefon nömrəsi',
+        accessor: 'personalInfo.phoneNumber',
+      },
+      {
         Header: 'Vəzifə',
         accessor: 'corporateInfo.position',
       },
@@ -519,7 +523,7 @@ endBirthDate.setFullYear(currentDate.getFullYear() - 18);
   )}
 </div>
                 <div className="form-group">
-                  <label>Şöbə:</label>
+                  <label>Xətti rəhbər:</label>
                   <input
                     type="text"
                     className={`form-control ${validationErrors.corporateInfo.lineManager ? 'is-invalid' : ''}`}
@@ -530,6 +534,20 @@ endBirthDate.setFullYear(currentDate.getFullYear() - 18);
                   )}
                   {clearedFields.lineManager && (
                     <div className="alert alert-danger mt-2 small-notification">{clearedFields.lineManager}</div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label>Telefon nömrəsi:</label>
+                  <input
+                    type="number"
+                    className={`form-control ${validationErrors.personalInfo.phoneNumber ? 'is-invalid' : ''}`}
+                    value={editedFields.personalInfo && editedFields.personalInfo.phoneNumber ? editedFields.personalInfo.phoneNumber : ''}
+                    onChange={(e) => handleFieldChange(e.target.value, 'phoneNumber', 'personalInfo')}
+                  />{validationErrors.personalInfo.phoneNumber && (
+                    <div className="invalid-feedback">{validationErrors.personalInfo.phoneNumber}</div>
+                  )}
+                  {clearedFields.phoneNumber && (
+                    <div className="alert alert-danger mt-2 small-notification">{clearedFields.phoneNumber}</div>
                   )}
                 </div>
                 <div className="form-group">

@@ -13,18 +13,31 @@ import Select from 'react-select';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const Yeni_emekdash = () => {
   const { user } = useContext(AuthContext);
   const [registeredStaffMembers, setRegisteredStaffMembers] = useState([]);
   const [isLineManagerSelected, setIsLineManagerSelected] = useState(true);
   const [lineManagerError, setLineManagerError] = useState(false);
+  
 
   const isEmailAlreadyRegistered = (email) => {
     return registeredStaffMembers.some(
       (staffMember) =>
         staffMember.personalInfo.email.toLowerCase() === email.toLowerCase()
     );
+  };
+
+  const generateRandomPassword = () => {
+    const length = 10; // You can adjust the length of the password
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let password = '';
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      password += characters.charAt(randomIndex);
+    }
+
+    return password;
   };
   const [personalInfo, setPersonalInfo] = useState({
     name: '',
@@ -34,9 +47,10 @@ const Yeni_emekdash = () => {
     birthDate: null,
     FINCode: '',
     email: '',
+    phoneNumberPrefix: '050', // Default prefix
+    phoneNumberDigits: '',
   });
 
-  const [showSuccess, setShowSuccess] = useState(false);
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
 
   const resetForm = () => {
@@ -90,10 +104,6 @@ const Yeni_emekdash = () => {
   
     console.log('Selected Line Manager:', selectedOption.value);
   };
-  
-  const hideSuccessMessage = () => {
-    setIsSuccessVisible(false);
-  };
 
   const handleEmailBlur = (e) => {
     const { name, value } = e.target;
@@ -129,6 +139,7 @@ const Yeni_emekdash = () => {
     gender: false,
     birthDate: false,
     FINCode: false,
+    phoneNumber: false,
     email: false,
     lineManager: false,
     position: false,
@@ -138,6 +149,8 @@ const Yeni_emekdash = () => {
     annualLeaveDays: false,
     contractDuration: false,
     weeklyWorkingHours: false,
+    phoneNumberDigits: false,
+
   });
 
   const isValidEmail = (email) => {
@@ -150,9 +163,29 @@ const Yeni_emekdash = () => {
     if (name === 'FINCode') {
       const formattedValue = value.slice(0, 7).toUpperCase();
       setPersonalInfo({ ...personalInfo, [name]: formattedValue });
+    }else if (name === 'phoneNumberPrefix' || name === 'phoneNumberDigits') {
+      // Handle phone number input
+      const digitsOnly = value.replace(/\D/g, ''); // Remove non-digit characters
+      const formattedValue = digitsOnly
+        .slice(0, 7)
+        .replace(/(\d{3})(\d{2})(\d{2})/, '$1-$2-$3'); // Format as XXX-XX-XX
+  
+      setPersonalInfo((prevPersonalInfo) => ({
+        ...prevPersonalInfo,
+        [name]: formattedValue,
+      }));
+  
+      // Validate phone number digits (7 digits)
+      if (name === 'phoneNumberDigits' && digitsOnly.length !== 7) {
+        setValidationErrors({ ...validationErrors, phoneNumberDigits: true });
+      } else {
+        setValidationErrors({ ...validationErrors, phoneNumberDigits: false });
+      }
     } else {
       setPersonalInfo({ ...personalInfo, [name]: value });
     }
+    
+    // Validate other fields as needed
     if (value.trim() === '' || (name === 'email' && !isValidEmail(value))) {
       setValidationErrors({ ...validationErrors, [name]: true });
     } else {
@@ -193,6 +226,7 @@ const handleDateChange = (date, field) => {
       gender,
       birthDate,
       FINCode,
+      phoneNumber,
       email,
     } = personalInfo;
 
@@ -224,7 +258,10 @@ const handleDateChange = (date, field) => {
   
   const handleAddStaffMember = async (e) => {
     e.preventDefault(); 
-  
+    const temporaryPassword = generateRandomPassword();
+    console.log('Temporary Password:', temporaryPassword); // Log the temporary password
+
+
     if (!user) {
       console.error('User is not defined or null.');
       return;
@@ -235,6 +272,7 @@ const handleDateChange = (date, field) => {
     const hasValidationErrors = Object.values(validationErrors).some(
       (error) => error
     );
+    
   
     if (hasValidationErrors || !isLineManagerSelected) {
       console.error('Form has validation errors or line manager is not selected.');
@@ -255,6 +293,7 @@ const handleDateChange = (date, field) => {
         gender: personalInfo.name === '',
         birthDate: personalInfo.birthDate === null,
         FINCode: personalInfo.FINCode.trim() === '',
+        phoneNumber: (personalInfo.phoneNumber?.trim() || '') === '',
         email: !isValidEmail(personalInfo.email),
         position: corporateInfo.position.trim() === '',
         grossSalary: !isNaN(parseFloat(corporateInfo.grossSalary.toString().replace(/,/g, ''))) ? false : true,
@@ -301,6 +340,8 @@ const handleDateChange = (date, field) => {
             ? format(new Date(corporateInfo.startDate), 'dd-MM-yyyy')
             : null,
         },
+        temporaryPassword: temporaryPassword, // Add the temporary password here
+
       });
   
       if (response.status === 201) {
@@ -337,7 +378,6 @@ const handleDateChange = (date, field) => {
                 />
                 {validationErrors.name && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa adınızı daxil edin.
                   </div>
                 )}
               </div>
@@ -355,7 +395,6 @@ const handleDateChange = (date, field) => {
                 />
                 {validationErrors.surname && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa Soyadınızı daxil edin.
                   </div>
                 )}
               </div>
@@ -373,7 +412,6 @@ const handleDateChange = (date, field) => {
                 />
                 {validationErrors.fatherName && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa Ata adınızı daxil edin.
                   </div>
                 )}
               </div>
@@ -394,7 +432,6 @@ const handleDateChange = (date, field) => {
                 </select>
                 {validationErrors.gender && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa cinsinizi daxil edin.
                   </div>
                 )}
               </div>
@@ -415,7 +452,6 @@ const handleDateChange = (date, field) => {
       />
       {validationErrors.birthDate && (
         <div className="invalid-feedback">
-          Zəhmət olmasa doğum tarixinizi daxil edin.
         </div>
       )}
               </div>
@@ -433,7 +469,6 @@ const handleDateChange = (date, field) => {
                 />
                 {validationErrors.FINCode && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa FİN kodunuzu daxil edin.
                   </div>
                 )}
               </div>
@@ -462,7 +497,39 @@ const handleDateChange = (date, field) => {
                   )}
                 {validationErrors.email && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa email ünvanınızı daxil edin.
+                  </div>
+                )}
+              </div>
+              <div className="mb-3">
+                <div className="d-flex align-items-center">
+                  <select
+                    className={`form-control select-prefix form-select ${
+                      validationErrors.phoneNumberDigits ? 'is-invalid' : ''
+                    }`}
+                    name="phoneNumberPrefix"
+                    value={personalInfo.phoneNumberPrefix}
+                    onChange={handlePersonalInfoChange}
+                  >
+                    <option value="050">050</option>
+                    <option value="051">051</option>
+                    <option value="055">055</option>
+                    <option value="070">070</option>
+                  </select>
+
+                  <input
+                    type="text"
+                    className={`form-control ${
+                      validationErrors.phoneNumberDigits ? 'is-invalid' : ''
+                    }`}
+                    name="phoneNumberDigits"
+                    value={personalInfo.phoneNumberDigits}
+                    onChange={handlePersonalInfoChange}
+                    placeholder="XXX-XX-XX"
+                    required
+                  />
+                </div>
+                {validationErrors.phoneNumberDigits && (
+                  <div className="error-message">
                   </div>
                 )}
               </div>
@@ -486,7 +553,6 @@ const handleDateChange = (date, field) => {
 />
   {lineManagerError && (
     <div className="invalid-feedback">
-      Xətti rəhbəri seçilməyib. Zəhmət olmasa xətti rəhbəri seçin.
     </div>
   )}
 </div>
@@ -505,7 +571,6 @@ const handleDateChange = (date, field) => {
                 />
                 {validationErrors.position && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa vəzifəni daxil edin.
                   </div>
                 )}
               </div>
@@ -524,7 +589,6 @@ const handleDateChange = (date, field) => {
 
                 {validationErrors.grossSalary && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa gross əmək haqqını daxil edin.
                   </div>
                 )}
               </div>
@@ -545,7 +609,6 @@ const handleDateChange = (date, field) => {
                 </select>
                 {validationErrors.field && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa sektoru daxil edin.
                   </div>
                 )}
               </div>
@@ -563,7 +626,6 @@ const handleDateChange = (date, field) => {
                 />
                 {validationErrors.startDate && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa işə başlama tarixini daxil edin.
                   </div>
                 )}
               </div>
@@ -581,7 +643,6 @@ const handleDateChange = (date, field) => {
                 />
                 {validationErrors.annualLeaveDays && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa illik müddəti daxil edin.
                   </div>
                 )}
               </div>
@@ -599,7 +660,6 @@ const handleDateChange = (date, field) => {
                 />
                 {validationErrors.contractDuration && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa müqavilə müddətini daxil edin.
                   </div>
                 )}
               </div>
@@ -617,7 +677,6 @@ const handleDateChange = (date, field) => {
                 />
                 {validationErrors.weeklyWorkingHours && (
                   <div className="invalid-feedback">
-                    Zəhmət olmasa həftəlik iş saatını daxil edin.
                   </div>
                 )}
               </div>

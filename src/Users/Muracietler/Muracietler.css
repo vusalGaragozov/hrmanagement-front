@@ -128,5 +128,9 @@
 
 
 /* Assuming a parent container with class "date-input-container" */
+/* In your CSS stylesheet */
+.select-narrow {
+  width: 100px; /* Adjust the width as needed */
+}
 
 

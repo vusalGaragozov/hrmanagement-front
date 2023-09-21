@@ -29,6 +29,7 @@ import Emek_haqqi from '../Kalkulyatorlar/Emek_haqqi.js';
 import Mezuniyyet from '../Kalkulyatorlar/Mezuniyyet.js';
 import Ezamiyyet from '../Kalkulyatorlar/Ezamiyyet.js';
 import Xestelik_vereqesi from '../Kalkulyatorlar/Xestelik_vereqesi.js';
+import StaffRegister from './StaffRegister.js';
 
 
 
@@ -66,6 +67,7 @@ function App() {
             <Route path="/vacation_calculator" element={<Mezuniyyet />} />
             <Route path="/trip_payment" element={<Mezuniyyet />} />
             <Route path="/sick_leave_calculator" element={<Xestelik_vereqesi />} />
+            <Route path="/staffRegister" element={<StaffRegister />} />
           </Routes>
         </div>
       </Router>
