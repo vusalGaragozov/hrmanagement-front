@@ -20,7 +20,7 @@ const StaffRegister = () => {
       // Check if the email is not empty before making the API request
       if (email.trim() !== '') {
         try {
-          const response = await axios.get(`${API_URL}/api/staffmemberstoregister`, {
+          const response = await axios.get(`${API_URL}/api/staffregistrationpage`, {
             params: {
               email,
             },
@@ -44,8 +44,6 @@ const StaffRegister = () => {
   }, [email]);
   
   
-  
-
   const handleRegistration = async (e) => {
     e.preventDefault();
 

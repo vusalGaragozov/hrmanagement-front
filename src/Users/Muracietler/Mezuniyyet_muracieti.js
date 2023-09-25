@@ -7,16 +7,16 @@ import './Muracietler.css';
 import { AuthContext } from '../Main/AuthContext';
 import html2pdf from 'html2pdf.js';
 import Select from 'react-select';
-
-
+import { API_URL } from '../Other/config';
 
 const Mezuniyyet_muracieti = () => {
-  
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [paymentTiming, setPaymentTiming] = useState('immediate');
+  const [paymentTiming, setPaymentTiming] = useState('məzuniyyətdən əvvəl');
   const [isFormValid, setIsFormValid] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [annualLeaveDays, setAnnualLeaveDays] = useState(null);
+  const [position, setPosition] = useState(null);
 
   const pdfRef = useRef();
   const [generatedText, setGeneratedText] = useState({
@@ -26,14 +26,17 @@ const Mezuniyyet_muracieti = () => {
   const [registeredStaffMembers, setRegisteredStaffMembers] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedOptionsign, setSelectedOptionsign] = useState(null);
+
   const handleSelectChange = (selectedOption) => {
     setSelectedOption(selectedOption);
     // You can perform additional actions here if needed
   };
+
   const handleSelectChangesign = (selectedOptionsign) => {
     setSelectedOptionsign(selectedOptionsign);
     // You can perform additional actions here if needed
   };
+
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -53,6 +56,7 @@ const Mezuniyyet_muracieti = () => {
   
   useEffect(() => {
     fetchRegisteredStaffMembers();
+    fetchUserData();
   }, []);
   
 
@@ -62,12 +66,14 @@ const Mezuniyyet_muracieti = () => {
         credentials: 'include', 
       });
       const data = await response.json();
+      console.log('Data received from the backend:', data); // Log the data here
 
       setRegisteredStaffMembers(data);
     } catch (error) {
       console.error('Error fetching registered staff members:', error);
     }
   };
+
   const handleDownloadPdf = () => {
     console.log('handleDownloadPdf called');
     const pdfOptions = {
@@ -78,7 +84,6 @@ const Mezuniyyet_muracieti = () => {
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     };
  
-
     const content = document.getElementById('pdf-content');
     console.log('pdfOptions:', pdfOptions);
     console.log('content:', content);
@@ -97,6 +102,7 @@ const Mezuniyyet_muracieti = () => {
         });
     }
   };
+
   useEffect(() => {
     // Wait for the content to be rendered
     const contentElement = document.getElementById('pdf-content');
@@ -106,6 +112,7 @@ const Mezuniyyet_muracieti = () => {
       handleDownloadPdf();
     }
   }, []); 
+
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -116,7 +123,6 @@ const Mezuniyyet_muracieti = () => {
     }
   };
 
-  const availableDays = 20;
   const usedDays = 7;
 
   const handleEndDateChange = (date) => {
@@ -124,24 +130,32 @@ const Mezuniyyet_muracieti = () => {
       setEndDate(date);
     }
   };
+
   const fetchUserData = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/user', {
+      const response = await fetch('http://localhost:3001/api/staffmemberstoregister', {
         credentials: 'include', // You may need to include credentials for authentication
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('User Data:', data); // Log the user data
+        console.log('Staff Member Data:', data);
+  
+        // Set staff member data and annualLeaveDays in your component's state
+        setUserData(data.staffMember);
+        setAnnualLeaveDays(data.annualLeaveDays);
+        setPosition(data.position);
+        console.log('Position:', data.position);
+        console.log(data.staffMember);
 
-        setUserData(data.user); // Set user data in your component's state
       } else {
-        // Handle errors, e.g., user not authenticated
-        console.error('Error fetching user data:', response.statusText);
+        // Handle errors, e.g., user not authenticated or staff member not found
+        console.error('Error fetching staff member data:', response.statusText);
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error fetching staff member data:', error);
     }
   };
+  
   const formatDate = (date) => {
     if (date) {
       const day = date.getDate().toString().padStart(2, '0');
@@ -191,32 +205,26 @@ const Mezuniyyet_muracieti = () => {
     }
   }, [startDate, endDate, paymentTiming, selectedOption, selectedOptionsign]);
 
-  const handleSave = () => {
-
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const handledocshow = async () => {
+    // Create an object with the data to send to the backend
     const formattedStartDate = formatDate(startDate);
     const formattedEndDate = formatDate(endDate);
     const daysDifference = calculateDaysDifference(startDate, endDate);
-
     const currentDate = new Date();
     const formattedCurrentDate = formatDate(currentDate);
     const userFullName = user ? `${user.firstname} ${user.lastname}` : '';
-const selectedOptionLabel = selectedOption ? selectedOption.label : '';
-const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : '';
+    const selectedOptionLabel = selectedOption ? selectedOption.label : '';
+    const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : '';
 
 
-    // For the web page, hide the content with a CSS class
+    // HTML structure for textForWebPage
     const textForWebPage = `
-      <div class="hidden-for-print" id="pdf-content" >
+      <div class="hidden-for-print" id="pdf-content">
         <div class="text-for-webpage">
-        ${selectedOptionsignLabel.split('-')[0]?.trim() || ''} cənablarına, həmin şirkətdə ${selectedOptionsignLabel.split('-')[1]?.trim() || ''} vəzifəsində çalışan ${userFullName} tərəfindən
+          ${selectedOptionsignLabel.split('-')[0]?.trim() || ''} cənablarına, həmin şirkətdə ${position} vəzifəsində çalışan ${userFullName} tərəfindən
         </div>
         <br /> <br />
-        <div class="text-left">
+        <div class="text-center">
           Ərizə
         </div>
         <br />
@@ -224,8 +232,8 @@ const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : 
           Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz.
         </div>
         <div class="text-for-webpage">
-        Ödənişin ${paymentTiming} edilməsini xahiş edirəm.
-      </div>
+          Ödənişin ${paymentTiming} edilməsini xahiş edirəm.
+        </div>
         <br /><br /><br /><br />
         <div class="text-for-webpage">
           Tarix: ${formattedCurrentDate}
@@ -263,6 +271,45 @@ const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : 
     setGeneratedText({ textForWebPage, textForPrinting });
   };
 
+  const handleSendDataToBackend = async () => {
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
+    const selectedOptionLabel = selectedOption ? selectedOption.label : '';
+    const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : '';
+
+    const vacationData = {
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      paymentTiming,
+      selectedOptionLabel,
+      selectedOptionsignLabel,
+    };
+
+    try {
+      // Send a POST request to the backend to save the data
+      const response = await fetch('http://localhost:3001/api/submit-vacation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(vacationData),
+      });
+
+      if (response.ok) {
+        // Handle success, e.g., show a success message
+        console.log('Vacation request saved successfully.');
+        // Optionally, reset form fields or perform other actions
+      } else {
+        // Handle errors from the backend
+        console.error('Error saving vacation request to the backend.');
+        // Optionally, display an error message to the user
+      }
+    } catch (error) {
+      // Handle network errors or other exceptions
+      console.error('An error occurred while sending the request:', error);
+      // Optionally, display an error message to the user
+    }}
+
   return (
     <div className="container text-left muracietler">
       <div className="row">
@@ -272,91 +319,93 @@ const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : 
               <div className="border p-4 rounded mb-4">
                 <div className="text-center mt-3">
                   <div className="alert alert-info">
-                    <strong>Mövcud gün sayı:</strong> {availableDays} gün
+                    <strong>Mövcud gün sayı:</strong> {annualLeaveDays} gün
                   </div>
                   <div className="alert alert-success">
                     <strong>İstifadə olunmuş gün sayı:</strong> {usedDays} gün
                   </div>
                 </div>
               </div>
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handledocshow}>
                 <div className='border p-4 rounded mb-4'>
-                <div className="mb-3 row">
-                  <label className="col-md-6 col-form-label">Başlanğıc tarixi:</label>
-                  <div className="col-md-6">
-                    <DatePicker
-                      selected={startDate}
-                      onChange={handleStartDateChange}
-                      dateFormat="MMM d, yyyy"
-                      locale={az}
-                      className="form-control"
-                    />
-                  </div>
-                </div>
-                <div className="mb-3 row">
-                  <label className="col-md-6 col-form-label">Bitmə tarixi:</label>
-                  <div className="col-md-6">
-                    <DatePicker
-                      selected={endDate}
-                      onChange={handleEndDateChange}
-                      dateFormat="MMM d, yyyy"
-                      minDate={startDate}
-                      locale={az}
-                      className="form-control"
-                    />
-                  </div>
-                </div>
-                <div className="mb-3 row">
-                  <label className="col-md-6 col-form-label">Ödəniş vaxtı:</label>
-                  <div className="col-md-6 ">
-                    <div className="input-group">
-                      <select
-                        value={paymentTiming}
-                        onChange={(e) => setPaymentTiming(e.target.value)}
-                        className="form-control form-select"
-                      >
-                        <option value="dərhal">Məzuniyyətdən əvvəl</option>
-                        <option value="ay sonunda">Ay sonunda</option>
-                      </select>
+                  <div className="mb-3 row">
+                    <label className="col-md-6 col-form-label">Başlanğıc tarixi:</label>
+                    <div className="col-md-6">
+                      <DatePicker
+                        selected={startDate}
+                        onChange={handleStartDateChange}
+                        dateFormat="MMM d, yyyy"
+                        locale={az}
+                        className="form-control"
+                      />
                     </div>
                   </div>
-                </div>
-                <div className="mb-3 row">
-                <label className="col-md-6 col-form-label">Təstiq edəcək rəhbər</label>
-  <Select
-    options={registeredStaffMembers.map((staffMember) => ({
-    value: staffMember._id,
-    label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
-    }))}
-    value={selectedOption}
-    onChange={handleSelectChange}
-    placeholder="Rəhbəri seç"
-    styles={customStyles} 
-  />
-</div>
-<div className="mb-3 row">
-                <label className="col-md-6 col-form-label">İmza çəkəcək rəhbər</label>
-  <Select
-    options={registeredStaffMembers.map((staffMember) => ({
-    value: staffMember._id,
-    label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
-    }))}
-    value={selectedOptionsign}
-    onChange={handleSelectChangesign}
-    placeholder="Rəhbəri seç"
-    styles={customStyles} 
-  />
-</div>
-                <div className="mb-3 row">
-                  <div className="col-md-12">
-                    <button
-                      type="submit"
-                      className={`btn btn-primary ${isFormValid ? '' : 'disabled'}`}
-                      style={{ width: '100%' }}
-                    >
-                      Göndər
-                    </button>
+                  <div className="mb-3 row">
+                    <label className="col-md-6 col-form-label">Bitmə tarixi:</label>
+                    <div className="col-md-6">
+                      <DatePicker
+                        selected={endDate}
+                        onChange={handleEndDateChange}
+                        dateFormat="MMM d, yyyy"
+                        minDate={startDate}
+                        locale={az}
+                        className="form-control"
+                      />
+                    </div>
                   </div>
+                  <div className="mb-3 row">
+                    <label className="col-md-6 col-form-label">Ödəniş vaxtı:</label>
+                    <div className="col-md-6 ">
+                      <div className="input-group">
+                        <select
+                          value={paymentTiming}
+                          onChange={(e) => setPaymentTiming(e.target.value)}
+                          className="form-control form-select"
+                        >
+                          <option value="dərhal">Məzuniyyətdən əvvəl</option>
+                          <option value="ay sonunda">Ay sonunda</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mb-3 row">
+                    <label className="col-md-6 col-form-label">Təstiq edəcək rəhbər</label>
+                    <Select
+                      options={registeredStaffMembers.map((staffMember) => ({
+                        value: staffMember._id,
+                        label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
+                      }))}
+                      value={selectedOption}
+                      onChange={handleSelectChange}
+                      placeholder="Rəhbəri seç"
+                      styles={customStyles} 
+                    />
+                  </div>
+                  <div className="mb-3 row">
+                    <label className="col-md-6 col-form-label">İmza çəkəcək rəhbər</label>
+                    <Select
+                      options={registeredStaffMembers.map((staffMember) => ({
+                        value: staffMember._id,
+                        label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
+                      }))}
+                      value={selectedOptionsign}
+                      onChange={handleSelectChangesign}
+                      placeholder="Rəhbəri seç"
+                      styles={customStyles} 
+                    />
+                  </div>
+                  <div className="mb-3 row">
+                    <div className="col-md-12">
+                    <button
+  
+  className={`btn btn-primary ${isFormValid ? '' : 'disabled'}`}
+  style={{ width: '100%' }}
+  onClick={handleSendDataToBackend}
+>
+  Göndər
+</button>
+
+                    </div>
                   </div>
                 </div>
               </form>
@@ -368,7 +417,7 @@ const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : 
             <div className="d-flex justify-content-center">
               <button
                 className={`btn btn-primary ${isFormValid ? '' : 'disabled'}`}
-                onClick={handleSubmit}
+                onClick={handledocshow}
                 style={{ marginRight: '10px' }}
               >
                 Ərizə yarat
@@ -419,14 +468,12 @@ const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : 
                 Çap et
               </button>
               <button
-          className={`btn btn-primary ${isFormValid ? '' : 'disabled'}`}
-          onClick={handleDownloadPdf}
-          style={{ marginLeft: '10px' }}
-        >
-          Yüklə
-        </button>
-
-
+                className={`btn btn-primary ${isFormValid ? '' : 'disabled'}`}
+                onClick={handleDownloadPdf}
+                style={{ marginLeft: '10px' }}
+              >
+                Yüklə
+              </button>
             </div>
             <hr style={{ margin: '20px 0', borderColor: '#6c757d' }} />
             {generatedText.textForWebPage && (
