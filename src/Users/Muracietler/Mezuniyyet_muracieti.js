@@ -271,19 +271,19 @@ const Mezuniyyet_muracieti = () => {
     setGeneratedText({ textForWebPage, textForPrinting });
   };
 
-  const handleSendDataToBackend = async () => {
-    const formattedStartDate = formatDate(startDate);
-    const formattedEndDate = formatDate(endDate);
-    const selectedOptionLabel = selectedOption ? selectedOption.label : '';
-    const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : '';
+const handleSendDataToBackend = async () => {
+  const formattedStartDate = formatDate(startDate);
+  const formattedEndDate = formatDate(endDate);
+  const selectedOptionLabel = selectedOption ? selectedOption.label : '';
+  const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : '';
 
-    const vacationData = {
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-      paymentTiming,
-      selectedOptionLabel,
-      selectedOptionsignLabel,
-    };
+  const vacationData = {
+    startDate: formattedStartDate,
+    endDate: formattedEndDate,
+    paymentTiming,
+    selectedOptionLabel,
+    selectedOptionsignLabel,
+  };
 
     try {
       // Send a POST request to the backend to save the data
@@ -294,6 +294,7 @@ const Mezuniyyet_muracieti = () => {
         },
         body: JSON.stringify(vacationData),
       });
+     
 
       if (response.ok) {
         // Handle success, e.g., show a success message
@@ -309,7 +310,7 @@ const Mezuniyyet_muracieti = () => {
       console.error('An error occurred while sending the request:', error);
       // Optionally, display an error message to the user
     }}
-
+    console.log(startDate);
   return (
     <div className="container text-left muracietler">
       <div className="row">
