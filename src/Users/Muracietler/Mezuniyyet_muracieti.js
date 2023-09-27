@@ -24,35 +24,38 @@ const Mezuniyyet_muracieti = () => {
     textForPrinting: '',
   });
   const [registeredStaffMembers, setRegisteredStaffMembers] = useState([]);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [selectedOptionsign, setSelectedOptionsign] = useState(null);
+  const [selectedOption, setselectedOption] = useState(null);
+  const [selectedOptionsign, setselectedOptionsign] = useState(null);
 
   const handleSelectChange = (selectedOption) => {
-    setSelectedOption(selectedOption);
+    setselectedOption(selectedOption);
     // You can perform additional actions here if needed
-  };
-
-  const handleSelectChangesign = (selectedOptionsign) => {
-    setSelectedOptionsign(selectedOptionsign);
-    // You can perform additional actions here if needed
-  };
-
-  const customStyles = {
-    control: (provided, state) => ({
-      ...provided,
-      width: 185, // Set the width to 100% to make it responsive
-      margin: 'auto', // Center horizontally
-      marginBottom: '20px',
-      marginTop: '-35px',
-      marginLeft: '206px',
+    const selectedStaffMember = registeredStaffMembers.find(
+      (staffMember) => staffMember._id === selectedOption.value
+    );
   
-      // Use media query to adjust styles for smaller screens
-      '@media (max-width: 768px)': {
-        width: '100%', // Adjust the width for smaller screens
-        marginTop: '-20px', // Adjust margin-top for smaller screens
-      },
-    }),
+    if (selectedStaffMember) {
+      const email = selectedStaffMember.personalInfo.email;
+      // Use the email for further processing or sending it to the backend
+      console.log(email);
+    }
   };
+
+ const handleSelectChangesign = (selectedOptionsign) => {
+   setselectedOptionsign(selectedOptionsign);
+ 
+   // Access the selected staff member's email
+   const selectedStaffMember = registeredStaffMembers.find(
+     (staffMember) => staffMember._id === selectedOptionsign.value
+   );
+ 
+   if (selectedStaffMember) {
+     const email = selectedStaffMember.personalInfo.email;
+     // Use the email for further processing or sending it to the backend
+     console.log(email);
+   }
+ };
+
   
   useEffect(() => {
     fetchRegisteredStaffMembers();
@@ -85,11 +88,8 @@ const Mezuniyyet_muracieti = () => {
     };
  
     const content = document.getElementById('pdf-content');
-    console.log('pdfOptions:', pdfOptions);
-    console.log('content:', content);
 
     if (content) {
-      // Use html2pdf to generate and save the PDF
       html2pdf()
         .set(pdfOptions)
         .from(content)
@@ -104,7 +104,6 @@ const Mezuniyyet_muracieti = () => {
   };
 
   useEffect(() => {
-    // Wait for the content to be rendered
     const contentElement = document.getElementById('pdf-content');
   
     if (contentElement) {
@@ -144,8 +143,6 @@ const Mezuniyyet_muracieti = () => {
         setUserData(data.staffMember);
         setAnnualLeaveDays(data.annualLeaveDays);
         setPosition(data.position);
-        console.log('Position:', data.position);
-        console.log(data.staffMember);
 
       } else {
         // Handle errors, e.g., user not authenticated or staff member not found
@@ -198,6 +195,7 @@ const Mezuniyyet_muracieti = () => {
       paymentTiming &&
       selectedOption &&
       selectedOptionsign
+
     ) {
       setIsFormValid(true);
     } else {
@@ -248,7 +246,7 @@ const Mezuniyyet_muracieti = () => {
     const textForPrinting = `
       <div>
         <div class="text-for-printing">
-          Şirkətin rəhbəri, ${selectedOptionsign ? selectedOptionsign.label.split('-')[0].trim() : ''} cənablarına, həmin şirkətdə Maliyyə meneceri vəzifəsində çalışan Vüsal Qaragözov t
+          Şirkətin rəhbəri, ${selectedOptionsign ? selectedOptionsign.label.split('-')[0].trim() : ''} cənablarına, həmin şirkətdə Maliyyə meneceri vəzifəsində çalışan ${userFullName} t
         </div>
         <br /> <br />
         <div class="text-center">
@@ -272,45 +270,60 @@ const Mezuniyyet_muracieti = () => {
   };
 
 const handleSendDataToBackend = async () => {
-  const formattedStartDate = formatDate(startDate);
-  const formattedEndDate = formatDate(endDate);
+  const formattedStartDate = new Date(startDate);
+  const formattedEndDate = new Date(endDate);
   const selectedOptionLabel = selectedOption ? selectedOption.label : '';
   const selectedOptionsignLabel = selectedOptionsign ? selectedOptionsign.label : '';
+  const userFullName = user ? `${user.firstname} ${user.lastname}` : '';
+
+  const lineManager = registeredStaffMembers.find(
+    (staffMember) => staffMember._id === selectedOption.value
+  );
+  const lineManagerEmail = lineManager ? lineManager.personalInfo.email : '';
+
+  const director = registeredStaffMembers.find(
+    (staffMember) => staffMember._id === selectedOptionsign.value
+  );
+  const directorEmail = director ? director.personalInfo.email : '';
 
   const vacationData = {
+    userEmail: user.email,
+    userFullName: userFullName,
     startDate: formattedStartDate,
     endDate: formattedEndDate,
     paymentTiming,
     selectedOptionLabel,
+    lineManagerEmail,
     selectedOptionsignLabel,
+    directorEmail,
   };
 
-    try {
-      // Send a POST request to the backend to save the data
-      const response = await fetch('http://localhost:3001/api/submit-vacation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(vacationData),
-      });
-     
+  try {
+    // Send a POST request to the backend to save the data
+    const response = await fetch('http://localhost:3001/api/submit-vacation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(vacationData),
+    });
 
-      if (response.ok) {
-        // Handle success, e.g., show a success message
-        console.log('Vacation request saved successfully.');
-        // Optionally, reset form fields or perform other actions
-      } else {
-        // Handle errors from the backend
-        console.error('Error saving vacation request to the backend.');
-        // Optionally, display an error message to the user
-      }
-    } catch (error) {
-      // Handle network errors or other exceptions
-      console.error('An error occurred while sending the request:', error);
+    if (response.ok) {
+      // Handle success, e.g., show a success message
+      console.log('Vacation request saved successfully.');
+      // Optionally, reset form fields or perform other actions
+    } else {
+      // Handle errors from the backend
+      console.error('Error saving vacation request to the backend.');
       // Optionally, display an error message to the user
-    }}
-    console.log(startDate);
+    }
+  } catch (error) {
+    // Handle network errors or other exceptions
+    console.error('An error occurred while sending the request:', error);
+    // Optionally, display an error message to the user
+  }
+};
+console.log(startDate);
   return (
     <div className="container text-left muracietler">
       <div className="row">
@@ -327,75 +340,80 @@ const handleSendDataToBackend = async () => {
                   </div>
                 </div>
               </div>
-              <form onSubmit={handledocshow}>
-                <div className='border p-4 rounded mb-4'>
-                  <div className="mb-3 row">
-                    <label className="col-md-6 col-form-label">Başlanğıc tarixi:</label>
-                    <div className="col-md-6">
-                      <DatePicker
-                        selected={startDate}
-                        onChange={handleStartDateChange}
-                        dateFormat="MMM d, yyyy"
-                        locale={az}
-                        className="form-control"
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-3 row">
-                    <label className="col-md-6 col-form-label">Bitmə tarixi:</label>
-                    <div className="col-md-6">
-                      <DatePicker
-                        selected={endDate}
-                        onChange={handleEndDateChange}
-                        dateFormat="MMM d, yyyy"
-                        minDate={startDate}
-                        locale={az}
-                        className="form-control"
-                      />
-                    </div>
-                  </div>
-                  <div className="mb-3 row">
-                    <label className="col-md-6 col-form-label">Ödəniş vaxtı:</label>
-                    <div className="col-md-6 ">
-                      <div className="input-group">
-                        <select
-                          value={paymentTiming}
-                          onChange={(e) => setPaymentTiming(e.target.value)}
-                          className="form-control form-select"
-                        >
-                          <option value="dərhal">Məzuniyyətdən əvvəl</option>
-                          <option value="ay sonunda">Ay sonunda</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mb-3 row">
-                    <label className="col-md-6 col-form-label">Təstiq edəcək rəhbər</label>
-                    <Select
-                      options={registeredStaffMembers.map((staffMember) => ({
-                        value: staffMember._id,
-                        label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
-                      }))}
-                      value={selectedOption}
-                      onChange={handleSelectChange}
-                      placeholder="Rəhbəri seç"
-                      styles={customStyles} 
-                    />
-                  </div>
-                  <div className="mb-3 row">
-                    <label className="col-md-6 col-form-label">İmza çəkəcək rəhbər</label>
-                    <Select
-                      options={registeredStaffMembers.map((staffMember) => ({
-                        value: staffMember._id,
-                        label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
-                      }))}
-                      value={selectedOptionsign}
-                      onChange={handleSelectChangesign}
-                      placeholder="Rəhbəri seç"
-                      styles={customStyles} 
-                    />
-                  </div>
-                  <div className="mb-3 row">
+<form onSubmit={handledocshow}>
+  <div className='border p-4 rounded mb-4'>
+    <div className="mb-3 row">
+      <label className="col-md-6 col-form-label">Başlanğıc tarixi:</label>
+      <div className="col-md-6">
+        <DatePicker
+          selected={startDate}
+          onChange={handleStartDateChange}
+          dateFormat="MMM d, yyyy"
+          locale={az}
+          className="form-control"
+        />
+      </div>
+    </div>
+    <div className="mb-3 row">
+      <label className="col-md-6 col-form-label">Bitmə tarixi:</label>
+      <div className="col-md-6">
+        <DatePicker
+          selected={endDate}
+          onChange={handleEndDateChange}
+          dateFormat="MMM d, yyyy"
+          minDate={startDate}
+          locale={az}
+          className="form-control"
+        />
+      </div>
+    </div>
+    <div className="mb-3 row">
+      <label className="col-md-6 col-form-label">Ödəniş vaxtı:</label>
+      <div className="col-md-6 ">
+        <div className="input-group">
+          <select
+            value={paymentTiming}
+            onChange={(e) => setPaymentTiming(e.target.value)}
+            className="form-control form-select"
+          >
+            <option value="dərhal">Məzuniyyətdən əvvəl</option>
+            <option value="ay sonunda">Ay sonunda</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div className="mb-3 row">
+      <label className="col-md-6 col-form-label">Təstiq edəcək rəhbər</label>
+      <div className="col-md-6">
+        <Select
+          options={registeredStaffMembers.map((staffMember) => ({
+            value: staffMember._id,
+            label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
+          }))}
+          value={selectedOption}
+          onChange={handleSelectChange}
+          placeholder="Rəhbəri seç"
+        />
+      </div>
+    </div>
+    <div className="mb-3 row">
+      <label className="col-md-6 col-form-label">İmza çəkəcək rəhbər</label>
+      <div className="col-md-6">
+        <Select
+          options={registeredStaffMembers.map((staffMember) => ({
+            value: staffMember._id,
+            label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
+          }))}
+          value={selectedOptionsign}
+          onChange={handleSelectChangesign}
+          placeholder="Rəhbəri seç"
+           
+        />
+        </div>
+    </div>
+  </div>
+  <div className="mb-3 row">
+    <div className="col-md-12">
                     <div className="col-md-12">
                     <button
   
@@ -406,10 +424,12 @@ const handleSendDataToBackend = async () => {
   Göndər
 </button>
 
-                    </div>
                   </div>
-                </div>
-              </form>
+    </div>
+    
+  </div>
+ 
+</form>
             </div>
           </main>
         </div>

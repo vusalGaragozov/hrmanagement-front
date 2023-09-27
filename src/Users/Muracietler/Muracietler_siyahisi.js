@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Button, Dropdown, Form } from 'react-bootstrap';
 import DatePicker from 'react-datepicker'; // Import date picker library
 import 'react-datepicker/dist/react-datepicker.css'; // Import date picker styles
+import axios from 'axios';
 
 const Muracietler_siyahisi = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState([]); // Replace with your actual data
 
-  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/vacation-data');
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    };
+    fetchData();
+  }, []);
+
 
   // Implement sorting logic here
   const sortByStatus = () => {
@@ -87,7 +99,7 @@ const Muracietler_siyahisi = () => {
           {data.map((item, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
-              <td>{item.employee}</td>
+              <td>{item.userFullName}</td>
               <td>{item.applicationType}</td>
               <td>{item.startDate}</td>
               <td>{item.endDate}</td>
