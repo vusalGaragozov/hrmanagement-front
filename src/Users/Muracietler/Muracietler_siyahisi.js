@@ -12,7 +12,7 @@ const Muracietler_siyahisi = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/vacation-data');
+        const response = await axios.get('http://localhost:3001/api/vacation-data');
         setData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -35,6 +35,20 @@ const Muracietler_siyahisi = () => {
     // Implement create functionality
   };
 
+  function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const formattedDate = new Date(dateString).toLocaleDateString(undefined, options);
+    return formattedDate;
+  }
+  function calculateDuration(startDate, endDate) {
+    const oneDay = 24 * 60 * 60 * 1000; // One day in milliseconds
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const durationInDays = Math.floor((end - start) / oneDay) + 1;
+    return durationInDays;
+  }
+  
+  
   return (
     <div className='muracietler'>
       <div className="d-flex align-items-center mb-3">
@@ -90,7 +104,7 @@ const Muracietler_siyahisi = () => {
             <th>Başlama tarixi</th>
             <th>Bitmə Tarixi</th>
             <th>Müddət</th>
-            <th>Təstiq edənlər</th>
+            <th>Xətti rəhbər</th>
             <th>Status</th>
           </tr>
         </thead>
@@ -100,11 +114,11 @@ const Muracietler_siyahisi = () => {
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{item.userFullName}</td>
-              <td>{item.applicationType}</td>
-              <td>{item.startDate}</td>
-              <td>{item.endDate}</td>
-              <td>{item.duration}</td>
-              <td>{item.approvers}</td>
+              <td>Məzuniyyət</td>
+              <td>{formatDate(item.startDate)}</td>
+              <td>{formatDate(item.endDate)}</td>
+              <td>{calculateDuration(item.startDate, item.endDate)}</td>
+              <td>{item.selectedOptionLabel}</td>
               <td>{item.status}</td>
             </tr>
           ))}
