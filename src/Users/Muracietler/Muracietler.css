@@ -2,9 +2,9 @@
   font-family: 'Blinker', sans-serif;
 }
 
-
-
-
+.modal-body {
+  font-family: "Blinker", sans-serif;
+}
 .sidebar {
     min-height: 10vh;
     width: 200px;
@@ -132,5 +132,42 @@
 .select-narrow {
   width: 100px; /* Adjust the width as needed */
 }
+
+.comment-container {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #F1EFEF;
+  word-wrap: break-word;
+}
+
+.rounded-table {
+  border-spacing: 0;
+  border-radius: 5px; /* Adjust the border-radius value as needed */
+  overflow: hidden;
+}
+.steps-title {
+  font-family: 'Blinker', sans-serif; /* Replace with your custom font */
+  font-size: 16px; /* Adjust the font size as needed */
+  /* Add any other font-related styles here */
+}
+
+/* Define styles for the rejected state */
+.custom-steps.rejected .ant-steps-item:nth-child(2) .ant-steps-item-tail::after,
+.custom-steps.rejected .ant-steps-item:nth-child(3) .ant-steps-item-tail::after {
+  background-color: #ff0000 !important; /* Change the color to red or your desired color */
+}
+
+/* Change the color of the "Rədd edilib" title to red */
+.custom-steps.rejected .rejected-title {
+  color: #ff0000 !important; /* Change the color to red or your desired color */
+}
+
+/* Change the color of the third dot's icon to red */
+.custom-steps.rejected .ant-steps-item:nth-child(3) .ant-steps-item-icon {
+  background-color: #ff0000 !important; /* Change the color to red or your desired color */
+}
+
 
 

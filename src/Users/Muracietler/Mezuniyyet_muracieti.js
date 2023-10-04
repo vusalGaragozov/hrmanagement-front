@@ -286,17 +286,20 @@ const handleSendDataToBackend = async () => {
   );
   const directorEmail = director ? director.personalInfo.email : '';
 
-  const vacationData = {
-    userEmail: user.email,
-    userFullName: userFullName,
-    startDate: formattedStartDate,
-    endDate: formattedEndDate,
-    paymentTiming,
-    selectedOptionLabel,
-    lineManagerEmail,
-    selectedOptionsignLabel,
-    directorEmail,
-  };
+const vacationData = {
+  userEmail: user.email,
+  userFullName: userFullName,
+  startDate: formattedStartDate,
+  endDate: formattedEndDate,
+  paymentTiming,
+  selectedOptionLabel,
+  lineManagerEmail,
+  selectedOptionsignLabel,
+  directorEmail,
+  status_1: 'Təsdiq gözləyir', // Add the "status" property with the default value
+  status_2: 'Təsdiq gözləyir',
+};
+console.log(vacationData);
 
   try {
     // Send a POST request to the backend to save the data
@@ -383,7 +386,7 @@ console.log(startDate);
       </div>
     </div>
     <div className="mb-3 row">
-      <label className="col-md-6 col-form-label">Təstiq edəcək rəhbər</label>
+      <label className="col-md-6 col-form-label">Təsdiq edəcək rəhbər</label>
       <div className="col-md-6">
         <Select
           options={registeredStaffMembers.map((staffMember) => ({

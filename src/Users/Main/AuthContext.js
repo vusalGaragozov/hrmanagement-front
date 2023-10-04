@@ -1,14 +1,13 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import {API_URL} from "../Other/config.js"
-export const AuthContext = createContext();
+import { API_URL } from "../Other/config.js";
 
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-
 
   useEffect(() => {
     axios
@@ -30,9 +29,12 @@ export const AuthProvider = ({ children }) => {
       });
   }, []);
 
+  // Set the loggedInUserFullName using user.firstname and user.lastname
+  const loggedInUserFullName = user ? `${user.firstname} ${user.lastname}` : 'John Doe';
+  const loggedInUserEmail = user ? `${user.email}` : 'John Doe';
   return (
     <AuthContext.Provider
-      value={{ user, setUser, isAuthenticated, setAuthenticated }}
+      value={{ user, setUser, isAuthenticated, setAuthenticated, loggedInUserFullName, loggedInUserEmail }}
     >
       {!isLoaded ? <div>Loading...</div> : children}
     </AuthContext.Provider>
