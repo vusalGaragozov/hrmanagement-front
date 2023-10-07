@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Table, Button, Form, Modal, FormControl, Card } from 'react-bootstrap';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { DatePicker, Space, Button as AntButton, Tooltip } from 'antd';
+import azAZ from 'antd/lib/locale/az_AZ';
+import "antd/dist/reset.css";
 import axios from 'axios';
 import { AuthContext } from '../Main/AuthContext';
 import './Muracietler.css';
-import { Steps, Popover } from 'antd';
+import { Alert, Steps, Popover } from 'antd';
 
-const customDot = (dot, { status, index }) => (
-  <Popover content={<span>Step {index} status: {status}</span>}>
-    {dot}
-  </Popover>
-);
+
+const { RangePicker } = DatePicker;
+const { Step } = Steps; // Import the Step component
+
 
 const Muracietler_siyahisi = () => {
   const [startDate, setStartDate] = useState(null);
@@ -23,52 +23,62 @@ const Muracietler_siyahisi = () => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const { loggedInUserEmail, loggedInUserFullName } = useContext(AuthContext);
-  const [isRejected, setIsRejected] = useState(false);
+  const [isRejected_1, setIsRejected_1] = useState(false);
+  const [isRejected_2, setIsRejected_2] = useState(false);
+  const [showNote, setShowNote] = useState(false);
+
   
   useEffect(() => {
-    if (selectedItem && selectedItem.status1 === 'Rədd edilib') {
-      setIsRejected(true);
+    if (selectedItem && selectedItem.status_1 === 'Rədd edilib') {
+      setIsRejected_1(true);
     } else {
-      setIsRejected(false);
+      setIsRejected_1(false);
+    }
+  }, [selectedItem]);
+  useEffect(() => {
+    if (selectedItem && selectedItem.status_2 === 'Rədd edilib') {
+      setIsRejected_2(true);
+    } else {
+      setIsRejected_2(false);
     }
   }, [selectedItem]);
   
+  const isDirector = selectedItem && loggedInUserEmail === selectedItem.directorEmail;
+  const isUserEmailMatch = selectedItem && loggedInUserEmail === selectedItem.userEmail;
+  const hasRejectedStatusBetween = selectedItem && (selectedItem.status_1 === 'Rədd edilib' || selectedItem.status_2 === 'Rədd edilib');
+
+  const noteText =
+    isDirector && selectedItem
+      ? selectedItem.status_1 === 'Təsdiq gözləyir'
+        ? 'Xətti rəhbər təsdiqindən sonra təstiq/rədd edə bilərsiz.'
+        : selectedItem.status_1 === 'Rədd edilib'
+        ? 'Xətti rəhbər rədd etdiyinə görə sizin tərəfinizdən hər hansı addıma ehtiyac yoxdur.'
+        : ''
+      : '';
+
+
   const [stepsData, setStepsData] = useState([
     {
       title: <span className="steps-title">Hazırlanıb</span>,
     },
     {
-      title: <span className="steps-title">Xətti rəhbər təstiqi</span>,
-    },
-    {
-      title: <span className="steps-title">Direktor təstiqi</span>,
+      title: (
+        <span className={`steps-title ${isRejected_1 ? 'rejected-title' : ''}`}>
+          {selectedItem?.status_1 === 'Rədd edilib' ? 'Rədd edilib' : selectedItem?.status_1 === 'Təsdiqlənib' ? 'Təsdiqlənib' : 'Təsdiq gözləyir'}
+        </span>
+      ),
+      description: 'Xətti rəhbərin təsdiq statusu',
     },
     {
       title: (
-        <span className={`steps-title ${isRejected ? 'rejected-title' : ''}`}>
-          {selectedItem?.status1 === 'Rədd edilib' ? 'Rədd edilib' : 'Təsdiqlənib'}
+        <span className={`steps-title ${isRejected_2 ? 'rejected-title' : ''}`}>
+          {selectedItem?.status_2 === 'Rədd edilib' ? 'Rədd edilib' : selectedItem?.status_2 === 'Təsdiqlənib' ? 'Təsdiqlənib' : 'Təsdiq gözləyir'}
         </span>
       ),
+      description: 'Direktorun təsdiq statusu',
     },
   ]);
   
-  useEffect(() => {
-    if (selectedItem && selectedItem.status1 === 'Rədd edilib') {
-      setStepsData((prevStepsData) => {
-        const updatedStepsData = [...prevStepsData];
-        updatedStepsData[2].title = (
-          <span className={`steps-title rejected-title`}>Rədd edilib</span>
-        );
-        return updatedStepsData;
-      });
-    } else {
-      setStepsData((prevStepsData) => {
-        const updatedStepsData = [...prevStepsData];
-        updatedStepsData[2].title = <span className="steps-title">Təsdiqlənib</span>;
-        return updatedStepsData;
-      });
-    }
-  }, [selectedItem]);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +91,32 @@ const Muracietler_siyahisi = () => {
     };
     fetchData();
   }, []);
+  
+  useEffect(() => {
+    if (selectedItem) {
+      const updatedStepsData = [...stepsData];
+      
+      // Update the first step based on status_1
+      if (selectedItem.status_1 === 'Rədd edilib') {
+        updatedStepsData[1].title = <span className={`steps-title rejected-title`}>Rədd edilib</span>;
+      } else if (selectedItem.status_1 === 'Təsdiqlənib') {
+        updatedStepsData[1].title = <span className="steps-title">Təsdiqlənib</span>;
+      } else {
+        updatedStepsData[1].title = <span className="steps-title">Təsdiq gözləyir</span>;
+      }
+  
+      // Update the second step based on status_2
+      if (selectedItem.status_2 === 'Rədd edilib') {
+        updatedStepsData[2].title = <span className={`steps-title rejected-title`}>Rədd edilib</span>;
+      } else if (selectedItem.status_2 === 'Təsdiqlənib') {
+        updatedStepsData[2].title = <span className="steps-title">Təsdiqlənib</span>;
+      } else {
+        updatedStepsData[2].title = <span className="steps-title">Təsdiq gözləyir</span>;
+      }
+  
+      setStepsData(updatedStepsData);
+    }
+  }, [selectedItem]);
   
   const openModal = (item) => {
     setSelectedItem(item);
@@ -185,6 +221,7 @@ const Muracietler_siyahisi = () => {
     }
   };
 
+
   const handleStatusRejected_2 = async () => {
     try {
       const response = await axios.put(`http://localhost:3001/api/update-status/${selectedItem._id}`, {
@@ -241,30 +278,22 @@ const Muracietler_siyahisi = () => {
     setComment(event.target.value);
   };
 
+
   return (
     <div className='muracietler'>
       <div className="d-flex align-items-center mb-3">
-        <Form.Group className="mr-3">
-          <DatePicker
+        <Form.Group>
+          <RangePicker locale={azAZ}
             selected={startDate}
             onChange={(date) => setStartDate(date)}
-            dateFormat="MMM d, yyyy"
-            className="form-control"
-            placeholderText="Başlama tarixi"
           />
         </Form.Group>
-        <Form.Group className="mr-3">
-          <DatePicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            dateFormat="MMM d, yyyy"
-            className="form-control"
-            placeholderText="Bitmə tarixi"
-          />
-        </Form.Group>
-        <Button variant="primary" onClick={handleCreate}>
-          Siyahı formalaşdır
-        </Button>
+       
+        <Tooltip title="Tooltip Text">
+          <AntButton type="primary" onClick={handleCreate}>
+            Siyahı formalaşdır
+          </AntButton>
+        </Tooltip>
       </div>
       <Table striped bordered hover>
         <thead>
@@ -276,8 +305,8 @@ const Muracietler_siyahisi = () => {
             <th>Bitmə Tarixi</th>
             <th>Müddət</th>
             <th>Xətti rəhbər</th>
-            <th>Xətti rəhbər təstiqi</th>
-            <th>Direktor təstiqi</th>
+            <th>Xətti rəhbər təsdiqi</th>
+            <th>Direktor təsdiqi</th>
           </tr>
         </thead>
         <tbody>
@@ -304,121 +333,167 @@ const Muracietler_siyahisi = () => {
           <Modal.Title className='steps-title'>Məzuniyyət vərəqi</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Steps
-            current={selectedItem?.status_1 === 'Təsdiqlənib' ? 2 : 1}
-            progressDot={customDot}
-            className={`custom-steps ${isRejected ? 'rejected' : ''}`}
-            items={stepsData}
+        <Steps current={1}>
+  <Step title="Yaradılıb" status="finish" />
+  <Step
+    title={selectedItem?.status_1 || 'Təsdiq gözləyir'}
+    status={
+      selectedItem?.status_1 === 'Rədd edilib'
+        ? 'error'
+        : selectedItem?.status_1 === 'Təsdiqlənib'
+        ? 'finish'
+        : 'wait'
+    }
+    description="Xətti rəhbərin təsdiq statusu"
+  />
+  <Step
+    title={selectedItem?.status_2 || 'Təsdiq gözləyir'}
+    status={
+      selectedItem?.status_2 === 'Rədd edilib'
+        ? 'error'
+        : selectedItem?.status_2 === 'Təsdiqlənib'
+        ? 'finish'
+        : 'wait'
+    }
+    description="Direktorun təsdiq statusu"
+  />
+</Steps>
+<br/>
+{isUserEmailMatch && hasRejectedStatusBetween && (
+        <div>
+          <Alert message="Sizin müraciətiniz rədd edilibdir!" type="error"/> 
+        </div>
+      )}
+{isDirector && noteText && (
+        <div>
+          <Alert message={noteText} type="error"/> 
+        </div>
+      )}
+        <br />
+        <div className='rounded'>
+          <table className="table table-bordered rounded-table">
+            <tbody>
+              <tr>
+                <th>Əməkdaş:</th>
+                <td>{selectedItem && selectedItem.userFullName}</td>
+              </tr>
+              <tr>
+                <th>Başlanğıc tarixi:</th>
+                <td>{selectedItem && formatDate(selectedItem.startDate)}</td>
+              </tr>
+              <tr>
+                <th>Bitmə tarixi:</th>
+                <td>{selectedItem && formatDate(selectedItem.endDate)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <Form.Group>
+          <FormControl
+            as="textarea"
+            rows={3}
+            value={comment}
+            placeholder='Şərh əlavə edin...'
+            onChange={handleCommentChange}
           />
-          <br />
-          <div className='rounded'>
-            <table className="table table-bordered rounded-table">
-              <tbody>
-                <tr>
-                  <th>Əməkdaş:</th>
-                  <td>{selectedItem && selectedItem.userFullName}</td>
-                </tr>
-                <tr>
-                  <th>Başlanğıc tarixi:</th>
-                  <td>{selectedItem && formatDate(selectedItem.startDate)}</td>
-                </tr>
-                <tr>
-                  <th>Bitmə tarixi:</th>
-                  <td>{selectedItem && formatDate(selectedItem.endDate)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <Form.Group>
-            <FormControl
-              as="textarea"
-              rows={3}
-              value={comment}
-              placeholder='Şərh əlavə edin...'
-              onChange={handleCommentChange}
-            />
-          </Form.Group>
-          <br />
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleEdit}
-            disabled={selectedItem && selectedItem.status_1 !== 'Təsdiq gözləyir'}
+        </Form.Group>
+        <br />
+        <Button
+          type="primary"
+          onClick={handleEdit}
+          disabled={selectedItem && selectedItem.status_1 !== 'Təsdiq gözləyir'}
+        >
+          Şərh əlavə et
+        </Button>
+        <br />
+        <br />
+        {comments.map((commentItem, commentIndex) => (
+          <div
+            key={commentIndex}
+            className="comment-container"
+            style={{
+              border: `1px solid #ccc`,
+              borderRadius: '10px',
+              marginBottom: '10px',
+              padding: '10px',
+              backgroundColor: '#F1EFEF',
+              width: commentItem.comment.length > 50 ? '450px' : '300px'
+            }}
           >
-            Şərh əlavə et
-          </button>
-          <br />
-          <br />
-          {comments.map((commentItem, commentIndex) => (
-            <div
-              key={commentIndex}
-              className="comment-container"
-              style={{
-                border: `1px solid #ccc`,
-                borderRadius: '10px',
-                marginBottom: '10px',
-                padding: '10px',
-                backgroundColor: '#F1EFEF',
-                width: commentItem.comment.length > 50 ? '450px' : '300px'
-              }}
-            >
-              {commentItem.commentedUserFullName && commentItem.comment && (
-                <>
-                  <span className="fw-bold">{commentItem.commentedUserFullName}: </span>
-                  <span className="text-muted">{commentItem.comment}</span>
-                </>
-              )}
-            </div>
-          ))}
-        </Modal.Body>
-        <Modal.Footer className='steps-title'>
-  <button type="button" className="btn btn-outline-secondary" onClick={closeModal}>
-    Bağla
-  </button>
-  {selectedItem && (
-    <>
-      {loggedInUserEmail === selectedItem.lineManagerEmail && (
-        <Button
-          variant="success"
-          onClick={handleStatusConfirmed_1}
-          disabled={selectedItem && selectedItem.status_1 !== 'Təsdiq gözləyir'}
-        >
-          Təsdiq et
+            {commentItem.commentedUserFullName && commentItem.comment && (
+              <>
+                <span className="fw-bold">{commentItem.commentedUserFullName}: </span>
+                <span className="text-muted">{commentItem.comment}</span>
+              </>
+            )}
+          </div>
+        ))}
+      </Modal.Body>
+      <Modal.Footer className='steps-title'>
+        <Button type="button" className='btn btn-secondary' onClick={closeModal}>
+          Bağla
         </Button>
-      )}
-      {loggedInUserEmail === selectedItem.directorEmail && (
-        <Button
-          variant="success"
-          onClick={handleStatusConfirmed_2}
-          disabled={selectedItem && selectedItem.status_2 !== 'Təsdiq gözləyir'}
-        >
-          Təsdiq et
-        </Button>
-      )}
-      {loggedInUserEmail === selectedItem.lineManagerEmail && (
-        <Button
-          variant="danger"
-          onClick={handleStatusRejected_1}
-          disabled={selectedItem && selectedItem.status_1 !== 'Təsdiq gözləyir'}
-        >
-          Rədd et
-        </Button>
-      )}
-      {loggedInUserEmail === selectedItem.directorEmail && (
-        <Button
-          variant="danger"
-          onClick={handleStatusRejected_2}
-          disabled={selectedItem && selectedItem.status_2 !== 'Təsdiq gözləyir'}
-        >
-          Rədd et
-        </Button>
-      )}
-    </>
-  )}
-</Modal.Footer>
-      </Modal>
-    </div>
+        {selectedItem && (
+          <>
+            {loggedInUserEmail === selectedItem.lineManagerEmail && (
+              <Button
+                type="button"
+                className='btn btn-success'
+                onClick={handleStatusConfirmed_1}
+                disabled={selectedItem && selectedItem.status_1 !== 'Təsdiq gözləyir'}
+              >
+                Təsdiq et
+              </Button>
+            )}
+ {loggedInUserEmail === selectedItem.directorEmail && (
+  
+      <Button
+        type="button"
+        className='btn btn-success'
+        onClick={handleStatusConfirmed_2}
+        disabled={
+          selectedItem &&
+          (selectedItem.status_2 !== 'Təsdiq gözləyir' || selectedItem.status_1 !== 'Təsdiqlənib')
+        }
+      >
+        Təsdiq et
+      </Button>
+)}
+
+
+
+            {loggedInUserEmail === selectedItem.lineManagerEmail && (
+              <Button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleStatusRejected_1}
+                disabled={selectedItem && selectedItem.status_1 !== 'Təsdiq gözləyir'}
+              >
+                Rədd et
+              </Button>
+            )}
+            {loggedInUserEmail === selectedItem.directorEmail && (
+              <Button
+                type="button"
+                className="btn btn-danger"
+                onClick={handleStatusRejected_2}
+                disabled={
+                  selectedItem &&
+                  (selectedItem.status_2 !== 'Təsdiq gözləyir' || selectedItem.status_1 !== 'Təsdiqlənib')
+                }              >
+                Rədd et
+              </Button>
+            )}
+          </>
+        )}
+      </Modal.Footer>
+    </Modal>
+  </div>
   );
 };
 
+
 export default Muracietler_siyahisi;
+
+
+
