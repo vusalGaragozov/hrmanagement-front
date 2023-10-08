@@ -8,6 +8,8 @@ import { AuthContext } from '../Main/AuthContext';
 import html2pdf from 'html2pdf.js';
 import Select from 'react-select';
 import { API_URL } from '../Other/config';
+import { Skeleton } from 'antd';
+
 
 const Mezuniyyet_muracieti = () => {
   const [startDate, setStartDate] = useState(null);
@@ -78,10 +80,9 @@ const Mezuniyyet_muracieti = () => {
   };
 
   const handleDownloadPdf = () => {
-    console.log('handleDownloadPdf called');
     const pdfOptions = {
       margin: 10,
-      filename: 'document.pdf',
+      filename: 'mezuniyyet.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -103,14 +104,7 @@ const Mezuniyyet_muracieti = () => {
     }
   };
 
-  useEffect(() => {
-    const contentElement = document.getElementById('pdf-content');
-  
-    if (contentElement) {
-      // Content is available, proceed with PDF generation
-      handleDownloadPdf();
-    }
-  }, []); 
+
 
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -123,6 +117,8 @@ const Mezuniyyet_muracieti = () => {
   };
 
   const usedDays = 7;
+
+
 
   const handleEndDateChange = (date) => {
     if (!startDate || date >= startDate) {
@@ -217,54 +213,100 @@ const Mezuniyyet_muracieti = () => {
 
     // HTML structure for textForWebPage
     const textForWebPage = `
-      <div class="hidden-for-print" id="pdf-content">
-        <div class="text-for-webpage">
+    <div class="hidden-for-print" id="pdf-content">
+      <div class="text-for-webpage" style="display: flex;">
+        <div style="flex: 1;"></div> <!-- This div occupies the left half of the page -->
+        <div style="flex: 1; text-align: left;">
           ${selectedOptionsignLabel.split('-')[0]?.trim() || ''} cənablarına, həmin şirkətdə ${position} vəzifəsində çalışan ${userFullName} tərəfindən
         </div>
-        <br /> <br />
-        <div class="text-center">
-          Ərizə
-        </div>
-        <br />
-        <div class="text-for-webpage">
-          Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz.
-        </div>
-        <div class="text-for-webpage">
-          Ödənişin ${paymentTiming} edilməsini xahiş edirəm.
-        </div>
-        <br /><br /><br /><br />
-        <div class="text-for-webpage">
+      </div>
+  
+      <br /> <br />
+      <div class="text-for-webpage">
+        <div class="text-center">Ərizə</div>
+      </div>
+      <br />
+      <div class="text-for-webpage" style="text-align: left;">
+        Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz. Ödənişin ${paymentTiming} edilməsini xahiş edirəm.
+      </div>
+ 
+  
+      <br /><br /><br /><br />
+      <div style="display: flex; flex-direction: column; align-items: flex-start; width: 50%;">
+        <div class="text-for-webpage" style="text-align: left;">
           Tarix: ${formattedCurrentDate}
         </div>
-        <div class="text-for-webpage">
+        <div class="text-for-webpage" style="text-align: left;">
           İmza:
         </div>
       </div>
-    `;
+    </div>
+  `;
+  
 
     // For printing, include the content without the hidden class
     const textForPrinting = `
-      <div>
-        <div class="text-for-printing">
-          Şirkətin rəhbəri, ${selectedOptionsign ? selectedOptionsign.label.split('-')[0].trim() : ''} cənablarına, həmin şirkətdə Maliyyə meneceri vəzifəsində çalışan ${userFullName} t
+    <style>
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #printable-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .text-for-printing {
+        text-align: left;
+      }
+      .text-for-printing:last-child {
+        page-break-before: always; /* Page break before the last child */
+      }
+    </style>
+    <div style="margin: 40mm 20mm 0; min-height: 100vh; overflow: hidden;"> <!-- Add margin to the top and sides, and set min-height -->
+      <div class="text-for-webpage" style="display: flex;">
+        <div style="flex: 1;"></div> <!-- This div occupies the left half of the page -->
+        <div style="flex: 1; text-align: left;">
+          ${selectedOptionsignLabel.split('-')[0]?.trim() || ''} cənablarına, həmin şirkətdə ${position} vəzifəsində çalışan ${userFullName} tərəfindən
         </div>
-        <br /> <br />
-        <div class="text-center">
-          Ərizə
-        </div>
-        <br />
-        <div class="text-for-printing">
-          Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz.
-        </div>
-        <br /><br /><br /><br />
-        <div class="text-for-printing">
+      </div>
+  
+      <br /> <br />
+      <div class="text-for-webpage">
+        <div class="text-center" style="text-align: center;">Ərizə</div> <!-- Center align "Ərizə" -->
+      </div>
+      <br />
+      <div class="text-for-webpage" style="text-align: left;">
+        Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz. Ödənişin ${paymentTiming} edilməsini xahiş edirəm.
+      </div>
+  
+      <br /><br /><br /><br />
+      <div style="display: flex; flex-direction: column; align-items: flex-start; width: 50%;">
+        <div class="text-for-webpage" style="text-align: left;">
           Tarix: ${formattedCurrentDate}
         </div>
-        <div class="text-for-printing">
+        <div class="text-for-webpage" style="text-align: left;">
           İmza:
         </div>
       </div>
-    `;
+    </div>
+  `;
+  
+  // Rest of your code...
+  
+
+// Rest of your code...
+
+  
+
+
+
 
     setGeneratedText({ textForWebPage, textForPrinting });
   };
@@ -327,6 +369,8 @@ console.log(vacationData);
   }
 };
 console.log(startDate);
+
+
   return (
     <div className="container text-left muracietler">
       <div className="row">
@@ -335,9 +379,20 @@ console.log(startDate);
             <div>
               <div className="border p-4 rounded mb-4">
                 <div className="text-center mt-3">
-                  <div className="alert alert-info">
-                    <strong>Mövcud gün sayı:</strong> {annualLeaveDays} gün
-                  </div>
+                <div className="alert alert-info">
+  <strong>Mövcud gün sayı:</strong>{' '}
+  {annualLeaveDays ? (
+    annualLeaveDays
+  ) : (
+    <Skeleton.Input
+      style={{ width: '10px', display: 'inline-block' }}
+      active={true}
+    />
+  )}{' '}
+  gün
+</div>
+
+
                   <div className="alert alert-success">
                     <strong>İstifadə olunmuş gün sayı:</strong> {usedDays} gün
                   </div>

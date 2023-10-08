@@ -453,7 +453,7 @@ function Emek_haqqi() {
                 </div>
                 <div className="form-group">
                   <label>Sektor</label>
-                  <select className="form-control" value={grossToNetSector} onChange={handleGrossToNetSectorChange}>
+                  <select className="form-select" value={grossToNetSector} onChange={handleGrossToNetSectorChange}>
                     <option value="Qeyri-dövlət və qeyri-neft sektoru">Qeyri-dövlət və qeyri-neft sektoru</option>
                     <option value="Dövlət və Neft sektoru">Dövlət və Neft sektoru</option>
                   </select>
@@ -475,7 +475,7 @@ function Emek_haqqi() {
                 </div>
                 <div className="form-group">
                   <label>Sektor</label>
-                  <select className="form-control" value={netToGrossSector} onChange={handleNetToGrossSectorChange}>
+                  <select className="form-select" value={netToGrossSector} onChange={handleNetToGrossSectorChange}>
                     <option value="Qeyri-dövlət və qeyri-neft sektoru">Qeyri-dövlət və qeyri-neft sektoru</option>
                     <option value="Dövlət və Neft sektoru">Dövlət və Neft sektoru</option>
                   </select>
