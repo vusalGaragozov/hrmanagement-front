@@ -9,6 +9,7 @@ import html2pdf from 'html2pdf.js';
 import Select from 'react-select';
 import { API_URL } from '../Other/config';
 import { Skeleton } from 'antd';
+import { Select as AntSelect, Space } from 'antd';
 
 
 const Mezuniyyet_muracieti = () => {
@@ -298,15 +299,6 @@ const Mezuniyyet_muracieti = () => {
     </div>
   `;
   
-  // Rest of your code...
-  
-
-// Rest of your code...
-
-  
-
-
-
 
     setGeneratedText({ textForWebPage, textForPrinting });
   };
@@ -429,46 +421,55 @@ console.log(startDate);
       <label className="col-md-6 col-form-label">Ödəniş vaxtı:</label>
       <div className="col-md-6 ">
         <div className="input-group">
-          <select
-            value={paymentTiming}
-            onChange={(e) => setPaymentTiming(e.target.value)}
-            className="form-control form-select"
-          >
-            <option value="dərhal">Məzuniyyətdən əvvəl</option>
-            <option value="ay sonunda">Ay sonunda</option>
-          </select>
+        <AntSelect
+  value={paymentTiming}
+  onChange={(value) => setPaymentTiming(value)}
+  style={{
+    width: 230,
+  }}
+>
+  <AntSelect.Option value="dərhal">Məzuniyyətdən əvvəl</AntSelect.Option>
+  <AntSelect.Option value="ay sonunda">Ay sonunda</AntSelect.Option>
+</AntSelect>
+
         </div>
       </div>
     </div>
     <div className="mb-3 row">
-      <label className="col-md-6 col-form-label">Təsdiq edəcək rəhbər</label>
-      <div className="col-md-6">
-        <Select
-          options={registeredStaffMembers.map((staffMember) => ({
-            value: staffMember._id,
-            label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
-          }))}
-          value={selectedOption}
-          onChange={handleSelectChange}
-          placeholder="Rəhbəri seç"
-        />
-      </div>
-    </div>
-    <div className="mb-3 row">
-      <label className="col-md-6 col-form-label">İmza çəkəcək rəhbər</label>
-      <div className="col-md-6">
-        <Select
-          options={registeredStaffMembers.map((staffMember) => ({
-            value: staffMember._id,
-            label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
-          }))}
-          value={selectedOptionsign}
-          onChange={handleSelectChangesign}
-          placeholder="Rəhbəri seç"
-           
-        />
-        </div>
-    </div>
+  <label className="col-md-6 col-form-label">Təsdiq edəcək rəhbər</label>
+  <div className="col-md-6">
+    <AntSelect
+      options={registeredStaffMembers.map((staffMember) => ({
+        value: staffMember._id,
+        label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
+      }))}
+      value={selectedOption}
+      onChange={handleSelectChange}
+      placeholder="Rəhbəri seç"
+      style={{
+        width: 220,
+      }}
+    />
+  </div>
+</div>
+
+<div className="mb-3 row">
+  <label className="col-md-6 col-form-label">İmza çəkəcək rəhbər</label>
+  <div className="col-md-6">
+    <AntSelect
+      options={registeredStaffMembers.map((staffMember) => ({
+        value: staffMember._id,
+        label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
+      }))}
+      value={selectedOptionsign}
+      onChange={handleSelectChangesign}
+      placeholder="Rəhbəri seç"
+      style={{
+        width: 220,
+      }}
+    />
+  </div>
+</div>
   </div>
   <div className="mb-3 row">
     <div className="col-md-12">
