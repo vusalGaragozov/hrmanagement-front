@@ -171,3 +171,9 @@
 
 
 
+@media print {
+  @page {
+    margin: 5mm 15mm;
+  }
+}
+

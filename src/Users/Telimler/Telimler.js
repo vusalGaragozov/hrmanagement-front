@@ -1,12 +1,18 @@
-import React from 'react'; // Import AuthContext
-
+import React from 'react';
+import { DatePicker } from 'antd';
+import moment from 'moment';
+import 'moment/locale/az'; // Import Azerbaijani locale
 
 const Telimler = () => {
+  const onChange = (date, dateString) => {};
 
   return (
     <div className="container">
-      <h2>Trainings content</h2>
-     
+      <h2>Təlimlərin Məzmunu</h2>
+      <DatePicker
+        onChange={onChange}
+        format="DD.MM.YYYY"
+      />
     </div>
   );
 };

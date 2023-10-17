@@ -8,9 +8,6 @@ import { AuthContext } from '../Main/AuthContext';
 import html2pdf from 'html2pdf.js';
 import Select from 'react-select';
 import { API_URL } from '../Other/config';
-import { Skeleton } from 'antd';
-import { Select as AntSelect, Space } from 'antd';
-
 
 const Mezuniyyet_muracieti = () => {
   const [startDate, setStartDate] = useState(null);
@@ -81,9 +78,10 @@ const Mezuniyyet_muracieti = () => {
   };
 
   const handleDownloadPdf = () => {
+    console.log('handleDownloadPdf called');
     const pdfOptions = {
-      margin: 10,
-      filename: 'mezuniyyet.pdf',
+      margin: 20,
+      filename: 'document.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
@@ -105,7 +103,14 @@ const Mezuniyyet_muracieti = () => {
     }
   };
 
-
+  useEffect(() => {
+    const contentElement = document.getElementById('pdf-content');
+  
+    if (contentElement) {
+      // Content is available, proceed with PDF generation
+      ;
+    }
+  }, []); 
 
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -118,8 +123,6 @@ const Mezuniyyet_muracieti = () => {
   };
 
   const usedDays = 7;
-
-
 
   const handleEndDateChange = (date) => {
     if (!startDate || date >= startDate) {
@@ -214,92 +217,77 @@ const Mezuniyyet_muracieti = () => {
 
     // HTML structure for textForWebPage
     const textForWebPage = `
-    <div class="hidden-for-print" id="pdf-content">
-      <div class="text-for-webpage" style="display: flex;">
-        <div style="flex: 1;"></div> <!-- This div occupies the left half of the page -->
-        <div style="flex: 1; text-align: left;">
-          ${selectedOptionsignLabel.split('-')[0]?.trim() || ''} cənablarına, həmin şirkətdə ${position} vəzifəsində çalışan ${userFullName} tərəfindən
+      <div class="hidden-for-print" id="pdf-content">
+      <div class="text-for-webpage" style="display: flex; justify-content: space-between;">
+      <div style="flex: 2;">&nbsp;</div>
+      <div style="flex: 2; text-align: left;">
+        ${selectedOptionsignLabel.split('-')[0]?.trim() || ''} cənablarına, həmin şirkətdə ${position} vəzifəsində çalışan ${userFullName} tərəfindən
+      </div>
+    </div>
+    
+        <br /> <br />
+        <div class="text-center">
+          Ərizə
         </div>
-      </div>
-  
-      <br /> <br />
-      <div class="text-for-webpage">
-        <div class="text-center">Ərizə</div>
-      </div>
-      <br />
-      <div class="text-for-webpage" style="text-align: left;">
+        <br />
+        <div class="text-for-webpage" style="text-align: justify;">
         Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz. Ödənişin ${paymentTiming} edilməsini xahiş edirəm.
       </div>
- 
-  
-      <br /><br /><br /><br />
-      <div style="display: flex; flex-direction: column; align-items: flex-start; width: 50%;">
-        <div class="text-for-webpage" style="text-align: left;">
-          Tarix: ${formattedCurrentDate}
-        </div>
+
+        <br /><br /><br /><br />
+        <div class="text-for-printing" style="text-align: left;">
+        Tarix: ${formattedCurrentDate}
+      </div>
+      
         <div class="text-for-webpage" style="text-align: left;">
           İmza:
         </div>
       </div>
-    </div>
-  `;
-  
+    `;
 
     // For printing, include the content without the hidden class
     const textForPrinting = `
     <style>
-      @page {
-        size: A4;
-        margin: 0;
-      }
+    @media print {
       body {
-        margin: 0;
-        padding: 0;
+        margin: 0mm 15mm; /* Adjust these values as needed */
       }
-      #printable-content {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-      }
-      .text-for-printing {
-        text-align: left;
-      }
-      .text-for-printing:last-child {
-        page-break-before: always; /* Page break before the last child */
-      }
-    </style>
-    <div style="margin: 40mm 20mm 0; min-height: 100vh; overflow: hidden;"> <!-- Add margin to the top and sides, and set min-height -->
-      <div class="text-for-webpage" style="display: flex;">
-        <div style="flex: 1;"></div> <!-- This div occupies the left half of the page -->
-        <div style="flex: 1; text-align: left;">
-          ${selectedOptionsignLabel.split('-')[0]?.trim() || ''} cənablarına, həmin şirkətdə ${position} vəzifəsində çalışan ${userFullName} tərəfindən
+    }
+  
+    .text-center {
+      text-align: center; /* Center align text within elements with the class "text-center" */
+    }
+  </style>
+    <div>
+      <div class="text-for-printing" style="padding: 0; margin: 0;">
+        <div style="display: flex;">
+          <div style="flex: 1;"></div>
+          <div style="flex: 1; text-align: left;">
+            Şirkətin rəhbəri, ${selectedOptionsign ? selectedOptionsign.label.split('-')[0].trim() : ''} cənablarına, həmin şirkətdə Maliyyə meneceri vəzifəsində çalışan ${userFullName} tərəfindən
+          </div>
         </div>
       </div>
-  
       <br /> <br />
-      <div class="text-for-webpage">
-        <div class="text-center" style="text-align: center;">Ərizə</div> <!-- Center align "Ərizə" -->
+      <div class="text-center">
+        Ərizə
       </div>
       <br />
-      <div class="text-for-webpage" style="text-align: left;">
-        Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz. Ödənişin ${paymentTiming} edilməsini xahiş edirəm.
+      <div class="text-for-printing">
+        Yazıb Sizdən xahiş edirəm ki, mənə ${formattedStartDate} tarixindən ${formattedEndDate} tarixinədək (${daysDifference} təqvim günü) məzuniyyət verəsiniz.
       </div>
-  
       <br /><br /><br /><br />
-      <div style="display: flex; flex-direction: column; align-items: flex-start; width: 50%;">
-        <div class="text-for-webpage" style="text-align: left;">
-          Tarix: ${formattedCurrentDate}
-        </div>
-        <div class="text-for-webpage" style="text-align: left;">
-          İmza:
-        </div>
+      <div class="text-for-printing" style="text-align: left;">
+        Tarix: ${formattedCurrentDate}
+      </div>
+      
+      <div class="text-for-printing">
+        İmza:
       </div>
     </div>
-  `;
-  
-
+    `;
+    
+    // Now, you can print this HTML content with the specified A4 page margins.
+    
     setGeneratedText({ textForWebPage, textForPrinting });
   };
 
@@ -361,8 +349,6 @@ console.log(vacationData);
   }
 };
 console.log(startDate);
-
-
   return (
     <div className="container text-left muracietler">
       <div className="row">
@@ -371,20 +357,9 @@ console.log(startDate);
             <div>
               <div className="border p-4 rounded mb-4">
                 <div className="text-center mt-3">
-                <div className="alert alert-info">
-  <strong>Mövcud gün sayı:</strong>{' '}
-  {annualLeaveDays ? (
-    annualLeaveDays
-  ) : (
-    <Skeleton.Input
-      style={{ width: '10px', display: 'inline-block' }}
-      active={true}
-    />
-  )}{' '}
-  gün
-</div>
-
-
+                  <div className="alert alert-info">
+                    <strong>Mövcud gün sayı:</strong> {annualLeaveDays} gün
+                  </div>
                   <div className="alert alert-success">
                     <strong>İstifadə olunmuş gün sayı:</strong> {usedDays} gün
                   </div>
@@ -421,55 +396,46 @@ console.log(startDate);
       <label className="col-md-6 col-form-label">Ödəniş vaxtı:</label>
       <div className="col-md-6 ">
         <div className="input-group">
-        <AntSelect
-  value={paymentTiming}
-  onChange={(value) => setPaymentTiming(value)}
-  style={{
-    width: 230,
-  }}
->
-  <AntSelect.Option value="dərhal">Məzuniyyətdən əvvəl</AntSelect.Option>
-  <AntSelect.Option value="ay sonunda">Ay sonunda</AntSelect.Option>
-</AntSelect>
-
+          <select
+            value={paymentTiming}
+            onChange={(e) => setPaymentTiming(e.target.value)}
+            className="form-control form-select"
+          >
+            <option value="dərhal">Məzuniyyətdən əvvəl</option>
+            <option value="ay sonunda">Ay sonunda</option>
+          </select>
         </div>
       </div>
     </div>
     <div className="mb-3 row">
-  <label className="col-md-6 col-form-label">Təsdiq edəcək rəhbər</label>
-  <div className="col-md-6">
-    <AntSelect
-      options={registeredStaffMembers.map((staffMember) => ({
-        value: staffMember._id,
-        label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
-      }))}
-      value={selectedOption}
-      onChange={handleSelectChange}
-      placeholder="Rəhbəri seç"
-      style={{
-        width: 220,
-      }}
-    />
-  </div>
-</div>
-
-<div className="mb-3 row">
-  <label className="col-md-6 col-form-label">İmza çəkəcək rəhbər</label>
-  <div className="col-md-6">
-    <AntSelect
-      options={registeredStaffMembers.map((staffMember) => ({
-        value: staffMember._id,
-        label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
-      }))}
-      value={selectedOptionsign}
-      onChange={handleSelectChangesign}
-      placeholder="Rəhbəri seç"
-      style={{
-        width: 220,
-      }}
-    />
-  </div>
-</div>
+      <label className="col-md-6 col-form-label">Təsdiq edəcək rəhbər</label>
+      <div className="col-md-6">
+        <Select
+          options={registeredStaffMembers.map((staffMember) => ({
+            value: staffMember._id,
+            label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
+          }))}
+          value={selectedOption}
+          onChange={handleSelectChange}
+          placeholder="Rəhbəri seç"
+        />
+      </div>
+    </div>
+    <div className="mb-3 row">
+      <label className="col-md-6 col-form-label">İmza çəkəcək rəhbər</label>
+      <div className="col-md-6">
+        <Select
+          options={registeredStaffMembers.map((staffMember) => ({
+            value: staffMember._id,
+            label: `${staffMember.personalInfo.name} ${staffMember.personalInfo.surname} - ${staffMember.corporateInfo.position}`,
+          }))}
+          value={selectedOptionsign}
+          onChange={handleSelectChangesign}
+          placeholder="Rəhbəri seç"
+           
+        />
+        </div>
+    </div>
   </div>
   <div className="mb-3 row">
     <div className="col-md-12">
