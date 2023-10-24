@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './style.css';
 import { API_URL } from '../Other/config';
 import { AuthContext } from '../Main/AuthContext';
+import User from './user';
 
 const LoggedInNavbar = ({ user, handleLogout }) => (
   <nav className="navbar navbar-expand-lg navbar-light bg-light">

@@ -30,8 +30,11 @@ import Mezuniyyet from '../Kalkulyatorlar/Mezuniyyet.js';
 import Ezamiyyet from '../Kalkulyatorlar/Ezamiyyet.js';
 import Xestelik_vereqesi from '../Kalkulyatorlar/Xestelik_vereqesi.js';
 import StaffRegister from './StaffRegister.js';
+import User from './user.js';
+import UploadData from '../../data_modelling/Excel_upload.js';
+import EBITDAChart from '../../data_modelling/EBITDA_chart.js';
 
-
+window.google.charts.load('current', { packages: ['corechart'] });
 
 function App() {
   return (
@@ -68,6 +71,9 @@ function App() {
             <Route path="/trip_payment" element={<Mezuniyyet />} />
             <Route path="/sick_leave_calculator" element={<Xestelik_vereqesi />} />
             <Route path="/staffRegister" element={<StaffRegister />} />
+            <Route path="/personal" element={<User />} />
+            <Route path="/upload" element={<UploadData />} />
+            <Route path="/ebitda" element={<EBITDAChart />} />
           </Routes>
         </div>
       </Router>

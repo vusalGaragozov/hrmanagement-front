@@ -1,8 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Main/AuthContext.js';
 import { API_URL } from '../Other/config.js';
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,6 +11,14 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [footerHeight, setFooterHeight] = useState(0);
+
+  useEffect(() => {
+    const footer = document.querySelector('footer');
+    if (footer) {
+      setFooterHeight(footer.offsetHeight);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,10 +45,9 @@ const Login = () => {
   };
 
   return (
-    <div className="container main" style={{ marginTop: '4rem' }}>
+    <div className="container main" style={{ minHeight: `calc(100vh - ${footerHeight}px)`, marginTop: '0px', marginBottom: '10px' }}>
       <div className="row">
         <div className="col-7 mx-auto border border rounded p-4">
-          {/* Add border and border-success classes */}
           <form>
             <div className="form-group row">
               <label htmlFor="inputEmail3" className="col-sm-2 col-form-label">Email</label>
